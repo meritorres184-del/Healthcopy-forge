@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
+import { sql } from "../db";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -13,13 +14,54 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   }
 });
 
+// Read the content packs from the database instead of hardcoded data.
+const getPacks = createServerFn({ method: "GET" }).handler(async () => {
+  const rows = await sql()`select
+      slug, title, description, price_cents, category, coming_soon, includes
+    from content_packs
+    order by id`;
+  return rows.map((r) => ({
+    slug: r.slug,
+    title: r.title,
+    description: r.description,
+    price: (r.price_cents as number) / 100,
+    category: r.category,
+    comingSoon: r.coming_soon as boolean,
+    includes: r.includes as string[],
+  }));
+});
+
 export const Route = createFileRoute("/packs")({
-  loader: () => getBusinessName(),
+  loader: async () => {
+    const [businessName, packs] = await Promise.all([
+      getBusinessName(),
+      getPacks(),
+    ]);
+    return { businessName, packs };
+  },
   component: PacksPage,
 });
 
 function PacksPage() {
-  const businessName = Route.useLoaderData();
+  const { businessName, packs } = Route.useLoaderData();
+
+  // Group the DB packs into the same category sections as before, preserving
+  // first-appearance order.
+  const categoryLabels: Record<string, string> = {
+    Supplements: "Supplements & Nutrition",
+    Fitness: "Fitness & Performance",
+    "Natural Health": "Natural Health & Wellness",
+  };
+  const groups: CategoryGroup[] = [];
+  for (const pack of packs) {
+    const label = categoryLabels[pack.category] ?? pack.category;
+    let group = groups.find((g) => g.name === label);
+    if (!group) {
+      group = { name: label, packs: [] };
+      groups.push(group);
+    }
+    group.packs.push(pack);
+  }
 
   return (
     <main>
@@ -43,7 +85,7 @@ function PacksPage() {
       {/* Pack Grid */}
       <section className="px-4 py-12 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-6xl">
-          {categories.map((category) => (
+          {groups.map((category) => (
             <div key={category.name} className="mb-16">
               <div className="mb-6 flex items-center gap-3">
                 <h2 className="text-xl font-bold text-gray-900">
@@ -186,107 +228,3 @@ interface CategoryGroup {
   name: string;
   packs: Pack[];
 }
-
-// --- Placeholder Data ---
-
-const categories: CategoryGroup[] = [
-  {
-    name: "Supplements & Nutrition",
-    packs: [
-      {
-        title: "The Ultimate Probiotics Content Pack",
-        description:
-          "Complete PLR kit covering gut health, probiotic strains, and supplement guides. Perfect for supplement affiliate sites.",
-        price: 47,
-        category: "Supplements",
-        comingSoon: false,
-        includes: [
-          "5 SEO-optimized articles",
-          "7-day email sequence",
-          "10 social media posts",
-          "Probiotic checklist lead magnet",
-        ],
-      },
-      {
-        title: "Nootropics & Brain Health Bundle",
-        description:
-          "Cognitive enhancement and brain health content for the booming nootropics niche. Ready to rebrand in minutes.",
-        price: 67,
-        category: "Supplements",
-        comingSoon: false,
-        includes: [
-          "6 long-form articles",
-          "5-day nurture sequence",
-          "12 social media templates",
-          "Brain-boosting foods guide (PDF)",
-        ],
-      },
-      {
-        title: "Collagen & Skin Health Pack",
-        description:
-          "Beauty-from-within content focused on collagen supplements, skin health, and anti-aging nutrition.",
-        price: 57,
-        category: "Supplements",
-        comingSoon: true,
-        includes: [
-          "4 articles",
-          "Email welcome series",
-          "8 social posts",
-          "Glow-up checklist lead magnet",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Fitness & Performance",
-    packs: [
-      {
-        title: "Pre-Workout & Energy Content Kit",
-        description:
-          "Everything you need to promote pre-workout supplements, energy boosters, and workout nutrition to fitness audiences.",
-        price: 37,
-        category: "Fitness",
-        comingSoon: false,
-        includes: [
-          "4 articles on pre-workout nutrition",
-          "5-email launch sequence",
-          "10 Instagram-ready posts",
-          "Pre-workout timing guide",
-        ],
-      },
-      {
-        title: "Recovery & Muscle Growth Bundle",
-        description:
-          "Post-workout recovery, protein timing, and muscle-building content tailored for the fitness supplement market.",
-        price: 77,
-        category: "Fitness",
-        comingSoon: true,
-        includes: [
-          "6 in-depth articles",
-          "7-day drip sequence",
-          "15 social media templates",
-          "Recovery protocol lead magnet",
-        ],
-      },
-    ],
-  },
-  {
-    name: "Natural Health & Wellness",
-    packs: [
-      {
-        title: "Adaptogens & Herbal Wellness Pack",
-        description:
-          "Ride the adaptogen trend with content on ashwagandha, rhodiola, reishi, and other herbal supplements — all PLR-ready.",
-        price: 87,
-        category: "Natural Health",
-        comingSoon: false,
-        includes: [
-          "7 articles on adaptogenic herbs",
-          "10-email educational sequence",
-          "20 social media posts",
-          "Herbal wellness starter guide",
-        ],
-      },
-    ],
-  },
-];
