@@ -36,7 +36,8 @@ function MembershipPage() {
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
             Done-for-you content you can rebrand and publish immediately —
             articles, email sequences, social posts, and lead magnets — all
-            researched, written, and ready for your audience.
+            professionally researched and edited, grammar-free and ready for
+            your audience.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <a
@@ -109,12 +110,13 @@ function MembershipPage() {
             </span>
             <div>
               <h3 className="text-base font-semibold text-gray-900">
-                Researched &amp; Compliant-Friendly
+                Professionally Edited, Grammar-Free &amp; Compliant-Friendly
               </h3>
               <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                Every pack is built around accurate, defensible claims with
-                compliant-friendly framing — so you can publish with confidence
-                and keep your audience's trust.
+                Unlike most PLR, every pack is professionally edited and
+                grammar-free — so the content reads clean when you publish it.
+                It's also built around accurate, defensible claims with
+                compliant-friendly framing, so you keep your audience's trust.
               </p>
             </div>
           </div>
@@ -243,7 +245,7 @@ const benefits = [
   {
     title: "Ready-to-Rebrand Articles",
     description:
-      "SEO-friendly, professionally written articles you can edit, brand, and publish as your own in minutes.",
+      "SEO-friendly, professionally edited and grammar-free articles you can edit, brand, and publish as your own in minutes.",
     icon: (
       <svg
         className="h-6 w-6"
