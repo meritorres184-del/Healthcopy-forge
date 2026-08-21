@@ -103,6 +103,12 @@ function Header() {
           >
             Pricing
           </Link>
+          <Link
+            to="/library"
+            className="hover:text-emerald-600 transition-colors"
+          >
+            Library
+          </Link>
         </nav>
       </div>
     </header>
@@ -145,6 +151,14 @@ function Footer() {
                   className="hover:text-emerald-600 transition-colors"
                 >
                   Pricing
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/library"
+                  className="hover:text-emerald-600 transition-colors"
+                >
+                  Library
                 </Link>
               </li>
             </ul>
