@@ -75,9 +75,10 @@ function PacksPage() {
             {businessName} PLR Content Packs
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            Professionally researched, ready-to-rebrand content packs for
-            health-niche affiliate marketers. Each pack includes articles, email
-            sequences, social media posts, and a lead magnet.
+            Professionally researched and edited — grammar-free content you can
+            publish with confidence. Ready-to-rebrand packs for health-niche
+            affiliate marketers, each including articles, email sequences,
+            social media posts, and a lead magnet.
           </p>
         </div>
       </section>
@@ -199,13 +200,12 @@ function PackCard({ pack }: { pack: Pack }) {
               Coming Soon
             </span>
           ) : (
-            <button
-              type="button"
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-emerald-700 cursor-not-allowed opacity-70"
-              title="Purchasing will be available soon"
+            <a
+              href={`/checkout/${pack.slug}`}
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-emerald-700"
             >
               Buy Now
-            </button>
+            </a>
           )}
         </div>
       </div>
@@ -216,6 +216,7 @@ function PackCard({ pack }: { pack: Pack }) {
 // --- Data Types ---
 
 interface Pack {
+  slug: string;
   title: string;
   description: string;
   price: number;
