@@ -35,9 +35,10 @@ function Home() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
             Skip the writing and focus on driving traffic and conversions.
-            Professionally researched, ready-to-rebrand content packs —
-            including articles, email sequences, social media posts, and lead
-            magnets — built for health-niche affiliate marketers.
+            Professionally researched and edited — grammar-free content you can
+            publish with confidence. Ready-to-rebrand content packs including
+            articles, email sequences, social media posts, and lead magnets —
+            built for health-niche affiliate marketers.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link
@@ -81,8 +82,9 @@ function Home() {
               <span className="text-emerald-600">Grow Your Audience</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-              Each content pack is a complete marketing arsenal — researched,
-              written, and ready for you to brand as your own.
+              Each content pack is a complete marketing arsenal — professionally
+              researched, edited, and grammar-free, ready for you to brand as
+              your own.
             </p>
           </div>
           <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -291,7 +293,7 @@ const features = [
   {
     title: "Ready-to-Rebrand Articles",
     description:
-      "Professionally researched, compliance-friendly health articles you can publish as your own. Edit, brand, and go live in minutes.",
+      "Professionally researched and edited, grammar-free health articles you can publish as your own. Edit, brand, and go live in minutes — no fixing typos first.",
     icon: (
       <svg
         className="h-6 w-6"

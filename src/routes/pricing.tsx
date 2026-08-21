@@ -34,8 +34,9 @@ function PricingPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
             Buy a single pack when you need it, or unlock the entire library with
-            a membership. Either way, every piece of content is researched,
-            written, and ready to rebrand as your own.
+            a membership. Either way, every piece of content is professionally
+            researched and edited — grammar-free and ready to rebrand as your
+            own.
           </p>
         </div>
       </section>
@@ -197,6 +198,7 @@ function CheckIcon() {
 // --- Data ---
 
 const packsIncluded = [
+  "Professionally edited — grammar-free",
   "Ready-to-rebrand articles",
   "Email sequences included",
   "Social media post templates",
@@ -208,6 +210,7 @@ const membershipIncluded = [
   "Full access to the entire library",
   "Exclusive monthly content drops",
   "All articles, email sequences, social posts & lead magnets",
+  "Professionally edited — grammar-free content",
   "Compliant-friendly, researched content",
   "New packs added every month",
   "Cancel anytime",
