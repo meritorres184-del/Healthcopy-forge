@@ -1,7 +1,7 @@
 // Membership tier definitions shared across the /join and /join/$tier pages.
 
 export interface Tier {
-  slug: string; // 'standard' | 'premium' — matches the URL param
+  slug: string; // 'essentials' | 'pro' — matches the URL param
   name: string;
   price: number; // monthly USD
   tagline: string;
@@ -12,35 +12,38 @@ export interface Tier {
 
 export const TIERS: Tier[] = [
   {
-    slug: "standard",
-    name: "Standard",
-    price: 39,
-    tagline: "Full library access",
+    slug: "essentials",
+    name: "Essentials",
+    price: 47,
+    tagline: "Content to publish consistently",
     description:
-      "Everything you need for a steady stream of health content — full library access plus a fresh exclusive pack every month.",
+      "A steady stream of fresh, ready-to-customize content — 5 new SEO articles every month plus a rotating mini ebook, wellness journal, tracker, checklist, or cheat sheet. Everything ships with keyword, title, meta, and CTA support.",
     benefits: [
-      "Full access to the entire content library",
-      "One exclusive monthly pack",
-      "All content formats: articles, email sequences, social posts & lead magnets",
-      "Professionally edited, grammar-free content",
-      "Compliant-friendly, researched content",
+      "5 new SEO-written articles per month",
+      "Keyword, title, meta & CTA support",
+      "Rotating mini ebook",
+      "Wellness journal",
+      "Tracker",
+      "Checklist / cheat sheet",
       "Cancel anytime",
     ],
   },
   {
-    slug: "premium",
-    name: "Premium",
-    price: 59,
-    tagline: "Everything in Standard, plus more",
+    slug: "pro",
+    name: "Pro",
+    price: 97,
+    tagline: "Content + digital products to publish, grow, promote, sell",
     description:
-      "For serious affiliates who want more content, faster. Maximum volume with early access and a monthly publishing plan.",
+      "Everything in Essentials, expanded — 10–15 articles plus content briefs each month, a full-length PLR ebook, a complete PLR course, premium journals and workbooks, and a monthly Mystery Bonus.",
     benefits: [
-      "Everything in Standard",
-      "Two exclusive packs per month",
-      "7-day early access to new packs",
-      "Monthly content calendar",
-      "All content formats: articles, email sequences, social posts & lead magnets",
-      "Professionally edited, grammar-free content",
+      "Everything in Essentials",
+      "10–15 articles + content briefs per month",
+      "Full-length PLR ebook (40–60 pages)",
+      "Complete PLR course (modules, workbook, sales copy)",
+      "Premium journal / workbook",
+      "Tracker bundle & monthly PLR report",
+      "Lead-magnet & email-marketing vaults",
+      "Monthly Mystery Bonus",
       "Cancel anytime",
     ],
     highlighted: true,

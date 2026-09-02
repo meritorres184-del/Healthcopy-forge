@@ -33,10 +33,9 @@ function PricingPage() {
             Two Ways to Get Your Content
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
-            Buy a single pack when you need it, or unlock the entire library with
-            a membership. Either way, every piece of content is professionally
-            researched and edited — grammar-free and ready to rebrand as your
-            own.
+            Buy a single pack when you need it, or join the membership for a
+            steady stream of fresh content. Either way, every piece of content
+            is SEO-written and ready to customize, brand, and promote.
           </p>
         </div>
       </section>
@@ -49,11 +48,12 @@ function PricingPage() {
             <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900">Individual Packs</h2>
               <p className="mt-2 text-sm text-gray-500">
-                Buy only what you need — one-time purchase, yours forever.
+                $47 per pack — or any 4 packs for $97. One-time purchase, yours
+                forever.
               </p>
               <div className="mt-4">
                 <span className="text-4xl font-extrabold tracking-tight text-gray-900">
-                  $27–$97
+                  $47
                 </span>
                 <span className="ml-1 text-sm text-gray-400">per pack</span>
               </div>
@@ -72,7 +72,7 @@ function PricingPage() {
                 to="/packs"
                 className="mt-8 block w-full rounded-xl border-2 border-emerald-600 bg-white px-6 py-3 text-center text-sm font-semibold text-emerald-600 transition-all hover:bg-emerald-50"
               >
-                Browse Packs
+                Browse the 7 Packs
               </Link>
             </div>
 
@@ -83,11 +83,13 @@ function PricingPage() {
               </span>
               <h2 className="text-xl font-bold text-gray-900">Membership</h2>
               <p className="mt-2 text-sm text-gray-500">
-                Full library access plus exclusive monthly drops.
+                Essentials $47/mo — content to publish consistently. Pro $97/mo —
+                content plus digital products to publish, grow, promote, and
+                sell.
               </p>
               <div className="mt-4">
                 <span className="text-4xl font-extrabold tracking-tight text-gray-900">
-                  $39–$59
+                  $47–$97
                 </span>
                 <span className="ml-1 text-sm text-gray-400">per month</span>
               </div>
@@ -196,21 +198,22 @@ function CheckIcon() {
 // --- Data ---
 
 const packsIncluded = [
-  "Professionally edited — grammar-free",
-  "Ready-to-rebrand articles",
-  "Email sequences included",
-  "Social media post templates",
+  "SEO-written, ready-to-customize articles",
+  "Email swipes & sequences included",
+  "Social media posts included",
   "Lead magnet in every pack",
+  "PLR license & health disclaimers included",
+  "Bookcover & images in every pack",
   "One-time purchase — yours forever",
 ];
 
 const membershipIncluded = [
-  "Full access to the entire library",
-  "Exclusive monthly content drops",
-  "All articles, email sequences, social posts & lead magnets",
-  "Professionally edited — grammar-free content",
-  "Compliant-friendly, researched content",
-  "New packs added every month",
+  "Essentials — 5 new SEO articles monthly",
+  "Pro — 10–15 articles + PLR ebook & course",
+  "Keyword, title, meta & CTA support",
+  "Rotating mini ebooks, journals, trackers & checklists",
+  "Lead-magnet & email-marketing vaults on Pro",
+  "Monthly Mystery Bonus on Pro",
   "Cancel anytime",
 ];
 
@@ -218,12 +221,12 @@ const faqs = [
   {
     question: "Can I buy a single pack without a membership?",
     answer:
-      "Absolutely. Individual packs are one-time purchases between $27 and $97, and you keep them forever.",
+      "Absolutely. Individual packs are $47 each (any 4 packs for $97), and you keep them forever.",
   },
   {
     question: "What formats are included in each pack?",
     answer:
-      "Every pack includes ready-to-rebrand articles, email sequences, social media posts, and a lead magnet.",
+      "Every pack includes SEO-written articles, email swipes & sequences, social media posts, a lead magnet, a PLR license, health & wellness disclaimers, and a bookcover.",
   },
   {
     question: "Can I cancel my membership anytime?",
@@ -233,6 +236,6 @@ const faqs = [
   {
     question: "Can I really rebrand and publish the content as my own?",
     answer:
-      "Yes. It's PLR (private label rights) — edit, rebrand, and publish it as your own. That's the whole point.",
+      "Yes. It's PLR (private label rights) — customize, brand, and publish it as your own. That's the whole point.",
   },
 ];

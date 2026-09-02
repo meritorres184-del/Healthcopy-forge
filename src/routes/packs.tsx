@@ -28,8 +28,23 @@ const getPacks = createServerFn({ method: "GET" }).handler(async () => {
     category: r.category,
     comingSoon: r.coming_soon as boolean,
     includes: r.includes as string[],
+    cover: `/covers/pack-${slugToPackNumber(r.slug)}.jpg`,
   }));
 });
+
+// Map a pack slug back to its 1–7 cover image file.
+function slugToPackNumber(slug: string): string {
+  const map: Record<string, string> = {
+    "nutrition-everyday-wellness": "1-1",
+    "supplements-nutritional-support": "2-1",
+    "fitness-exercise": "3-1",
+    "sleep-recovery": "4-1",
+    "stress-management-mind-body-wellness": "5-1",
+    "healthy-aging-lifestyle": "6-1",
+    "natural-holistic-wellness": "7",
+  };
+  return map[slug] ?? "1-1";
+}
 
 export const Route = createFileRoute("/packs")({
   loader: async () => {
@@ -45,24 +60,6 @@ export const Route = createFileRoute("/packs")({
 function PacksPage() {
   const { businessName, packs } = Route.useLoaderData();
 
-  // Group the DB packs into the same category sections as before, preserving
-  // first-appearance order.
-  const categoryLabels: Record<string, string> = {
-    Supplements: "Supplements & Nutrition",
-    Fitness: "Fitness & Performance",
-    "Natural Health": "Natural Health & Wellness",
-  };
-  const groups: CategoryGroup[] = [];
-  for (const pack of packs) {
-    const label = categoryLabels[pack.category] ?? pack.category;
-    let group = groups.find((g) => g.name === label);
-    if (!group) {
-      group = { name: label, packs: [] };
-      groups.push(group);
-    }
-    group.packs.push(pack);
-  }
-
   return (
     <main>
       {/* Header */}
@@ -72,13 +69,14 @@ function PacksPage() {
             Content Packs
           </span>
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-            {businessName} PLR Content Packs
+            SEO-Written Health &amp; Wellness PLR Content Packs
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            Professionally researched and edited — grammar-free content you can
-            publish with confidence. Ready-to-rebrand packs for health-niche
-            affiliate marketers, each including articles, email sequences,
-            social media posts, and a lead magnet.
+            Comprehensive, SEO-written health and wellness content you can
+            customize for your own brand and audience. Use it for your website.
+            Turn it into newsletter content. Create social media posts. Add your
+            own affiliate recommendations. Repurpose it into other content and
+            digital resources according to the included PLR license.
           </p>
         </div>
       </section>
@@ -86,39 +84,46 @@ function PacksPage() {
       {/* Pack Grid */}
       <section className="px-4 py-12 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-6xl">
-          {groups.map((category) => (
-            <div key={category.name} className="mb-16">
-              <div className="mb-6 flex items-center gap-3">
-                <h2 className="text-xl font-bold text-gray-900">
-                  {category.name}
-                </h2>
-                <span className="rounded-full bg-gray-100 px-3 py-0.5 text-xs font-medium text-gray-500">
-                  {category.packs.length} pack{category.packs.length > 1 ? "s" : ""}
-                </span>
-              </div>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {category.packs.map((pack) => (
-                  <PackCard key={pack.title} pack={pack} />
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {packs.map((pack) => (
+              <PackCard key={pack.slug} pack={pack} />
+            ))}
+          </div>
+
+          {/* 4-Pack Bundle note */}
+          <div className="mt-14 rounded-2xl border border-emerald-200 bg-emerald-50 px-6 py-8 text-center sm:px-10">
+            <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
+              Any 4 Packs for $97
+            </h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
+              Choose any four packs and save over $90 compared to buying them
+              individually. Bundle checkout is being finalized — pick your packs
+              now and checkout will open here shortly.
+            </p>
+            <Link
+              to="/packs"
+              className="mt-6 inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
+            >
+              Build Your 4-Pack Bundle
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Coming Soon Teaser */}
+      {/* CTA */}
       <section className="bg-gray-50 px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-block rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-700">
-            More on the Way
+            Start With More Than a Blank Page
           </span>
           <h2 className="mt-4 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-            New Packs Added Regularly
+            Which Packs Fit Your Business?
           </h2>
           <p className="mt-3 text-gray-600">
-            We're constantly researching and writing new content packs across
-            trending health sub-niches. Check back soon — or join the membership
-            to get new drops automatically.
+            Seven article packs. Seven wellness categories. One powerful content
+            library. Instead of sitting down every week and asking, “What am I
+            going to write about now?” — you can ask, “What can I create from the
+            content I already have?”
           </p>
           <Link
             to="/membership"
@@ -137,10 +142,17 @@ function PacksPage() {
 function PackCard({ pack }: { pack: Pack }) {
   return (
     <div className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg hover:border-emerald-100">
-      {/* Top accent bar */}
-      <div
-        className={`h-2 rounded-t-2xl ${pack.comingSoon ? "bg-amber-400" : "bg-emerald-500"}`}
-      />
+      {/* Cover */}
+      {pack.cover && (
+        <div className="overflow-hidden rounded-t-2xl bg-gradient-to-b from-emerald-50 to-white">
+          <img
+            src={pack.cover}
+            alt={`${pack.title} bookcover`}
+            loading="lazy"
+            className="mx-auto h-56 w-auto object-contain"
+          />
+        </div>
+      )}
 
       <div className="flex flex-1 flex-col p-6">
         {/* Badge row */}
@@ -168,7 +180,10 @@ function PackCard({ pack }: { pack: Pack }) {
         {/* What's inside */}
         <div className="mt-4 space-y-1.5">
           {pack.includes.map((item) => (
-            <div key={item} className="flex items-center gap-2 text-xs text-gray-500">
+            <div
+              key={item}
+              className="flex items-center gap-2 text-xs text-gray-500"
+            >
               <svg
                 className="h-4 w-4 flex-shrink-0 text-emerald-400"
                 fill="none"
@@ -223,9 +238,5 @@ interface Pack {
   category: string;
   comingSoon: boolean;
   includes: string[];
-}
-
-interface CategoryGroup {
-  name: string;
-  packs: Pack[];
+  cover: string;
 }

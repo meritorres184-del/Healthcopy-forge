@@ -168,12 +168,13 @@ function MembershipPage() {
             </h2>
             <div className="mt-6">
               <span className="text-5xl font-extrabold tracking-tight text-gray-900">
-                $39–$59
+                $47–$97
               </span>
               <span className="ml-1 text-lg text-gray-400">/month</span>
             </div>
             <p className="mt-3 text-sm text-gray-500">
-              Full library access · Exclusive monthly drops · Cancel anytime
+              5 new SEO articles monthly on Essentials · 10–15 articles plus a
+              full PLR ebook &amp; course on Pro · Cancel anytime
             </p>
             <Link
               to="/join"
@@ -187,16 +188,17 @@ function MembershipPage() {
                 to="/join"
                 className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
               >
-                Standard
+                Essentials
               </Link>{" "}
               and{" "}
               <Link
                 to="/join"
                 className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
               >
-                Premium
+                Pro
               </Link>{" "}
-              to unlock full library access plus monthly drops. Cancel anytime.
+              — content to publish consistently, or content and digital products
+              to publish, grow, promote, and sell. Cancel anytime.
             </p>
           </div>
         </div>

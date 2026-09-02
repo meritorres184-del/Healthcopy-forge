@@ -11,9 +11,13 @@ function LibraryPage() {
 
   // Group by category for a clean library layout.
   const categoryLabels: Record<string, string> = {
-    Supplements: "Supplements & Nutrition",
-    Fitness: "Fitness & Performance",
-    "Natural Health": "Natural Health & Wellness",
+    Nutrition: "Nutrition & Everyday Wellness",
+    Supplements: "Supplements & Nutritional Support",
+    Fitness: "Fitness & Exercise",
+    "Sleep & Recovery": "Sleep & Recovery",
+    "Stress & Mind-Body": "Stress Management & Mind-Body Wellness",
+    "Healthy Aging": "Healthy Aging & Lifestyle",
+    "Natural & Holistic": "Natural & Holistic Wellness",
   };
   const groups: { name: string; packs: typeof packs }[] = [];
   for (const pack of packs) {
