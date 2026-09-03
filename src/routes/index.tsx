@@ -159,15 +159,18 @@ function Home() {
                 Individual Packs
               </h3>
               <p className="mt-1 text-3xl font-extrabold text-gray-900">
-                $27 – $97
+                $47
               </p>
-              <p className="mt-1 text-sm text-gray-500">per pack</p>
+              <p className="mt-1 text-sm text-gray-500">
+                per pack &middot; any 4 packs for $97
+              </p>
               <ul className="mt-6 space-y-3">
                 {[
-                  "Ready-to-rebrand articles",
-                  "Email sequences included",
-                  "Social media post templates",
+                  "Ready-to-rebrand SEO-written articles",
+                  "Email swipes & sequences included",
+                  "Social media posts included",
                   "Lead magnet in every pack",
+                  "PLR license & disclaimers included",
                   "One-time purchase — yours forever",
                 ].map((item) => (
                   <li
@@ -195,7 +198,7 @@ function Home() {
                 to="/packs"
                 className="mt-8 block w-full rounded-xl bg-white border-2 border-emerald-600 px-6 py-3 text-center text-sm font-semibold text-emerald-600 transition-all hover:bg-emerald-50"
               >
-                Browse Packs
+                Browse the 7 Packs
               </Link>
             </div>
 
@@ -206,17 +209,15 @@ function Home() {
               </span>
               <h3 className="text-xl font-bold text-gray-900">Membership</h3>
               <p className="mt-1 text-3xl font-extrabold text-gray-900">
-                $39 – $59
+                $47–$97
               </p>
               <p className="mt-1 text-sm text-gray-500">per month</p>
               <ul className="mt-6 space-y-3">
                 {[
-                  "Full access to the entire library",
-                  "Exclusive monthly content drops",
-                  "All article packs included",
-                  "All email sequences included",
-                  "All social media templates included",
-                  "All lead magnets included",
+                  "Essentials — $47/mo: 5 new SEO articles monthly",
+                  "Pro — $97/mo: 10–15 articles + PLR ebook & course",
+                  "Rotating mini ebooks, journals, trackers & checklists",
+                  "Lead-magnet & email-marketing vaults on Pro",
                   "Cancel anytime",
                 ].map((item) => (
                   <li
@@ -240,12 +241,12 @@ function Home() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="#"
+              <Link
+                to="/join"
                 className="mt-8 block w-full rounded-xl bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
               >
                 Join Now
-              </a>
+              </Link>
             </div>
           </div>
         </div>

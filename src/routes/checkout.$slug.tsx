@@ -16,8 +16,22 @@ const getPacks = createServerFn({ method: "GET" }).handler(async () => {
     category: r.category,
     comingSoon: r.coming_soon as boolean,
     includes: r.includes as string[],
+    cover: `/covers/pack-${slugToPackNumber(r.slug)}.jpg`,
   }));
 });
+
+function slugToPackNumber(slug: string): string {
+  const map: Record<string, string> = {
+    "nutrition-everyday-wellness": "1-1",
+    "supplements-nutritional-support": "2-1",
+    "fitness-exercise": "3-1",
+    "sleep-recovery": "4-1",
+    "stress-management-mind-body-wellness": "5-1",
+    "healthy-aging-lifestyle": "6-1",
+    "natural-holistic-wellness": "7",
+  };
+  return map[slug] ?? "1-1";
+}
 
 export const Route = createFileRoute("/checkout/$slug")({
   loader: async ({ params }) => {
@@ -32,7 +46,6 @@ export const Route = createFileRoute("/checkout/$slug")({
 
 function CheckoutPage() {
   const { pack } = Route.useLoaderData();
-
   if (!pack) {
     return (
       <main className="px-4 py-24 sm:px-6">
@@ -54,7 +67,6 @@ function CheckoutPage() {
       </main>
     );
   }
-
   return (
     <main className="bg-gradient-to-b from-emerald-50 to-white px-4 py-20 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-3xl">
@@ -64,8 +76,14 @@ function CheckoutPage() {
         >
           ← Back to packs
         </Link>
-
         <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm sm:p-10">
+          <div className="mb-6 flex justify-center">
+            <img
+              src={pack.cover}
+              alt={`${pack.title} bookcover`}
+              className="h-64 w-auto rounded-lg object-contain shadow-sm"
+            />
+          </div>
           <span className="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
             {pack.category}
           </span>
@@ -75,7 +93,6 @@ function CheckoutPage() {
           <p className="mt-4 leading-relaxed text-gray-600">
             {pack.description}
           </p>
-
           <div className="mt-6 space-y-1.5">
             {pack.includes.map((item) => (
               <div
@@ -99,7 +116,6 @@ function CheckoutPage() {
               </div>
             ))}
           </div>
-
           <div className="mt-8 border-t border-gray-100 pt-6">
             <div className="flex items-end justify-between">
               <div>
@@ -112,7 +128,6 @@ function CheckoutPage() {
                 Instant download after purchase
               </span>
             </div>
-
             <button
               type="button"
               className="mt-6 w-full rounded-xl bg-emerald-600 px-6 py-4 text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700"

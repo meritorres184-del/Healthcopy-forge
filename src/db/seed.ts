@@ -2,8 +2,8 @@ import { sql } from "../db";
 import { migrate } from "./migrate";
 
 /**
- * Seed script. Runs migrations first, then inserts the 6 placeholder content
- * packs. Idempotent: packs are keyed on their unique `slug` with
+ * Seed script. Runs migrations first, then inserts the real 7 article packs
+ * (owner-defined). Idempotent: packs are keyed on their unique `slug` with
  * `on conflict (slug) do nothing`, so re-running never duplicates rows.
  *
  * Run standalone with:  bun run db:seed
@@ -21,100 +21,158 @@ interface SeedPack {
 
 const packs: SeedPack[] = [
   {
-    slug: "probiotics-content-pack",
-    title: "The Ultimate Probiotics Content Pack",
+    slug: "nutrition-everyday-wellness",
+    title: "Article Pack 1: Nutrition & Everyday Wellness",
     description:
-      "Complete PLR kit covering gut health, probiotic strains, and supplement guides. Perfect for supplement affiliate sites.",
+      "Want to build your nutrition content without starting from zero? This pack gives you a ready-to-customize foundation of SEO-written PLR content covering important nutrition and everyday wellness topics.",
+    priceCents: 4700,
+    category: "Nutrition",
+    comingSoon: false,
+    includes: [
+      "15 SEO-written articles, ~5,000 words each (~75,000 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover & images",
+    ],
+  },
+  {
+    slug: "supplements-nutritional-support",
+    title: "Article Pack 2: Supplements & Nutritional Support",
+    description:
+      "Want to create supplement content without doing all the research yourself? This pack gives you a ready-made foundation for building educational supplement and nutritional-support content.",
     priceCents: 4700,
     category: "Supplements",
     comingSoon: false,
     includes: [
-      "5 SEO-optimized articles",
-      "7-day email sequence",
-      "10 social media posts",
-      "Probiotic checklist lead magnet",
+      "15 SEO-written articles, ~5,000 words each (~75,000 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover & images",
     ],
   },
   {
-    slug: "nootropics-brain-health-bundle",
-    title: "Nootropics & Brain Health Bundle",
+    slug: "fitness-exercise",
+    title: "Article Pack 3: Fitness & Exercise",
     description:
-      "Cognitive enhancement and brain health content for the booming nootropics niche. Ready to rebrand in minutes.",
-    priceCents: 6700,
-    category: "Supplements",
-    comingSoon: false,
-    includes: [
-      "6 long-form articles",
-      "5-day nurture sequence",
-      "12 social media templates",
-      "Brain-boosting foods guide (PDF)",
-    ],
-  },
-  {
-    slug: "collagen-skin-health-pack",
-    title: "Collagen & Skin Health Pack",
-    description:
-      "Beauty-from-within content focused on collagen supplements, skin health, and anti-aging nutrition.",
-    priceCents: 5700,
-    category: "Supplements",
-    comingSoon: true,
-    includes: [
-      "4 articles",
-      "Email welcome series",
-      "8 social posts",
-      "Glow-up checklist lead magnet",
-    ],
-  },
-  {
-    slug: "pre-workout-energy-content-kit",
-    title: "Pre-Workout & Energy Content Kit",
-    description:
-      "Everything you need to promote pre-workout supplements, energy boosters, and workout nutrition to fitness audiences.",
-    priceCents: 3700,
+      "Ready to build more than a few random fitness posts? This pack gives you a head start — content covering multiple areas of everyday fitness so you can customize it for your wellness audience.",
+    priceCents: 4700,
     category: "Fitness",
     comingSoon: false,
     includes: [
-      "4 articles on pre-workout nutrition",
-      "5-email launch sequence",
-      "10 Instagram-ready posts",
-      "Pre-workout timing guide",
+      "15 SEO-written articles, ~5,000 words each (~75,000 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover & images",
     ],
   },
   {
-    slug: "recovery-muscle-growth-bundle",
-    title: "Recovery & Muscle Growth Bundle",
+    slug: "sleep-recovery",
+    title: "Article Pack 4: Sleep & Recovery",
     description:
-      "Post-workout recovery, protein timing, and muscle-building content tailored for the fitness supplement market.",
-    priceCents: 7700,
-    category: "Fitness",
-    comingSoon: true,
-    includes: [
-      "6 in-depth articles",
-      "7-day drip sequence",
-      "15 social media templates",
-      "Recovery protocol lead magnet",
-    ],
-  },
-  {
-    slug: "adaptogens-herbal-wellness-pack",
-    title: "Adaptogens & Herbal Wellness Pack",
-    description:
-      "Ride the adaptogen trend with content on ashwagandha, rhodiola, reishi, and other herbal supplements — all PLR-ready.",
-    priceCents: 8700,
-    category: "Natural Health",
+      "Want to expand your wellness content into sleep and recovery? This pack gives you a ready-to-customize content foundation that helps you expand into the sleep and recovery niche.",
+    priceCents: 4700,
+    category: "Sleep & Recovery",
     comingSoon: false,
     includes: [
-      "7 articles on adaptogenic herbs",
-      "10-email educational sequence",
-      "20 social media posts",
-      "Herbal wellness starter guide",
+      "15 SEO-written articles, ~5,000 words each (~75,000 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover & images",
     ],
   },
+  {
+    slug: "stress-management-mind-body-wellness",
+    title: "Article Pack 5: Stress Management & Mind-Body Wellness",
+    description:
+      "Give your audience more than another “just relax” article. This pack gives you a starting point — customizable content covering multiple areas of stress management and mind-body wellness.",
+    priceCents: 4700,
+    category: "Stress & Mind-Body",
+    comingSoon: false,
+    includes: [
+      "15 SEO-written articles, ~5,000 words each (~75,000 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover & images",
+    ],
+  },
+  {
+    slug: "healthy-aging-lifestyle",
+    title: "Article Pack 6: Healthy Aging & Lifestyle",
+    description:
+      "Want to reach the growing healthy-aging audience? This pack gives you comprehensive content covering multiple aspects of wellness and healthy aging so you don’t have to build this entire content category yourself.",
+    priceCents: 4700,
+    category: "Healthy Aging",
+    comingSoon: false,
+    includes: [
+      "14 in-depth articles, ~5,000 words each (~70,000 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover & images",
+    ],
+  },
+  {
+    slug: "natural-holistic-wellness",
+    title: "Article Pack 7: Natural & Holistic Wellness",
+    description:
+      "Want to expand into natural and holistic wellness? This pack gives you a customizable content foundation covering a variety of natural and holistic wellness topics so you can start building this part of your business faster.",
+    priceCents: 4700,
+    category: "Natural & Holistic",
+    comingSoon: false,
+    includes: [
+      "12 in-depth articles + FAQ section (~101,000 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover & images",
+    ],
+  },
+];
+
+// Slugs that shipped with the original placeholder seed. Replacing the
+// placeholder catalog with the real 7-pack lineup, so any row left over from
+// the old seed is removed (a re-run of this seed is then idempotent).
+const LEGACY_PLACEHOLDER_SLUGS = [
+  "probiotics-content-pack",
+  "nootropics-brain-health-bundle",
+  "collagen-skin-health-pack",
+  "pre-workout-energy-content-kit",
+  "recovery-muscle-growth-bundle",
+  "adaptogens-herbal-wellness-pack",
 ];
 
 export async function seed() {
   await migrate();
   const db = sql();
+
+  if (LEGACY_PLACEHOLDER_SLUGS.length > 0) {
+    const placeholders = LEGACY_PLACEHOLDER_SLUGS.map(
+      (_, i) => `$${i + 1}`,
+    ).join(", ");
+    await db.query(
+      `delete from content_packs where slug in (${placeholders})`,
+      LEGACY_PLACEHOLDER_SLUGS,
+    );
+  }
 
   for (const p of packs) {
     await db`
