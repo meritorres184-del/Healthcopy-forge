@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 import { sql } from "../db";
+import { FreeSampleBand } from "../components/FreeSampleForm";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -109,6 +110,8 @@ function PacksPage() {
           </div>
         </div>
       </section>
+
+      <FreeSampleBand packs={packs} />
 
       {/* CTA */}
       <section className="bg-gray-50 px-4 py-16 sm:px-6 sm:py-24">
