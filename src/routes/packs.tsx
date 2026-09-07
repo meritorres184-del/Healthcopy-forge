@@ -47,6 +47,16 @@ function slugToPackNumber(slug: string): string {
 }
 
 export const Route = createFileRoute("/packs")({
+  head: () => ({
+    meta: [
+      { title: "Health & Wellness PLR Packs: 7 Topics | HealthCopy Forge" },
+      {
+        name: "description",
+        content:
+          "Browse 7 SEO-written health PLR packs: nutrition, supplements, fitness, sleep, stress, aging & holistic wellness. $47 each or any 4 for $97.",
+      },
+    ],
+  }),
   loader: async () => {
     const [businessName, packs] = await Promise.all([
       getBusinessName(),
