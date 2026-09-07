@@ -15,6 +15,16 @@ const AFFILIATE_APPLY_URL = "#";
 const FREE_SAMPLE_URL = "#";
 
 export const Route = createFileRoute("/affiliates")({
+  head: () => ({
+    meta: [
+      { title: "Affiliates: Earn 50% Promoting Health & Wellness PLR" },
+      {
+        name: "description",
+        content:
+          "Promote SEO-written health & wellness PLR: 50% per pack, 30% recurring on memberships, 90-day cookie. Done-for-you promo kit.",
+      },
+    ],
+  }),
   component: AffiliatesPage,
 });
 
