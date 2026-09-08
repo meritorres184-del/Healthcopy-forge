@@ -14,6 +14,16 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const Route = createFileRoute("/membership")({
+  head: () => ({
+    meta: [
+      { title: "Health PLR Membership: New Content Monthly" },
+      {
+        name: "description",
+        content:
+          "Get new SEO-written health & wellness PLR monthly: articles, ebooks, courses, journals & trackers. Essentials $47, Pro $97.",
+      },
+    ],
+  }),
   loader: () => getBusinessName(),
   component: MembershipPage,
 });

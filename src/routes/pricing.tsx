@@ -14,6 +14,16 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const Route = createFileRoute("/pricing")({
+  head: () => ({
+    meta: [
+      { title: "Pricing: $47 PLR Packs or $47–$97/mo Membership" },
+      {
+        name: "description",
+        content:
+          "One pack $47, any 4 for $97, or monthly membership $47–$97 with new SEO health articles, ebooks & courses. Cancel anytime.",
+      },
+    ],
+  }),
   loader: () => getBusinessName(),
   component: PricingPage,
 });

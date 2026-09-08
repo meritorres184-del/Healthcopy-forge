@@ -14,6 +14,16 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "SEO Health & Wellness PLR Content Packs | HealthCopy Forge" },
+      {
+        name: "description",
+        content:
+          "SEO-written health & wellness PLR packs for coaches: articles, emails, social posts & lead magnets. Original in-house content. $47/pack.",
+      },
+    ],
+  }),
   loader: () => getBusinessName(),
   component: Home,
 });

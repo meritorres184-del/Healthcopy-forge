@@ -2,6 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { getLibraryPacks } from "../lib/packs";
 
 export const Route = createFileRoute("/library/")({
+  head: () => ({
+    meta: [
+      { title: "Member Content Library | HealthCopy Forge" },
+      {
+        name: "description",
+        content:
+          "Members: browse every HealthCopy Forge PLR pack and download articles, emails, social posts & lead magnets in any format.",
+      },
+    ],
+  }),
   loader: () => getLibraryPacks(),
   component: LibraryPage,
 });
