@@ -4,10 +4,101 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import appCss from "~/styles/app.css?url";
+
+// Canonical production domain. The site is served ONLY at
+// https://www.healthcopyforge.com (the bare apex is not served), so every
+// absolute SEO URL must use the www host.
+const SITE_URL = "https://www.healthcopyforge.com";
+
+// Per-route title/description pairs. These mirror the per-route head()
+// values added in SEO P0 item 1 (PR #7), so og:/twitter: tags stay
+// consistent with each page's <title> and meta description.
+const ROUTE_SEO: Record<string, { title: string; description: string }> = {
+  "/": {
+    title: "SEO Health & Wellness PLR Content Packs | HealthCopy Forge",
+    description:
+      "SEO-written health & wellness PLR packs for coaches: articles, emails, social posts & lead magnets. Original in-house content. $47/pack.",
+  },
+  "/packs": {
+    title: "Health & Wellness PLR Packs: 7 Topics | HealthCopy Forge",
+    description:
+      "Browse 7 SEO-written health PLR packs: nutrition, supplements, fitness, sleep, stress, aging & holistic wellness. $47 each or any 4 for $97.",
+  },
+  "/library": {
+    title: "Member Content Library | HealthCopy Forge",
+    description:
+      "Members: browse every HealthCopy Forge PLR pack and download articles, emails, social posts & lead magnets in any format.",
+  },
+  "/pricing": {
+    title: "Pricing: $47 PLR Packs or $47–$97/mo Membership",
+    description:
+      "One pack $47, any 4 for $97, or monthly membership $47–$97 with new SEO health articles, ebooks & courses. Cancel anytime.",
+  },
+  "/membership": {
+    title: "Health PLR Membership: New Content Monthly",
+    description:
+      "Get new SEO-written health & wellness PLR monthly: articles, ebooks, courses, journals & trackers. Essentials $47, Pro $97.",
+  },
+  "/affiliates": {
+    title: "Affiliates: Earn 50% Promoting Health & Wellness PLR",
+    description:
+      "Promote SEO-written health & wellness PLR: 50% per pack, 30% recurring on memberships, 90-day cookie. Done-for-you promo kit.",
+  },
+};
+
+const DEFAULT_SEO = ROUTE_SEO["/"];
+
+// Renders the per-route canonical link plus Open Graph / Twitter tags.
+// The pathname comes from live router state, so the canonical always
+// reflects the current route — never a hardcoded single URL. Pack detail
+// pages (/library/<slug>) have no static head() entry, so their OG tags
+// fall back to the pack title/description from the route loader data,
+// then to the site default.
+function SeoHead() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const matches = useRouterState({ select: (s) => s.matches });
+  const normalized =
+    pathname.endsWith("/") && pathname.length > 1
+      ? pathname.slice(0, -1)
+      : pathname;
+  const canonical = SITE_URL + normalized;
+  let seo = ROUTE_SEO[normalized];
+  if (!seo) {
+    const leaf = matches[matches.length - 1];
+    const data = leaf ? (leaf.loaderData as unknown) : null;
+    if (
+      data &&
+      typeof data === "object" &&
+      typeof (data as { title?: unknown }).title === "string" &&
+      typeof (data as { description?: unknown }).description === "string"
+    ) {
+      const pack = data as { title: string; description: string };
+      seo = {
+        title: pack.title + " | HealthCopy Forge",
+        description: pack.description,
+      };
+    } else {
+      seo = DEFAULT_SEO;
+    }
+  }
+  return (
+    <>
+      <link rel="canonical" href={canonical} />
+      <meta property="og:title" content={seo.title} />
+      <meta property="og:description" content={seo.description} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={canonical} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={seo.title} />
+      <meta name="twitter:description" content={seo.description} />
+    </>
+  );
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -55,6 +146,7 @@ function RootDocument({ children }: { children: ReactNode }) {
     <html lang="en" className="scroll-smooth">
       <head>
         <HeadContent />
+        <SeoHead />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

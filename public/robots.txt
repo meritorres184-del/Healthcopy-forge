@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /checkout/
+Disallow: /join/
+Disallow: /purchase/
+
+Sitemap: https://www.healthcopyforge.com/sitemap.xml
