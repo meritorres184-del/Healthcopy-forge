@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
+import { FreeSampleBand } from "../components/FreeSampleForm";
+import { sql } from "../db";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -11,6 +13,12 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   } catch {
     return "HealthCopy Forge";
   }
+});
+
+// Pack options for the free-sample dropdown.
+const getPackOptions = createServerFn({ method: "GET" }).handler(async () => {
+  const rows = await sql()`select slug, title from content_packs order by id`;
+  return rows.map((r) => ({ slug: r.slug as string, title: r.title as string }));
 });
 
 export const Route = createFileRoute("/")({
@@ -24,12 +32,18 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  loader: () => getBusinessName(),
+  loader: async () => {
+    const [businessName, packs] = await Promise.all([
+      getBusinessName(),
+      getPackOptions(),
+    ]);
+    return { businessName, packs };
+  },
   component: Home,
 });
 
 function Home() {
-  const businessName = Route.useLoaderData();
+  const { businessName, packs } = Route.useLoaderData();
 
   return (
     <main>
@@ -148,6 +162,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <FreeSampleBand packs={packs} />
 
       {/* Pricing Teaser Section */}
       <section id="pricing" className="px-4 py-20 sm:px-6 sm:py-28">
