@@ -306,6 +306,14 @@ function Footer() {
                   Privacy Policy
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/disclaimer"
+                  className="hover:text-emerald-600 transition-colors"
+                >
+                  Disclaimer
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

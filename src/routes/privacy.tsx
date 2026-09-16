@@ -100,10 +100,10 @@ function PrivacyPage() {
             <p className="mt-2">
               Questions about privacy? Contact us at{" "}
               <a
-                href="mailto:support@healthcopyforge.com"
+                href="mailto:healthcopy2026@gmail.com"
                 className="text-emerald-600 hover:underline"
               >
-                support@healthcopyforge.com
+                healthcopy2026@gmail.com
               </a>
               .
             </p>
