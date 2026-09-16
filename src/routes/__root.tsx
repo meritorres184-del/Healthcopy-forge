@@ -275,7 +275,18 @@ function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <a href="#" className="hover:text-emerald-600 transition-colors">
+                <Link
+                  to="/support"
+                  className="hover:text-emerald-600 transition-colors"
+                >
+                  Support
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="mailto:support@healthcopyforge.com"
+                  className="hover:text-emerald-600 transition-colors"
+                >
                   support@healthcopyforge.com
                 </a>
               </li>
