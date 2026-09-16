@@ -280,14 +280,20 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-emerald-600 transition-colors">
+                <Link
+                  to="/terms"
+                  className="hover:text-emerald-600 transition-colors"
+                >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-emerald-600 transition-colors">
+                <Link
+                  to="/privacy"
+                  className="hover:text-emerald-600 transition-colors"
+                >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
