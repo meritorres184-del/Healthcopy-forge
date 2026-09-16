@@ -284,10 +284,10 @@ function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@healthcopyforge.com"
+                  href="mailto:healthcopy2026@gmail.com"
                   className="hover:text-emerald-600 transition-colors"
                 >
-                  support@healthcopyforge.com
+                  healthcopy2026@gmail.com
                 </a>
               </li>
               <li>

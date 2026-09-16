@@ -86,10 +86,10 @@ function SupportPage() {
             within one business day.
           </p>
           <a
-            href="mailto:support@healthcopyforge.com"
+            href="mailto:healthcopy2026@gmail.com"
             className="mt-5 inline-block rounded-full bg-emerald-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-emerald-700"
           >
-            support@healthcopyforge.com
+            healthcopy2026@gmail.com
           </a>
         </div>
       </section>
