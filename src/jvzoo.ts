@@ -15,4 +15,10 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     src: "https://i.jvzoo.com/0/452429/2",
     alt: "Article Pack 1 Nutrition & Everyday Wellness",
   },
+  // Pack 8 — Product Reviews & Buying Guides
+  "product-reviews-buying-guides": {
+    href: "https://www.jvzoo.com/b/0/452451/2",
+    src: "https://i.jvzoo.com/0/452451/2",
+    alt: "Article Pack 8 Product Reviews & Buying Guides",
+  },
 };

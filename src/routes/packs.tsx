@@ -44,6 +44,7 @@ function slugToPackNumber(slug: string): string {
     "stress-management-mind-body-wellness": "5-1",
     "healthy-aging-lifestyle": "6-1",
     "natural-holistic-wellness": "7",
+    "product-reviews-buying-guides": "8",
   };
   return map[slug] ?? "1-1";
 }
