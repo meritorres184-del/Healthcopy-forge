@@ -21,4 +21,10 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     src: "https://i.jvzoo.com/0/452451/2",
     alt: "Article Pack 8 Product Reviews & Buying Guides",
   },
+  // Pack 7 — Natural & Holistic Wellness
+  "natural-holistic-wellness": {
+    href: "https://www.jvzoo.com/b/0/452449/2",
+    src: "https://i.jvzoo.com/0/452449/2",
+    alt: "Article Pack 7 Natural & Holistic Wellness",
+  },
 };
