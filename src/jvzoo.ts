@@ -33,4 +33,10 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     src: "https://i.jvzoo.com/0/452447/2",
     alt: "Article Pack 6 Healthy Aging & Lifestyle",
   },
+  // Pack 5 — Stress Management & Mind-Body Wellness
+  "stress-management-mind-body-wellness": {
+    href: "https://www.jvzoo.com/b/0/452445/2",
+    src: "https://i.jvzoo.com/0/452445/2",
+    alt: "Article Pack 5 Stress Management & Mind-Body Wellness",
+  },
 };
