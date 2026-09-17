@@ -167,6 +167,8 @@ function RootDocument({ children }: { children: ReactNode }) {
 }
 
 function Header() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSalesPage = pathname === "/packs" || pathname.startsWith("/library/");
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
@@ -189,12 +191,14 @@ function Header() {
           >
             Packs
           </Link>
-          <Link
-            to="/pricing"
-            className="hover:text-emerald-600 transition-colors"
-          >
-            Pricing
-          </Link>
+          {!isSalesPage && (
+            <Link
+              to="/pricing"
+              className="hover:text-emerald-600 transition-colors"
+            >
+              Pricing
+            </Link>
+          )}
           <Link
             to="/library"
             className="hover:text-emerald-600 transition-colors"
@@ -214,6 +218,8 @@ function Header() {
 }
 
 function Footer() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSalesPage = pathname === "/packs" || pathname.startsWith("/library/");
   return (
     <footer className="border-t border-gray-100 bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -243,14 +249,16 @@ function Footer() {
                   Content Packs
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/pricing"
-                  className="hover:text-emerald-600 transition-colors"
-                >
-                  Pricing
-                </Link>
-              </li>
+              {!isSalesPage && (
+                <li>
+                  <Link
+                    to="/pricing"
+                    className="hover:text-emerald-600 transition-colors"
+                  >
+                    Pricing
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   to="/library"
