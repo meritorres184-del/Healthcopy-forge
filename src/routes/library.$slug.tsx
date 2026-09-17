@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { sql } from "../db";
 import { jvzooProducts } from "../jvzoo";
+import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 
 interface Pack {
   slug: string;
@@ -191,6 +192,8 @@ function PackDetailPage() {
           </section>
         ) : null;
       })()}
+      {/* JVZoo retailer disclosure — required on every product sales page */}
+      {jvzooProducts[pack.slug] ? <JvzooDisclaimer /> : null}
       {/* CTA */}
       <section className="bg-emerald-600 px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">

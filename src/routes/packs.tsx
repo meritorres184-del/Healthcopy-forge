@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 import { sql } from "../db";
 import { FreeSampleBand } from "../components/FreeSampleForm";
+import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 import { jvzooProducts } from "../jvzoo";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
@@ -133,6 +134,8 @@ function PacksPage() {
           </div>
         </div>
       </section>
+      {/* JVZoo retailer disclosure — required on every product sales page */}
+      <JvzooDisclaimer />
 
       <FreeSampleBand packs={packs} />
 
