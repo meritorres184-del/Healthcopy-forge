@@ -45,4 +45,10 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     src: "https://i.jvzoo.com/0/452435/2",
     alt: "Article Pack 4 Sleep & Recovery",
   },
+  // Pack 3 — Fitness & Exercise
+  "fitness-exercise": {
+    href: "https://www.jvzoo.com/b/0/452433/2",
+    src: "https://i.jvzoo.com/0/452433/2",
+    alt: "Article Pack 3 Fitness & Exercise",
+  },
 };
