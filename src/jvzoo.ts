@@ -39,4 +39,10 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     src: "https://i.jvzoo.com/0/452445/2",
     alt: "Article Pack 5 Stress Management & Mind-Body Wellness",
   },
+  // Pack 4 — Sleep & Recovery
+  "sleep-recovery": {
+    href: "https://www.jvzoo.com/b/0/452435/2",
+    src: "https://i.jvzoo.com/0/452435/2",
+    alt: "Article Pack 4 Sleep & Recovery",
+  },
 };
