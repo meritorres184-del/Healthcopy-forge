@@ -108,15 +108,26 @@ function PacksPage() {
             </h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
               Choose any four packs and save over $90 compared to buying them
-              individually. Bundle checkout is being finalized — pick your packs
-              now and checkout will open here shortly.
+              individually — or grab the ready-made Packs 1–4 Mega Bundle below
+              and get started right away.
             </p>
-            <Link
-              to="/packs"
-              className="mt-6 inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
-            >
-              Build Your 4-Pack Bundle
-            </Link>
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <a
+                href="https://www.jvzoo.com/b/0/453431/2"
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+              >
+                <img
+                  src="https://i.jvzoo.com/0/453431/2"
+                  alt="Health &amp; Wellness PLR Mega Bundle: 60 SEO Articles + Complete Content Resources  Packs 1-4"
+                  border="0"
+                  className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
+                />
+              </a>
+            </div>
+            <p className="mt-4 text-xs text-gray-500">
+              Buy securely through JVZoo — instant download after checkout.
+            </p>
           </div>
         </div>
       </section>
