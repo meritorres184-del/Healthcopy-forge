@@ -160,4 +160,11 @@ const packs = [
     size: "20.1 MB",
     cover: "/covers/pack-7.jpg",
   },
-];
+  {
+    number: 8,
+    title: "Product Reviews & Buying Guides",
+    file: "article-pack-8-product-reviews-buying-guides.zip",
+    size: "0.4 MB",
+    cover: null,
+  },
+];;
