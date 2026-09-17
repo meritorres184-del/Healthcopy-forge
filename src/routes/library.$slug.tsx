@@ -203,23 +203,6 @@ function PackDetailPage() {
       })()}
       {/* JVZoo retailer disclosure — required on every product sales page */}
       {jvzooProducts[pack.slug] ? <JvzooDisclaimer /> : null}
-      {/* CTA */}
-      <section className="bg-emerald-600 px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Enjoying this pack?
-          </h2>
-          <p className="mt-3 text-emerald-100">
-            Get every pack — including new monthly drops — with a membership.
-          </p>
-          <Link
-            to="/join"
-            className="mt-6 inline-flex items-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all hover:bg-emerald-50"
-          >
-            See Membership Plans
-          </Link>
-        </div>
-      </section>
     </main>
   );
 }
