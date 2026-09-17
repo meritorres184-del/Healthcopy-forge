@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { sql } from "../db";
 import { FreeSampleBand } from "../components/FreeSampleForm";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
-import { jvzooProducts } from "../jvzoo";
+import { bundleBuy, jvzooProducts } from "../jvzoo";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -116,17 +116,26 @@ function PacksPage() {
             </p>
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
-                href="https://www.jvzoo.com/b/0/453431/2"
+                href={bundleBuy.href}
                 target="_blank"
                 rel="nofollow noopener noreferrer"
               >
                 <img
-                  src="https://i.jvzoo.com/0/453431/2"
-                  alt="Health &amp; Wellness PLR Mega Bundle: 60 SEO Articles + Complete Content Resources  Packs 1-4"
+                  src={bundleBuy.btn}
+                  alt={bundleBuy.alt}
                   border="0"
                   className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
                 />
               </a>
+              {/* JVZoo tracking pixel — required alongside the buy button */}
+              <img
+                src={bundleBuy.src}
+                width="1"
+                height="1"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none"
+              />
             </div>
             <p className="mt-4 text-xs text-gray-500">
               Buy securely through JVZoo — instant download after checkout.
@@ -243,26 +252,30 @@ function PackCard({ pack }: { pack: Pack }) {
               Coming Soon
             </span>
           ) : jvzooProducts[pack.slug] ? (
-            <a
-              href={jvzooProducts[pack.slug].href}
-              target="_blank"
-              rel="nofollow noopener noreferrer"
-            >
+            <>
+              <a
+                href={jvzooProducts[pack.slug].href}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+              >
+                <img
+                  src={jvzooProducts[pack.slug].btn}
+                  alt={jvzooProducts[pack.slug].alt}
+                  border="0"
+                  className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
+                />
+              </a>
+              {/* JVZoo tracking pixel — required alongside the buy button */}
               <img
                 src={jvzooProducts[pack.slug].src}
-                alt={jvzooProducts[pack.slug].alt}
-                border="0"
-                className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
+                width="1"
+                height="1"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none"
               />
-            </a>
-          ) : (
-            <a
-              href={`/checkout/${pack.slug}`}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-emerald-700"
-            >
-              Buy Now
-            </a>
-          )}
+            </>
+          ) : null}
         </div>
         <JvzooDisclaimer compact />
       </div>

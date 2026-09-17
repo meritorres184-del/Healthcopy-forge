@@ -174,19 +174,28 @@ function PackDetailPage() {
               <p className="mt-3 text-sm text-gray-600">
                 Buy securely through JVZoo — instant download after checkout.
               </p>
-              <div className="mt-6 flex justify-center">
+              <div className="mt-6 flex flex-col items-center gap-3">
                 <a
                   href={j.href}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
                 >
                   <img
-                    src={j.src}
+                    src={j.btn}
                     alt={j.alt}
                     border="0"
                     className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
                   />
                 </a>
+                {/* JVZoo tracking pixel — required alongside the buy button */}
+                <img
+                  src={j.src}
+                  width="1"
+                  height="1"
+                  alt=""
+                  aria-hidden="true"
+                  className="pointer-events-none"
+                />
               </div>
             </div>
           </section>
