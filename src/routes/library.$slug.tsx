@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { sql } from "../db";
+import { jvzooProducts } from "../jvzoo";
 
 interface Pack {
   slug: string;
@@ -160,6 +161,36 @@ function PackDetailPage() {
         </div>
       </section>
 
+      {/* JVZoo purchase */}
+      {(() => {
+        const j = jvzooProducts[pack.slug];
+        return j ? (
+          <section className="bg-white px-4 py-14 sm:px-6">
+            <div className="mx-auto max-w-xl text-center">
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                Get Instant Access
+              </h2>
+              <p className="mt-3 text-sm text-gray-600">
+                Buy securely through JVZoo — instant download after checkout.
+              </p>
+              <div className="mt-6 flex justify-center">
+                <a
+                  href={j.href}
+                  target="_blank"
+                  rel="nofollow noopener noreferrer"
+                >
+                  <img
+                    src={j.src}
+                    alt={j.alt}
+                    border="0"
+                    className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
+                  />
+                </a>
+              </div>
+            </div>
+          </section>
+        ) : null;
+      })()}
       {/* CTA */}
       <section className="bg-emerald-600 px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">

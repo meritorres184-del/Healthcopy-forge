@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 import { sql } from "../db";
 import { FreeSampleBand } from "../components/FreeSampleForm";
+import { jvzooProducts } from "../jvzoo";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -238,6 +239,19 @@ function PackCard({ pack }: { pack: Pack }) {
             <span className="rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 cursor-not-allowed">
               Coming Soon
             </span>
+          ) : jvzooProducts[pack.slug] ? (
+            <a
+              href={jvzooProducts[pack.slug].href}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+            >
+              <img
+                src={jvzooProducts[pack.slug].src}
+                alt={jvzooProducts[pack.slug].alt}
+                border="0"
+                className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
+              />
+            </a>
           ) : (
             <a
               href={`/checkout/${pack.slug}`}
