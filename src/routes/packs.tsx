@@ -132,10 +132,9 @@ function PacksPage() {
               Buy securely through JVZoo — instant download after checkout.
             </p>
           </div>
+          <JvzooDisclaimer compact />
         </div>
       </section>
-      {/* JVZoo retailer disclosure — required on every product sales page */}
-      <JvzooDisclaimer />
 
       <FreeSampleBand packs={packs} />
 
@@ -265,6 +264,7 @@ function PackCard({ pack }: { pack: Pack }) {
             </a>
           )}
         </div>
+        <JvzooDisclaimer compact />
       </div>
     </div>
   );
