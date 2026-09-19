@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/purchase/cancel")({
   component: PurchaseCancelPage,
@@ -31,18 +31,12 @@ function PurchaseCancelPage() {
           and try again whenever you're ready.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            to="/packs"
-            className="inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition-all hover:bg-emerald-700"
-          >
+          <a href="/packs" className="inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition-all hover:bg-emerald-700">
             Back to Packs
-          </Link>
-          <Link
-            to="/"
-            className="inline-flex items-center rounded-xl border-2 border-gray-200 px-8 py-3.5 text-base font-semibold text-gray-700 transition-all hover:border-emerald-200 hover:text-emerald-700"
-          >
+          </a>
+          <a href="/" className="inline-flex items-center rounded-xl border-2 border-gray-200 px-8 py-3.5 text-base font-semibold text-gray-700 transition-all hover:border-emerald-200 hover:text-emerald-700">
             Back to Home
-          </Link>
+          </a>
         </div>
       </div>
     </main>

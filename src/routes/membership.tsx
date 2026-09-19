@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 
@@ -56,12 +56,9 @@ function MembershipPage() {
             >
               Join the Membership
             </a>
-            <Link
-              to="/packs"
-              className="inline-flex items-center rounded-xl border-2 border-gray-200 px-8 py-3.5 text-base font-semibold text-gray-700 transition-all hover:border-emerald-200 hover:text-emerald-700"
-            >
+            <a href="/packs" className="inline-flex items-center rounded-xl border-2 border-gray-200 px-8 py-3.5 text-base font-semibold text-gray-700 transition-all hover:border-emerald-200 hover:text-emerald-700">
               Browse the Packs
-            </Link>
+            </a>
           </div>
         </div>
         {/* Decorative background blur */}
@@ -186,27 +183,18 @@ function MembershipPage() {
               5 new SEO articles monthly on Essentials · 10–15 articles plus a
               full PLR ebook &amp; course on Pro · Cancel anytime
             </p>
-            <Link
-              to="/join"
-              className="mt-8 block w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
-            >
+            <a href="/join" className="mt-8 block w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700">
               Join the Membership
-            </Link>
+            </a>
             <p className="mt-4 text-sm text-gray-500">
               Choose between{" "}
-              <Link
-                to="/join"
-                className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-              >
+              <a href="/join" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
                 Essentials
-              </Link>{" "}
+              </a>{" "}
               and{" "}
-              <Link
-                to="/join"
-                className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-              >
+              <a href="/join" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
                 Pro
-              </Link>{" "}
+              </a>{" "}
               — content to publish consistently, or content and digital products
               to publish, grow, promote, and sell. Cancel anytime.
             </p>

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { getLibraryPacks } from "../lib/packs";
 import { ContentUnavailable } from "../components/ContentUnavailable";
 
@@ -127,11 +127,7 @@ function LibraryPage() {
 
 function PackCard({ pack }: { pack: any }) {
   return (
-    <Link
-      to="/library/$slug"
-      params={{ slug: pack.slug }}
-      className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg hover:border-emerald-200"
-    >
+    <a href={`/library/${pack.slug}`} className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg hover:border-emerald-200">
       <div className="h-2 rounded-t-2xl bg-emerald-500" />
       <div className="flex flex-1 flex-col p-6">
         <span className="mb-3 w-fit rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
@@ -172,6 +168,6 @@ function PackCard({ pack }: { pack: any }) {
           </span>
         </div>
       </div>
-    </Link>
+    </a>
   );
 }

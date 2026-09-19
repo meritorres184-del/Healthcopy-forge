@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { readWithRetry } from "../db";
 import { jvzooProducts } from "../jvzoo";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
@@ -90,12 +90,9 @@ function PackDetailPage() {
             <p className="mt-4 text-gray-600">
               We couldn't find that content pack in the library.
             </p>
-            <Link
-              to="/library"
-              className="mt-6 inline-flex rounded-xl bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700"
-            >
+            <a href="/library" className="mt-6 inline-flex rounded-xl bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700">
               Back to Library
-            </Link>
+            </a>
           </div>
         </section>
       </main>
@@ -116,12 +113,9 @@ function PackDetailPage() {
       {/* Header */}
       <section className="bg-gradient-to-b from-emerald-50 to-white px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-3xl">
-          <Link
-            to="/library"
-            className="inline-flex items-center text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
-          >
+          <a href="/library" className="inline-flex items-center text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
             ← Back to Library
-          </Link>
+          </a>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
               {pack.category}

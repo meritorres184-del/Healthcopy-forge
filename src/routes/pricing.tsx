@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 
@@ -78,12 +78,9 @@ function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                to="/packs"
-                className="mt-8 block w-full rounded-xl border-2 border-emerald-600 bg-white px-6 py-3 text-center text-sm font-semibold text-emerald-600 transition-all hover:bg-emerald-50"
-              >
+              <a href="/packs" className="mt-8 block w-full rounded-xl border-2 border-emerald-600 bg-white px-6 py-3 text-center text-sm font-semibold text-emerald-600 transition-all hover:bg-emerald-50">
                 Browse the 7 Packs
-              </Link>
+              </a>
             </div>
 
             {/* Membership */}
@@ -114,12 +111,9 @@ function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                to="/join"
-                className="mt-8 block w-full rounded-xl bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
-              >
+              <a href="/join" className="mt-8 block w-full rounded-xl bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-700">
                 Join the Membership
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -168,18 +162,12 @@ function PricingPage() {
             with either.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              to="/packs"
-              className="inline-flex items-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all hover:bg-emerald-50"
-            >
+            <a href="/packs" className="inline-flex items-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all hover:bg-emerald-50">
               Browse Packs
-            </Link>
-            <Link
-              to="/join"
-              className="inline-flex items-center rounded-xl border-2 border-white/70 px-8 py-3.5 text-base font-semibold text-white transition-all hover:border-white hover:bg-white/10"
-            >
+            </a>
+            <a href="/join" className="inline-flex items-center rounded-xl border-2 border-white/70 px-8 py-3.5 text-base font-semibold text-white transition-all hover:border-white hover:bg-white/10">
               See the Membership
-            </Link>
+            </a>
           </div>
         </div>
       </section>

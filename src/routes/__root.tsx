@@ -1,6 +1,5 @@
 import {
   HeadContent,
-  Link,
   Outlet,
   Scripts,
   createRootRoute,
@@ -121,12 +120,9 @@ export const Route = createRootRoute({
       <div className="text-center">
         <h1 className="mb-2 text-4xl font-bold text-gray-800">404</h1>
         <p className="text-gray-600">Page not found</p>
-        <Link
-          to="/"
-          className="mt-4 inline-block text-emerald-600 hover:text-emerald-700 underline"
-        >
+        <a href="/" className="mt-4 inline-block text-emerald-600 hover:text-emerald-700 underline">
           Back to home
-        </Link>
+        </a>
       </div>
     </div>
   ),
@@ -208,18 +204,12 @@ function RootErrorComponent({
               Try again
             </button>
           ) : null}
-          <Link
-            to="/packs"
-            className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50"
-          >
+          <a href="/packs" className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50">
             Browse all packs
-          </Link>
-          <Link
-            to="/"
-            className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50"
-          >
+          </a>
+          <a href="/" className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50">
             Back to home
-          </Link>
+          </a>
         </div>
       </div>
     </main>
@@ -267,45 +257,30 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link
-          to="/"
-          className="flex items-center gap-2 text-xl font-bold tracking-tight text-gray-900"
-        >
+        <a href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-gray-900">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white">
             H
           </span>
           HealthCopy Forge
-        </Link>
+        </a>
         <nav className="flex items-center gap-6 text-sm font-medium text-gray-600">
-          <Link to="/" className="hover:text-emerald-600 transition-colors">
+          <a href="/" className="hover:text-emerald-600 transition-colors">
             Home
-          </Link>
-          <Link
-            to="/packs"
-            className="hover:text-emerald-600 transition-colors"
-          >
+          </a>
+          <a href="/packs" className="hover:text-emerald-600 transition-colors">
             Packs
-          </Link>
+          </a>
           {!isSalesPage && (
-            <Link
-              to="/pricing"
-              className="hover:text-emerald-600 transition-colors"
-            >
+            <a href="/pricing" className="hover:text-emerald-600 transition-colors">
               Pricing
-            </Link>
+            </a>
           )}
-          <Link
-            to="/library"
-            className="hover:text-emerald-600 transition-colors"
-          >
+          <a href="/library" className="hover:text-emerald-600 transition-colors">
             Library
-          </Link>
-          <Link
-            to="/affiliates"
-            className="hover:text-emerald-600 transition-colors"
-          >
+          </a>
+          <a href="/affiliates" className="hover:text-emerald-600 transition-colors">
             Affiliates
-          </Link>
+          </a>
         </nav>
       </div>
     </header>
@@ -332,43 +307,31 @@ function Footer() {
             <h4 className="mb-3 text-sm font-semibold text-gray-900">Links</h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <Link to="/" className="hover:text-emerald-600 transition-colors">
+                <a href="/" className="hover:text-emerald-600 transition-colors">
                   Home
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to="/packs"
-                  className="hover:text-emerald-600 transition-colors"
-                >
+                <a href="/packs" className="hover:text-emerald-600 transition-colors">
                   Content Packs
-                </Link>
+                </a>
               </li>
               {!isSalesPage && (
                 <li>
-                  <Link
-                    to="/pricing"
-                    className="hover:text-emerald-600 transition-colors"
-                  >
+                  <a href="/pricing" className="hover:text-emerald-600 transition-colors">
                     Pricing
-                  </Link>
+                  </a>
                 </li>
               )}
               <li>
-                <Link
-                  to="/library"
-                  className="hover:text-emerald-600 transition-colors"
-                >
+                <a href="/library" className="hover:text-emerald-600 transition-colors">
                   Library
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to="/affiliates"
-                  className="hover:text-emerald-600 transition-colors"
-                >
+                <a href="/affiliates" className="hover:text-emerald-600 transition-colors">
                   Affiliates
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -378,12 +341,9 @@ function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <Link
-                  to="/support"
-                  className="hover:text-emerald-600 transition-colors"
-                >
+                <a href="/support" className="hover:text-emerald-600 transition-colors">
                   Support
-                </Link>
+                </a>
               </li>
               <li>
                 <a
@@ -394,28 +354,19 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <Link
-                  to="/terms"
-                  className="hover:text-emerald-600 transition-colors"
-                >
+                <a href="/terms" className="hover:text-emerald-600 transition-colors">
                   Terms of Service
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to="/privacy"
-                  className="hover:text-emerald-600 transition-colors"
-                >
+                <a href="/privacy" className="hover:text-emerald-600 transition-colors">
                   Privacy Policy
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to="/disclaimer"
-                  className="hover:text-emerald-600 transition-colors"
-                >
+                <a href="/disclaimer" className="hover:text-emerald-600 transition-colors">
                   Disclaimer
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

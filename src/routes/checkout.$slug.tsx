@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readWithRetry } from "../db";
 import { ContentUnavailable } from "../components/ContentUnavailable";
@@ -83,12 +83,9 @@ function CheckoutPage() {
             We couldn't find that content pack — or it isn't available for
             purchase yet.
           </p>
-          <Link
-            to="/packs"
-            className="mt-8 inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition-all hover:bg-emerald-700"
-          >
+          <a href="/packs" className="mt-8 inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition-all hover:bg-emerald-700">
             Browse Packs
-          </Link>
+          </a>
         </div>
       </main>
     );
@@ -96,12 +93,9 @@ function CheckoutPage() {
   return (
     <main className="bg-gradient-to-b from-emerald-50 to-white px-4 py-20 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-3xl">
-        <Link
-          to="/packs"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
-        >
+        <a href="/packs" className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
           ← Back to packs
-        </Link>
+        </a>
         <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm sm:p-10">
           <div className="mb-6 flex justify-center">
             <img

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 import { readWithRetry } from "../db";
@@ -196,12 +196,9 @@ function PacksPage() {
             going to write about now?” — you can ask, “What can I create from the
             content I already have?”
           </p>
-          <Link
-            to="/membership"
-            className="mt-6 inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-          >
+          <a href="/membership" className="mt-6 inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
             Learn about membership →
-          </Link>
+          </a>
         </div>
       </section>
     </main>

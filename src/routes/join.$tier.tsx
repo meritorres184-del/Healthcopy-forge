@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { getTier } from "../lib/tiers";
 
 export const Route = createFileRoute("/join/$tier")({
@@ -21,12 +21,9 @@ function TierConfirmPage() {
               We couldn't find that membership plan. Choose one of the plans
               below.
             </p>
-            <Link
-              to="/join"
-              className="mt-6 inline-flex rounded-xl bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700"
-            >
+            <a href="/join" className="mt-6 inline-flex rounded-xl bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700">
               Choose a Plan
-            </Link>
+            </a>
           </div>
         </section>
       </main>
@@ -119,20 +116,14 @@ function TierConfirmPage() {
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-3 text-sm text-gray-500">
-              <Link
-                to="/join"
-                className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-              >
+              <a href="/join" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
                 ← Compare plans again
-              </Link>
+              </a>
               <span>
                 Need to see other options?{" "}
-                <Link
-                  to="/library"
-                  className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-                >
+                <a href="/library" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
                   Browse the library
-                </Link>
+                </a>
               </span>
             </div>
           </div>

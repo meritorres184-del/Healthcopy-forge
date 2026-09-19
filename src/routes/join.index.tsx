@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { TIERS } from "../lib/tiers";
 
 export const Route = createFileRoute("/join/")({
@@ -67,17 +67,9 @@ function JoinPage() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  to="/join/$tier"
-                  params={{ tier: tier.slug }}
-                  className={`mt-8 block w-full rounded-xl px-6 py-3.5 text-center text-base font-semibold text-white shadow-md transition-all ${
-                    tier.highlighted
-                      ? "bg-emerald-600 hover:bg-emerald-700"
-                      : "bg-gray-900 hover:bg-gray-800"
-                  }`}
-                >
+                <a href={`/join/${tier.slug}`} className={`mt-8 block w-full rounded-xl px-6 py-3.5 text-center text-base font-semibold text-white shadow-md transition-all ${ tier.highlighted ? "bg-emerald-600 hover:bg-emerald-700" : "bg-gray-900 hover:bg-gray-800" }`}>
                   Choose {tier.name}
-                </Link>
+                </a>
               </div>
             ))}
           </div>
