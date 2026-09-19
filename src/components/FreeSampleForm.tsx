@@ -98,7 +98,14 @@ export function FreeSampleForm({ packs }: { packs: PackOption[] }) {
   );
 }
 
-export function FreeSampleBand({ packs }: { packs: PackOption[] }) {
+export function FreeSampleBand({
+  packs,
+  packsDegraded,
+}: {
+  packs: PackOption[];
+  /** True when the pack list could not be read — say so, don't just show an empty dropdown. */
+  packsDegraded?: boolean;
+}) {
   return (
     <section className="border-y border-emerald-100 bg-emerald-50 px-4 py-16 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-3xl text-center">
@@ -116,6 +123,13 @@ export function FreeSampleBand({ packs }: { packs: PackOption[] }) {
         <div className="mt-8">
           <FreeSampleForm packs={packs} />
         </div>
+        {packsDegraded ? (
+          <p className="mx-auto mt-4 max-w-xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
+            The per-pack list didn&apos;t load just now, so the picker shows
+            &ldquo;Any pack&rdquo; only. Your request still works — reload the
+            page for the full list.
+          </p>
+        ) : null}
         <p className="mt-4 text-xs text-gray-400">
           One sample per email. No spam — unsubscribe anytime.
         </p>

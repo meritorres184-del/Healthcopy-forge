@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { sql } from "../db";
+import { readWithRetry } from "../db";
 
 export interface Pack {
   slug: string;
@@ -24,14 +24,20 @@ function mapRow(r: any): Pack {
 }
 
 // All packs that are live (not "coming soon") — shown in the member library.
+// Reads are retried (see src/db.ts); if every attempt fails this throws a
+// DbUnavailableError, which the route turns into visible fallback UI rather
+// than an empty page.
 export const getLibraryPacks = createServerFn({
   method: "GET",
 }).handler(async () => {
-  const rows = await sql()`
+  const rows = await readWithRetry(
+    "library.packs",
+    (db) => db`
     select slug, title, description, price_cents, category, coming_soon, includes
     from content_packs
     where coming_soon = false
-    order by id`;
+    order by id`,
+  );
   return rows.map(mapRow);
 });
 
@@ -39,10 +45,13 @@ export const getLibraryPacks = createServerFn({
 export const getPackBySlug = createServerFn({
   method: "GET",
 }).handler(async ({ slug }: { slug: string }) => {
-  const rows = await sql()`
+  const rows = await readWithRetry(
+    "library.pack-by-slug",
+    (db) => db`
     select slug, title, description, price_cents, category, coming_soon, includes
     from content_packs
-    where slug = ${slug}`;
+    where slug = ${slug}`,
+  );
   if (rows.length === 0) return null;
   return mapRow(rows[0]);
 });

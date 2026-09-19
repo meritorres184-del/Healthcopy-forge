@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getLibraryPacks } from "../lib/packs";
+import { ContentUnavailable } from "../components/ContentUnavailable";
 
 export const Route = createFileRoute("/library/")({
   head: () => ({
@@ -12,12 +13,32 @@ export const Route = createFileRoute("/library/")({
       },
     ],
   }),
-  loader: () => getLibraryPacks(),
+  loader: async () => {
+    try {
+      return { packs: await getLibraryPacks(), degraded: false };
+    } catch (err) {
+      // Reads are already retried in src/db.ts; if they still fail, say so on
+      // the page rather than letting the loader error blank it.
+      console.error(
+        "[library] content_packs read failed; rendering the unavailable notice",
+        err,
+      );
+      return { packs: [], degraded: true };
+    }
+  },
   component: LibraryPage,
 });
 
 function LibraryPage() {
-  const packs = Route.useLoaderData();
+  const { packs, degraded } = Route.useLoaderData();
+
+  if (degraded) {
+    return (
+      <main>
+        <ContentUnavailable heading="Your Content Library" />
+      </main>
+    );
+  }
 
   // Group by category for a clean library layout.
   const categoryLabels: Record<string, string> = {

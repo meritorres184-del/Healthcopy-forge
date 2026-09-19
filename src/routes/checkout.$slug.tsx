@@ -1,13 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { sql } from "../db";
+import { readWithRetry } from "../db";
+import { ContentUnavailable } from "../components/ContentUnavailable";
 
 // Read all packs so we can resolve the requested slug server-side.
 const getPacks = createServerFn({ method: "GET" }).handler(async () => {
-  const rows = await sql()`
+  const rows = await readWithRetry(
+    "checkout.packs",
+    (db) => db`
     select slug, title, description, price_cents, category, coming_soon, includes
     from content_packs
-    order by id`;
+    order by id`,
+  );
   return rows.map((r) => ({
     slug: r.slug,
     title: r.title,
@@ -29,23 +33,45 @@ function slugToPackNumber(slug: string): string {
     "stress-management-mind-body-wellness": "5-1",
     "healthy-aging-lifestyle": "6-1",
     "natural-holistic-wellness": "7",
+    "product-reviews-buying-guides": "8",
   };
   return map[slug] ?? "1-1";
 }
 
 export const Route = createFileRoute("/checkout/$slug")({
   loader: async ({ params }) => {
-    const packs = await getPacks();
-    const pack = packs.find(
-      (p) => p.slug === params.slug && !p.comingSoon,
-    );
-    return { pack: pack ?? null };
+    try {
+      const packs = await getPacks();
+      const pack = packs.find(
+        (p) => p.slug === params.slug && !p.comingSoon,
+      );
+      return { pack: pack ?? null, unavailable: false };
+    } catch (err) {
+      // Retried already (src/db.ts): show an honest notice, not a blank page.
+      console.error(
+        `[checkout/$slug] could not read packs for "${params.slug}"`,
+        err,
+      );
+      return { pack: null, unavailable: true };
+    }
   },
   component: CheckoutPage,
 });
 
 function CheckoutPage() {
-  const { pack } = Route.useLoaderData();
+  const { pack, unavailable } = Route.useLoaderData();
+
+  if (unavailable) {
+    return (
+      <main>
+        <ContentUnavailable
+          heading="Checkout"
+          slug={Route.useParams().slug}
+        />
+      </main>
+    );
+  }
+
   if (!pack) {
     return (
       <main className="px-4 py-24 sm:px-6">
