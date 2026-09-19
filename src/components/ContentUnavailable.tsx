@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
 import { jvzooProducts } from "../jvzoo";
 import { JvzooDisclaimer } from "./JvzooDisclaimer";
 
@@ -91,18 +90,12 @@ export function ContentUnavailable({ heading, slug, children }: Props) {
           ) : null}
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              to="/packs"
-              className="inline-flex rounded-xl bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700"
-            >
+            <a href="/packs" className="inline-flex rounded-xl bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700">
               Browse all packs
-            </Link>
-            <Link
-              to="/"
-              className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50"
-            >
+            </a>
+            <a href="/" className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50">
               Back to home
-            </Link>
+            </a>
           </div>
 
           {children}

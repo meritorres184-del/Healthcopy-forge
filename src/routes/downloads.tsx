@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/downloads")({
   component: DownloadsPage,
@@ -95,12 +95,9 @@ function DownloadsPage() {
           </p>
 
           <div className="mt-6 text-center">
-            <Link
-              to="/packs"
-              className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-            >
+            <a href="/packs" className="inline-flex items-center text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
               ← Back to Content Packs
-            </Link>
+            </a>
           </div>
         </div>
       </section>
