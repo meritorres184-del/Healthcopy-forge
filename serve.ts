@@ -6,9 +6,10 @@
 // STATIC FIRST IS THE COMPLIANCE FIX: the build pre-renders every sales and
 // marketing route to HTML in dist/client (see vite.config.ts), so those URLs are
 // answered with a file read here — never with a per-request SSR stream. The live
-// edge has been observed cutting streamed SSR bodies at ~5-7KB and returning a
-// "repaired" but content-less document; a file-backed response cannot be cut.
-// Only genuinely dynamic requests (and paths with no file) reach the SSR handler.
+// edge has been observed cutting streamed SSR bodies and returning a "repaired"
+// but content-less document; a file-backed response cannot be cut, and it needs no
+// database at request time. Only genuinely dynamic requests (and paths with no
+// file) reach the SSR handler.
 //
 // Starting a new instance supersedes the old one: it frees the port no matter
 // which user owns the current server (provisioning starts it as `engine`; a team
@@ -39,6 +40,15 @@ function staticCandidates(pathname: string): string[] {
   if (clean.endsWith("/")) return [clean + "index.html", clean + ".html"];
   return [clean, clean + ".html", clean + "/index.html"];
 }
+// Startup inventory: how many pre-rendered pages this instance can serve from
+// disk. Printed into .run/server.log on every publish, so "is the live server
+// actually answering from files?" is answerable without probing from outside.
+// A shortfall is not fatal here — `bun run build` fails earlier (see
+// scripts/verify-prerender.mjs) if a required route was not baked — but it makes
+// an incomplete build visible at startup.
+const baked = new Bun.Glob("**/index.html").scanSync(CLIENT_DIR);
+let bakedCount = 0;
+for (const _ of baked) bakedCount++;
 // Free PORT regardless of which user owns the current listener. lsof runs under
 // sudo so it can see (and the kill can signal) a process owned by another user;
 // the loop waits for the socket to actually release before we bind.
@@ -75,4 +85,6 @@ for (let attempt = 1; ; attempt++) {
     await Bun.sleep(200);
   }
 }
-console.log(`team-site serving on http://${HOST}:${String(PORT)}`);
+console.log(
+  `team-site serving on http://${HOST}:${String(PORT)} — ${String(bakedCount)} pre-rendered pages served from dist/client, SSR only for dynamic paths`,
+);
