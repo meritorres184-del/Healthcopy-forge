@@ -1,76 +1,78 @@
-// JVZoo buy buttons & tracking pixels for HealthCopy Forge products.
-// Keyed by pack slug (the fixed Packs 1-4 bundle lives in packs.tsx).
-// href = buy-button link; src = tracking pixel (i.jvzoo.com/0/{id}/2);
-// btn  = hosted buy-button image (i.jvzoo.com/0/{id}/1) — the visible button.
-// Both button image AND tracking pixel are required on every sales page.
+// Canonical JVZoo buy blocks — one entry per live listing, all built from the
+// product ID so every product renders byte-identical markup.
+//
+// This is JVZoo's dashboard "use your own button" code, exactly:
+//
+//   <a href="https://jvzoo.com/b/0/{ID}/2" target="_blank"
+//      rel="nofollow noopener noreferrer">
+//     <img src="https://i.jvzoo.com/0/{ID}/2" border="0" alt="..." /></a>
+//   <img src="https://i.jvzoo.com/0/{ID}/2" width="1" height="1" border="0" alt="" />
+//
+// Points that matter for compliance (a reviewer flagged the old markup):
+//   * the bare host `jvzoo.com` (no `www.`) in the link,
+//   * the `/2` variant for the link, for the button image INSIDE the anchor,
+//     and for the 1x1 tracking pixel that follows it.
+// Render it with <JvzooBuyButton> (src/components/JvzooBuyButton.tsx) so no page
+// can drift from this shape; scripts/verify-prerender.mjs fails the build if a
+// baked page does not contain it.
 export interface JvzooProduct {
-  href: string; // full buy button link, e.g. https://www.jvzoo.com/b/0/XXXXXX/2
-  src: string;  // tracking pixel (i.jvzoo.com/0/XXXXXX/2) — rendered as a 1x1
-  btn: string;  // hosted buy-button image (i.jvzoo.com/0/XXXXXX/1) — the visible button
-  alt: string;  // alt text shown for the button image
+  id: string; // JVZoo product ID, e.g. "452435"
+  href: string; // buy link: https://jvzoo.com/b/0/{ID}/2
+  btn: string; // button image inside <a>: https://i.jvzoo.com/0/{ID}/2
+  src: string; // 1x1 tracking pixel: https://i.jvzoo.com/0/{ID}/2
+  alt: string; // alt text for the button image
 }
+
+function jvzooProduct(id: string, alt: string): JvzooProduct {
+  return {
+    id,
+    href: `https://jvzoo.com/b/0/${id}/2`,
+    btn: `https://i.jvzoo.com/0/${id}/2`,
+    src: `https://i.jvzoo.com/0/${id}/2`,
+    alt,
+  };
+}
+
+// Live JVZoo listings, keyed by site pack slug.
 export const jvzooProducts: Record<string, JvzooProduct> = {
   // Pack 1 — Nutrition & Everyday Wellness
-  "nutrition-everyday-wellness": {
-    href: "https://www.jvzoo.com/b/0/452429/2",
-    src: "https://i.jvzoo.com/0/452429/2",
-    btn: "https://i.jvzoo.com/0/452429/1",
-    alt: "Article Pack 1 Nutrition & Everyday Wellness",
-  },
+  "nutrition-everyday-wellness": jvzooProduct(
+    "452429",
+    "Article Pack 1 Nutrition & Everyday Wellness",
+  ),
   // Pack 8 — Product Reviews & Buying Guides
-  "product-reviews-buying-guides": {
-    href: "https://www.jvzoo.com/b/0/452451/2",
-    src: "https://i.jvzoo.com/0/452451/2",
-    btn: "https://i.jvzoo.com/0/452451/1",
-    alt: "Article Pack 8 Product Reviews & Buying Guides",
-  },
+  "product-reviews-buying-guides": jvzooProduct(
+    "452451",
+    "Article Pack 8 Product Reviews & Buying Guides",
+  ),
   // Pack 7 — Natural & Holistic Wellness
-  "natural-holistic-wellness": {
-    href: "https://www.jvzoo.com/b/0/452449/2",
-    src: "https://i.jvzoo.com/0/452449/2",
-    btn: "https://i.jvzoo.com/0/452449/1",
-    alt: "Article Pack 7 Natural & Holistic Wellness",
-  },
+  "natural-holistic-wellness": jvzooProduct(
+    "452449",
+    "Article Pack 7 Natural & Holistic Wellness",
+  ),
   // Pack 6 — Healthy Aging & Lifestyle
-  "healthy-aging-lifestyle": {
-    href: "https://www.jvzoo.com/b/0/452447/2",
-    src: "https://i.jvzoo.com/0/452447/2",
-    btn: "https://i.jvzoo.com/0/452447/1",
-    alt: "Article Pack 6 Healthy Aging & Lifestyle",
-  },
+  "healthy-aging-lifestyle": jvzooProduct(
+    "452447",
+    "Article Pack 6 Healthy Aging & Lifestyle",
+  ),
   // Pack 5 — Stress Management & Mind-Body Wellness
-  "stress-management-mind-body-wellness": {
-    href: "https://www.jvzoo.com/b/0/452445/2",
-    src: "https://i.jvzoo.com/0/452445/2",
-    btn: "https://i.jvzoo.com/0/452445/1",
-    alt: "Article Pack 5 Stress Management & Mind-Body Wellness",
-  },
+  "stress-management-mind-body-wellness": jvzooProduct(
+    "452445",
+    "Article Pack 5 Stress Management & Mind-Body Wellness",
+  ),
   // Pack 4 — Sleep & Recovery
-  "sleep-recovery": {
-    href: "https://www.jvzoo.com/b/0/452435/2",
-    src: "https://i.jvzoo.com/0/452435/2",
-    btn: "https://i.jvzoo.com/0/452435/1",
-    alt: "Article Pack 4 Sleep & Recovery",
-  },
+  "sleep-recovery": jvzooProduct("452435", "Article Pack 4 Sleep & Recovery"),
   // Pack 3 — Fitness & Exercise
-  "fitness-exercise": {
-    href: "https://www.jvzoo.com/b/0/452433/2",
-    src: "https://i.jvzoo.com/0/452433/2",
-    btn: "https://i.jvzoo.com/0/452433/1",
-    alt: "Article Pack 3 Fitness & Exercise",
-  },
+  "fitness-exercise": jvzooProduct("452433", "Article Pack 3 Fitness & Exercise"),
   // Pack 2 — Supplements & Nutritional Support
-  "supplements-nutritional-support": {
-    href: "https://www.jvzoo.com/b/0/452431/2",
-    src: "https://i.jvzoo.com/0/452431/2",
-    btn: "https://i.jvzoo.com/0/452431/1",
-    alt: "Article Pack 2 Supplements & Nutritional Support",
-  },
+  "supplements-nutritional-support": jvzooProduct(
+    "452431",
+    "Article Pack 2 Supplements & Nutritional Support",
+  ),
 };
-// Fixed Packs 1–4 bundle (JVZoo product 453431) — buy button + tracking pixel.
-export const bundleBuy = {
-  href: "https://www.jvzoo.com/b/0/453431/2",
-  src: "https://i.jvzoo.com/0/453431/2",
-  btn: "https://i.jvzoo.com/0/453431/1",
-  alt: "Health & Wellness PLR Mega Bundle: 60 SEO Articles + Complete Content Resources Packs 1-4",
-};
+
+// Fixed Packs 1–4 bundle (JVZoo product 453431) — same canonical shape.
+export const bundleBuy = jvzooProduct(
+  "453431",
+  "Health & Wellness PLR Mega Bundle: 60 SEO Articles + Complete Content Resources Packs 1-4",
+);

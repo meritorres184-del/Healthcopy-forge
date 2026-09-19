@@ -98,7 +98,76 @@ for (const [path, min, wantBuy] of [
   if (problems.length) failures.push([path, problems]);
 }
 
+// --- Canonical JVZoo buy-block gate (added 2026-09-19) ---
+//
+// A JVZoo reviewer requires the dashboard's "use your own button" snippet shape:
+//
+//   <a href="https://jvzoo.com/b/0/{ID}/2" target="_blank"
+//      rel="nofollow noopener noreferrer"><img src="https://i.jvzoo.com/0/{ID}/2"
+//      border="0" alt="..." /></a>
+//   <img src="https://i.jvzoo.com/0/{ID}/2" width="1" height="1" border="0" alt="" />
+//
+// i.e. the bare `jvzoo.com` host, and the `/2` variant on the link, on the
+// button image inside the anchor, AND on the 1x1 tracking pixel. The product
+// IDs are read from src/jvzoo.ts, so this gate can never drift from the code
+// that renders the buttons.
+const jvzooSource = readFileSync(join(ROOT, "src", "jvzoo.ts"), "utf8");
+const idBySlug = new Map(
+  [...jvzooSource.matchAll(/^\s*"([a-z0-9-]+)":\s*jvzooProduct\(\s*"(\d+)"/gm)].map(
+    (m) => [m[1], m[2]],
+  ),
+);
+const bundleId = (jvzooSource.match(/bundleBuy\s*=\s*jvzooProduct\(\s*"(\d+)"/) || [])[1];
+const allIds = [...new Set([...idBySlug.values(), ...(bundleId ? [bundleId] : [])])];
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const pad = (s, n) => String(s).padEnd(n);
+function canonicalBuyProblems(html, id) {
+  const problems = [];
+  const link = `https://jvzoo.com/b/0/${id}/2`;
+  const img = `https://i.jvzoo.com/0/${id}/2`;
+  const anchor = new RegExp(
+    `<a href="${escapeRe(link)}"[^>]*>\\s*<img src="${escapeRe(img)}"`,
+  );
+  const pixel = new RegExp(`<img src="${escapeRe(img)}" width="1" height="1"`);
+  if (!html.includes(`href="${link}"`)) problems.push(`no buy link ${link}`);
+  if (!anchor.test(html)) problems.push(`button image inside the anchor is not ${img}`);
+  if (!pixel.test(html)) problems.push(`no 1x1 tracking pixel ${img}`);
+  if (html.includes(`/0/${id}/1`)) problems.push(`non-canonical /1 image for product ${id}`);
+  return problems;
+}
+if (allIds.length !== 9) {
+  failures.push([
+    "src/jvzoo.ts",
+    [`expected 9 product IDs (8 packs + 1 bundle), read ${allIds.length}`],
+  ]);
+}
+const packIds = [...new Set(idBySlug.values())];
+const buyPages = [
+  // /packs shows all eight packs plus the Packs 1-4 bundle.
+  ["/packs", allIds],
+  // /library shows the eight pack buy buttons; the bundle is only sold on /packs.
+  ["/library", packIds],
+  ...PACK_SLUGS.map((s) => [
+    "/library/" + s,
+    idBySlug.has(s) ? [idBySlug.get(s)] : [],
+  ]),
+];
+const buyRows = [];
+for (const [path, ids] of buyPages) {
+  const f = file(path);
+  const problems = [];
+  if (!existsSync(f)) {
+    problems.push("no baked file (route missing from the prerender list?)");
+  } else {
+    const html = readFileSync(f, "utf8");
+    for (const id of ids) problems.push(...canonicalBuyProblems(html, id));
+    if (html.includes("www.jvzoo.com/b/")) {
+      problems.push("non-canonical www.jvzoo.com buy link");
+    }
+  }
+  buyRows.push([path, ids.length, problems]);
+  if (problems.length) failures.push(["buy-block " + path, problems]);
+}
 console.log("pre-render gate — dist/client");
 for (const [path, size, problems] of rows) {
   const status = problems.length ? "FAIL" : "ok  ";
@@ -109,13 +178,26 @@ for (const [path, size, problems] of rows) {
   );
 }
 
+console.log("\ncanonical JVZoo buy blocks \u2014 every baked sales page");
+for (const [path, count, problems] of buyRows) {
+  const status = problems.length ? "FAIL" : "ok  ";
+  console.log(
+    `  ${status} ${pad(path, 52)} ${pad(count + " product(s)", 13)}${problems.join(
+      "; ",
+    )}`,
+  );
+}
 if (failures.length) {
   console.error(
     `\npre-render gate FAILED for ${failures.length} route(s). ` +
-      "Refusing to publish pages that would not be served complete from disk. " +
+      "Refusing to publish pages that would not be served complete from disk " +
+      "with canonical JVZoo buy blocks. " +
       "Check the prerender list in vite.config.ts and that the database was " +
       "reachable during this build (it is read at build time, not request time).",
   );
   process.exit(1);
 }
-console.log(`\npre-render gate passed: ${rows.length} routes baked and complete.`);
+console.log(
+  `\npre-render gate passed: ${rows.length} routes baked and complete; ` +
+    `${buyRows.length} sales pages carry canonical JVZoo buy blocks.`,
+);

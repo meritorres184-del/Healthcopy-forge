@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 import { readWithRetry } from "../db";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
+import { JvzooBuyButton } from "../components/JvzooBuyButton";
 import { bundleBuy, jvzooProducts } from "../jvzoo";
 import { UNAVAILABLE_MESSAGE } from "../components/ContentUnavailable";
 
@@ -150,26 +151,9 @@ function PacksPage() {
               and get started right away.
             </p>
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <a
-                href={bundleBuy.href}
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-              >
-                <img
-                  src={bundleBuy.btn}
-                  alt={bundleBuy.alt}
-                  border="0"
-                  className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
-                />
-              </a>
-              {/* JVZoo tracking pixel — required alongside the buy button */}
-              <img
-                src={bundleBuy.src}
-                width="1"
-                height="1"
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none"
+              <JvzooBuyButton
+                product={bundleBuy}
+                imgClassName="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
               />
             </div>
             <p className="mt-4 text-xs text-gray-500">
@@ -226,22 +210,9 @@ function FallbackPackButtons() {
             {packNameFromAlt(j.alt)}
           </p>
           <span className="text-sm text-gray-500">$47 one-time</span>
-          <a href={j.href} target="_blank" rel="nofollow noopener noreferrer">
-            <img
-              src={j.btn}
-              alt={j.alt}
-              border="0"
-              className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
-            />
-          </a>
-          {/* JVZoo tracking pixel — required alongside the buy button */}
-          <img
-            src={j.src}
-            width="1"
-            height="1"
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none"
+          <JvzooBuyButton
+            product={j}
+            imgClassName="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
           />
         </div>
       ))}
@@ -327,29 +298,10 @@ function PackCard({ pack }: { pack: Pack }) {
               Coming Soon
             </span>
           ) : jvzooProducts[pack.slug] ? (
-            <>
-              <a
-                href={jvzooProducts[pack.slug].href}
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-              >
-                <img
-                  src={jvzooProducts[pack.slug].btn}
-                  alt={jvzooProducts[pack.slug].alt}
-                  border="0"
-                  className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
-                />
-              </a>
-              {/* JVZoo tracking pixel — required alongside the buy button */}
-              <img
-                src={jvzooProducts[pack.slug].src}
-                width="1"
-                height="1"
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none"
-              />
-            </>
+            <JvzooBuyButton
+              product={jvzooProducts[pack.slug]}
+              imgClassName="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
+            />
           ) : null}
         </div>
         <JvzooDisclaimer compact />

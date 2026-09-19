@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getLibraryPacks } from "../lib/packs";
 import { ContentUnavailable } from "../components/ContentUnavailable";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
+import { JvzooBuyButton } from "../components/JvzooBuyButton";
 import { jvzooProducts } from "../jvzoo";
 
 export const Route = createFileRoute("/library/")({
@@ -156,26 +157,9 @@ function LibraryPage() {
                     <span className="text-sm text-gray-500">
                       ${pack.price} one-time
                     </span>
-                    <a
-                      href={j.href}
-                      target="_blank"
-                      rel="nofollow noopener noreferrer"
-                    >
-                      <img
-                        src={j.btn}
-                        alt={j.alt}
-                        border="0"
-                        className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
-                      />
-                    </a>
-                    {/* JVZoo tracking pixel — required alongside the buy button */}
-                    <img
-                      src={j.src}
-                      width="1"
-                      height="1"
-                      alt=""
-                      aria-hidden="true"
-                      className="pointer-events-none"
+                    <JvzooBuyButton
+                      product={j}
+                      imgClassName="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
                     />
                   </div>
                 );
