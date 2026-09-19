@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getLibraryPacks } from "../lib/packs";
 import { ContentUnavailable } from "../components/ContentUnavailable";
+import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
+import { jvzooProducts } from "../jvzoo";
 
 export const Route = createFileRoute("/library/")({
   head: () => ({
@@ -60,6 +62,11 @@ function LibraryPage() {
     }
     group.packs.push(pack);
   }
+  // Packs that have a JVZoo listing. The library page is a public route, so it
+  // carries the same buy button + tracking pixel + retailer disclaimer as every
+  // other pack page: a visitor (or a reviewer) landing here always has a working
+  // buy path, and a page that sells is never without the required disclaimer.
+  const buyable = packs.filter((pack) => jvzooProducts[pack.slug]);
 
   return (
     <main>
@@ -121,6 +128,63 @@ function LibraryPage() {
           )}
         </div>
       </section>
+
+      {/* Buy any pack — JVZoo buy button + tracking pixel per pack */}
+      {buyable.length > 0 ? (
+        <section className="border-t border-gray-100 bg-gray-50 px-4 py-14 sm:px-6">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+                Buy a pack now
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-gray-600">
+                Every pack is a one-time purchase with instant download after
+                checkout — buy securely through JVZoo.
+              </p>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {buyable.map((pack) => {
+                const j = jvzooProducts[pack.slug];
+                return (
+                  <div
+                    key={pack.slug}
+                    className="flex flex-col items-center gap-3 rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm"
+                  >
+                    <p className="text-base font-bold leading-snug text-gray-900">
+                      {pack.title}
+                    </p>
+                    <span className="text-sm text-gray-500">
+                      ${pack.price} one-time
+                    </span>
+                    <a
+                      href={j.href}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
+                    >
+                      <img
+                        src={j.btn}
+                        alt={j.alt}
+                        border="0"
+                        className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
+                      />
+                    </a>
+                    {/* JVZoo tracking pixel — required alongside the buy button */}
+                    <img
+                      src={j.src}
+                      width="1"
+                      height="1"
+                      alt=""
+                      aria-hidden="true"
+                      className="pointer-events-none"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <JvzooDisclaimer compact />
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
