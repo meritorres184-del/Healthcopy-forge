@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 
 import appCss from "~/styles/app.css?url";
 import { jvzooProducts } from "../jvzoo";
+import { JvzooBuyButton } from "../components/JvzooBuyButton";
 import { UNAVAILABLE_MESSAGE } from "../components/ContentUnavailable";
 
 // Canonical production domain. The site is served ONLY at
@@ -169,22 +170,9 @@ function RootErrorComponent({
 
         {buy ? (
           <div className="mt-8 flex flex-col items-center gap-3">
-            <a href={buy.href} target="_blank" rel="nofollow noopener noreferrer">
-              <img
-                src={buy.btn}
-                alt={buy.alt}
-                border="0"
-                className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
-              />
-            </a>
-            {/* JVZoo tracking pixel — required alongside the buy button */}
-            <img
-              src={buy.src}
-              width="1"
-              height="1"
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none"
+            <JvzooBuyButton
+              product={buy}
+              imgClassName="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
             />
             <p className="text-xs text-gray-500">
               Buy securely through JVZoo — instant download after checkout.
