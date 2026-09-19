@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
 import { FreeSampleBand } from "../components/FreeSampleForm";
-import { sql } from "../db";
+import { readWithRetry } from "../db";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -16,9 +16,31 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 // Pack options for the free-sample dropdown.
+//
+// The dropdown is a nicety, so a failed read must not take the homepage down
+// with it (that is what used to happen: the loader error replaced the whole
+// page with an empty error widget). Returns `degraded: true` instead, and the
+// free-sample band says so out loud.
 const getPackOptions = createServerFn({ method: "GET" }).handler(async () => {
-  const rows = await sql()`select slug, title from content_packs order by id`;
-  return rows.map((r) => ({ slug: r.slug as string, title: r.title as string }));
+  try {
+    const rows = await readWithRetry(
+      "home.pack-options",
+      (db) => db`select slug, title from content_packs order by id`,
+    );
+    return {
+      options: rows.map((r) => ({
+        slug: r.slug as string,
+        title: r.title as string,
+      })),
+      degraded: false,
+    };
+  } catch (err) {
+    console.error(
+      "[home] pack list for the free-sample dropdown failed; continuing without it",
+      err,
+    );
+    return { options: [] as { slug: string; title: string }[], degraded: true };
+  }
 });
 
 export const Route = createFileRoute("/")({
@@ -33,17 +55,21 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async () => {
-    const [businessName, packs] = await Promise.all([
+    const [businessName, packOptions] = await Promise.all([
       getBusinessName(),
       getPackOptions(),
     ]);
-    return { businessName, packs };
+    return {
+      businessName,
+      packs: packOptions.options,
+      packsDegraded: packOptions.degraded,
+    };
   },
   component: Home,
 });
 
 function Home() {
-  const { businessName, packs } = Route.useLoaderData();
+  const { businessName, packs, packsDegraded } = Route.useLoaderData();
 
   return (
     <main>
@@ -163,7 +189,7 @@ function Home() {
         </div>
       </section>
 
-      <FreeSampleBand packs={packs} />
+      <FreeSampleBand packs={packs} packsDegraded={packsDegraded} />
 
       {/* Pricing Teaser Section */}
       <section id="pricing" className="px-4 py-20 sm:px-6 sm:py-28">

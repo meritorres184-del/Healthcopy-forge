@@ -1,5 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { sql } from "../db";
+import { readWithRetry } from "../db";
+import { jvzooProducts } from "../jvzoo";
+import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
+import {
+  ContentUnavailable,
+  slugToHeading,
+} from "../components/ContentUnavailable";
 
 interface Pack {
   slug: string;
@@ -11,29 +17,67 @@ interface Pack {
   includes: string[];
 }
 
+// The rendered pack plus a flag for the one case where we could not read it.
+// `unavailable` must only ever be set by the degraded fallback below.
+type PackView = Pack & { unavailable?: boolean };
+
+// Fallback used when the database is unreachable even after retries. It exists
+// so this sales page still renders something truthful — with its JVZoo buy
+// button, tracking pixel and retailer disclaimer in place — instead of the
+// contentless page a thrown loader error would produce.
+function degradedPack(slug: string): PackView {
+  const heading = slugToHeading(slug);
+  return {
+    slug,
+    title: heading,
+    description:
+      "SEO-written health & wellness PLR content from HealthCopy Forge — ready to customize, brand & promote.",
+    price: 47,
+    category: "Health & Wellness",
+    comingSoon: false,
+    includes: [],
+    unavailable: true,
+  };
+}
+
 export const Route = createFileRoute("/library/$slug")({
   loader: async ({ params }) => {
-    const rows = await sql()`
+    try {
+      const rows = await readWithRetry(
+        "library.pack-detail",
+        (db) => db`
       select slug, title, description, price_cents, category, coming_soon, includes
       from content_packs
-      where slug = ${params.slug}`;
-    if (rows.length === 0) return null;
-    const r = rows[0];
-    return {
-      slug: r.slug,
-      title: r.title,
-      description: r.description,
-      price: (r.price_cents as number) / 100,
-      category: r.category,
-      comingSoon: r.coming_soon as boolean,
-      includes: r.includes as string[],
-    } as Pack;
+      where slug = ${params.slug}`,
+      );
+      if (rows.length === 0) return null;
+      const r = rows[0];
+      return {
+        slug: r.slug,
+        title: r.title,
+        description: r.description,
+        price: (r.price_cents as number) / 100,
+        category: r.category,
+        comingSoon: r.coming_soon as boolean,
+        includes: r.includes as string[],
+      } as PackView;
+    } catch (err) {
+      // Any read failure (already retried inside readWithRetry) degrades to the
+      // notice instead of a thrown loader error: a thrown error renders
+      // TanStack's bare "Something went wrong!" widget and leaves this sales
+      // page with no content and no buy button.
+      console.error(
+        `[library/$slug] could not read pack "${params.slug}"; rendering the unavailable notice`,
+        err,
+      );
+      return degradedPack(params.slug);
+    }
   },
   component: PackDetailPage,
 });
 
 function PackDetailPage() {
-  const pack = Route.useLoaderData<Pack | null>();
+  const pack = Route.useLoaderData<PackView | null>();
 
   if (!pack) {
     return (
@@ -54,6 +98,15 @@ function PackDetailPage() {
             </Link>
           </div>
         </section>
+      </main>
+    );
+  }
+
+  // Database unreachable: show the honest notice, never a blank sales page.
+  if (pack.unavailable) {
+    return (
+      <main>
+        <ContentUnavailable heading={pack.title} slug={pack.slug} />
       </main>
     );
   }
@@ -160,23 +213,47 @@ function PackDetailPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-emerald-600 px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Enjoying this pack?
-          </h2>
-          <p className="mt-3 text-emerald-100">
-            Get every pack — including new monthly drops — with a membership.
-          </p>
-          <Link
-            to="/join"
-            className="mt-6 inline-flex items-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all hover:bg-emerald-50"
-          >
-            See Membership Plans
-          </Link>
-        </div>
-      </section>
+      {/* JVZoo purchase */}
+      {(() => {
+        const j = jvzooProducts[pack.slug];
+        return j ? (
+          <section className="bg-white px-4 py-14 sm:px-6">
+            <div className="mx-auto max-w-xl text-center">
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                Get Instant Access
+              </h2>
+              <p className="mt-3 text-sm text-gray-600">
+                Buy securely through JVZoo — instant download after checkout.
+              </p>
+              <div className="mt-6 flex flex-col items-center gap-3">
+                <a
+                  href={j.href}
+                  target="_blank"
+                  rel="nofollow noopener noreferrer"
+                >
+                  <img
+                    src={j.btn}
+                    alt={j.alt}
+                    border="0"
+                    className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
+                  />
+                </a>
+                {/* JVZoo tracking pixel — required alongside the buy button */}
+                <img
+                  src={j.src}
+                  width="1"
+                  height="1"
+                  alt=""
+                  aria-hidden="true"
+                  className="pointer-events-none"
+                />
+              </div>
+            </div>
+          </section>
+        ) : null;
+      })()}
+      {/* JVZoo retailer disclosure — required on every product sales page */}
+      {jvzooProducts[pack.slug] ? <JvzooDisclaimer /> : null}
     </main>
   );
 }

@@ -9,6 +9,8 @@ import {
 import type { ReactNode } from "react";
 
 import appCss from "~/styles/app.css?url";
+import { jvzooProducts } from "../jvzoo";
+import { UNAVAILABLE_MESSAGE } from "../components/ContentUnavailable";
 
 // Canonical production domain. The site is served ONLY at
 // https://www.healthcopyforge.com (the bare apex is not served), so every
@@ -128,8 +130,101 @@ export const Route = createRootRoute({
       </div>
     </div>
   ),
+  errorComponent: RootErrorComponent,
   component: RootComponent,
 });
+
+// Last-resort error boundary for the whole site (added 2026-09-19).
+//
+// TanStack's built-in fallback is a bare "Something went wrong!" widget, which
+// turns a sales page into a contentless document — no headline, no description,
+// no buy button. That is exactly the page JVZoo compliance kept rejecting. This
+// renders an honest, on-brand page instead, and on a pack page it keeps that
+// pack's JVZoo buy button, tracking pixel and retailer disclaimer in place.
+function RootErrorComponent({
+  reset,
+}: {
+  error?: unknown;
+  info?: unknown;
+  reset?: () => void;
+}) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const slug = pathname.startsWith("/library/")
+    ? pathname.slice("/library/".length).replace(/\/+$/, "")
+    : "";
+  const buy = slug ? jvzooProducts[slug] : undefined;
+
+  return (
+    <main className="px-4 py-16 sm:px-6 sm:py-20">
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="inline-block rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-700">
+          HealthCopy Forge
+        </span>
+        <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5">
+          <p className="text-base font-semibold text-amber-900">
+            {UNAVAILABLE_MESSAGE}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-amber-900/80">
+            Something went wrong while building this page, so its content
+            hasn&apos;t loaded. Reload to try again — nothing has been removed
+            from the library.
+          </p>
+        </div>
+
+        {buy ? (
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <a href={buy.href} target="_blank" rel="nofollow noopener noreferrer">
+              <img
+                src={buy.btn}
+                alt={buy.alt}
+                border="0"
+                className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
+              />
+            </a>
+            {/* JVZoo tracking pixel — required alongside the buy button */}
+            <img
+              src={buy.src}
+              width="1"
+              height="1"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none"
+            />
+            <p className="text-xs text-gray-500">
+              Buy securely through JVZoo — instant download after checkout.
+            </p>
+          </div>
+        ) : null}
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          {typeof reset === "function" ? (
+            <button
+              type="button"
+              onClick={() => {
+                reset();
+              }}
+              className="inline-flex rounded-xl bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition-all hover:bg-emerald-700"
+            >
+              Try again
+            </button>
+          ) : null}
+          <Link
+            to="/packs"
+            className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50"
+          >
+            Browse all packs
+          </Link>
+          <Link
+            to="/"
+            className="inline-flex rounded-xl border border-emerald-200 bg-white px-6 py-3 text-base font-semibold text-emerald-700 transition-all hover:bg-emerald-50"
+          >
+            Back to home
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+}
 
 function RootComponent() {
   return (
@@ -167,6 +262,8 @@ function RootDocument({ children }: { children: ReactNode }) {
 }
 
 function Header() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSalesPage = pathname === "/packs" || pathname.startsWith("/library/");
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
@@ -189,12 +286,14 @@ function Header() {
           >
             Packs
           </Link>
-          <Link
-            to="/pricing"
-            className="hover:text-emerald-600 transition-colors"
-          >
-            Pricing
-          </Link>
+          {!isSalesPage && (
+            <Link
+              to="/pricing"
+              className="hover:text-emerald-600 transition-colors"
+            >
+              Pricing
+            </Link>
+          )}
           <Link
             to="/library"
             className="hover:text-emerald-600 transition-colors"
@@ -214,6 +313,8 @@ function Header() {
 }
 
 function Footer() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSalesPage = pathname === "/packs" || pathname.startsWith("/library/");
   return (
     <footer className="border-t border-gray-100 bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -243,14 +344,16 @@ function Footer() {
                   Content Packs
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/pricing"
-                  className="hover:text-emerald-600 transition-colors"
-                >
-                  Pricing
-                </Link>
-              </li>
+              {!isSalesPage && (
+                <li>
+                  <Link
+                    to="/pricing"
+                    className="hover:text-emerald-600 transition-colors"
+                  >
+                    Pricing
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   to="/library"
@@ -275,19 +378,44 @@ function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <a href="#" className="hover:text-emerald-600 transition-colors">
-                  support@healthcopyforge.com
+                <Link
+                  to="/support"
+                  className="hover:text-emerald-600 transition-colors"
+                >
+                  Support
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="mailto:healthcopy2026@gmail.com"
+                  className="hover:text-emerald-600 transition-colors"
+                >
+                  healthcopy2026@gmail.com
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-emerald-600 transition-colors">
+                <Link
+                  to="/terms"
+                  className="hover:text-emerald-600 transition-colors"
+                >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-emerald-600 transition-colors">
+                <Link
+                  to="/privacy"
+                  className="hover:text-emerald-600 transition-colors"
+                >
                   Privacy Policy
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/disclaimer"
+                  className="hover:text-emerald-600 transition-colors"
+                >
+                  Disclaimer
+                </Link>
               </li>
             </ul>
           </div>

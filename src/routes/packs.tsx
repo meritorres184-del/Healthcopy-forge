@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
-import { sql } from "../db";
-import { FreeSampleBand } from "../components/FreeSampleForm";
+import { readWithRetry } from "../db";
+import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
+import { bundleBuy, jvzooProducts } from "../jvzoo";
+import { UNAVAILABLE_MESSAGE } from "../components/ContentUnavailable";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -17,10 +19,13 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
 
 // Read the content packs from the database instead of hardcoded data.
 const getPacks = createServerFn({ method: "GET" }).handler(async () => {
-  const rows = await sql()`select
+  const rows = await readWithRetry(
+    "packs.list",
+    (db) => db`select
       slug, title, description, price_cents, category, coming_soon, includes
     from content_packs
-    order by id`;
+    order by id`,
+  );
   return rows.map((r) => ({
     slug: r.slug,
     title: r.title,
@@ -43,6 +48,7 @@ function slugToPackNumber(slug: string): string {
     "stress-management-mind-body-wellness": "5-1",
     "healthy-aging-lifestyle": "6-1",
     "natural-holistic-wellness": "7",
+    "product-reviews-buying-guides": "8",
   };
   return map[slug] ?? "1-1";
 }
@@ -58,18 +64,33 @@ export const Route = createFileRoute("/packs")({
       },
     ],
   }),
-  loader: async () => {
-    const [businessName, packs] = await Promise.all([
-      getBusinessName(),
-      getPacks(),
-    ]);
-    return { businessName, packs };
+  loader: async (): Promise<PacksLoaderData> => {
+    const businessName = await getBusinessName();
+    try {
+      return { businessName, packs: await getPacks(), degraded: false };
+    } catch (err) {
+      // A failed read must never blank this page — JVZoo buyers (and JVZoo's
+      // own reviewers) land here. Render the notice plus the live buy buttons.
+      console.error(
+        "[packs] content_packs read failed; rendering the degraded pack list",
+        err,
+      );
+      return { businessName, packs: [], degraded: true };
+    }
   },
   component: PacksPage,
 });
 
+// Loader shape for /packs. `degraded` is true only when the pack list could
+// not be read; the page then shows an honest notice instead of the grid.
+type PacksLoaderData = {
+  businessName: string;
+  packs: Pack[];
+  degraded: boolean;
+};
+
 function PacksPage() {
-  const { businessName, packs } = Route.useLoaderData();
+  const { packs, degraded } = Route.useLoaderData();
 
   return (
     <main>
@@ -95,11 +116,28 @@ function PacksPage() {
       {/* Pack Grid */}
       <section className="px-4 py-12 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {packs.map((pack) => (
-              <PackCard key={pack.slug} pack={pack} />
-            ))}
-          </div>
+          {degraded ? (
+            <>
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5 text-center">
+                <p className="text-base font-semibold text-amber-900">
+                  {UNAVAILABLE_MESSAGE} — the pack details didn&apos;t load
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-amber-900/80">
+                  Our content service didn&apos;t answer just now, so the pack
+                  descriptions are missing from this page. Every pack is still
+                  on sale through the links below; reload in a moment for the
+                  full details.
+                </p>
+              </div>
+              <FallbackPackButtons />
+            </>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {packs.map((pack) => (
+                <PackCard key={pack.slug} pack={pack} />
+              ))}
+            </div>
+          )}
 
           {/* 4-Pack Bundle note */}
           <div className="mt-14 rounded-2xl border border-emerald-200 bg-emerald-50 px-6 py-8 text-center sm:px-10">
@@ -108,20 +146,40 @@ function PacksPage() {
             </h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
               Choose any four packs and save over $90 compared to buying them
-              individually. Bundle checkout is being finalized — pick your packs
-              now and checkout will open here shortly.
+              individually — or grab the ready-made Packs 1–4 Mega Bundle below
+              and get started right away.
             </p>
-            <Link
-              to="/packs"
-              className="mt-6 inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
-            >
-              Build Your 4-Pack Bundle
-            </Link>
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <a
+                href={bundleBuy.href}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+              >
+                <img
+                  src={bundleBuy.btn}
+                  alt={bundleBuy.alt}
+                  border="0"
+                  className="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
+                />
+              </a>
+              {/* JVZoo tracking pixel — required alongside the buy button */}
+              <img
+                src={bundleBuy.src}
+                width="1"
+                height="1"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none"
+              />
+            </div>
+            <p className="mt-4 text-xs text-gray-500">
+              Buy securely through JVZoo — instant download after checkout.
+            </p>
           </div>
+          <JvzooDisclaimer compact />
         </div>
       </section>
 
-      <FreeSampleBand packs={packs} />
 
       {/* CTA */}
       <section className="bg-gray-50 px-4 py-16 sm:px-6 sm:py-24">
@@ -147,6 +205,50 @@ function PacksPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+// --- Degraded (database unreachable) pack list ---
+//
+// The JVZoo buy buttons, links and tracking pixels come from src/jvzoo.ts, not
+// the database, so they can stay live even when the pack rows cannot be read.
+// Names come from the button alt text (e.g. "Article Pack 4 Sleep & Recovery").
+function packNameFromAlt(alt: string): string {
+  return alt.replace(/^Article Pack \d+\s*/, "").trim();
+}
+
+function FallbackPackButtons() {
+  return (
+    <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {Object.entries(jvzooProducts).map(([slug, j]) => (
+        <div
+          key={slug}
+          className="flex flex-col items-center gap-3 rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm"
+        >
+          <p className="text-base font-bold leading-snug text-gray-900">
+            {packNameFromAlt(j.alt)}
+          </p>
+          <span className="text-sm text-gray-500">$47 one-time</span>
+          <a href={j.href} target="_blank" rel="nofollow noopener noreferrer">
+            <img
+              src={j.btn}
+              alt={j.alt}
+              border="0"
+              className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
+            />
+          </a>
+          {/* JVZoo tracking pixel — required alongside the buy button */}
+          <img
+            src={j.src}
+            width="1"
+            height="1"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none"
+          />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -227,15 +329,33 @@ function PackCard({ pack }: { pack: Pack }) {
             <span className="rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 cursor-not-allowed">
               Coming Soon
             </span>
-          ) : (
-            <a
-              href={`/checkout/${pack.slug}`}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-emerald-700"
-            >
-              Buy Now
-            </a>
-          )}
+          ) : jvzooProducts[pack.slug] ? (
+            <>
+              <a
+                href={jvzooProducts[pack.slug].href}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+              >
+                <img
+                  src={jvzooProducts[pack.slug].btn}
+                  alt={jvzooProducts[pack.slug].alt}
+                  border="0"
+                  className="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
+                />
+              </a>
+              {/* JVZoo tracking pixel — required alongside the buy button */}
+              <img
+                src={jvzooProducts[pack.slug].src}
+                width="1"
+                height="1"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none"
+              />
+            </>
+          ) : null}
         </div>
+        <JvzooDisclaimer compact />
       </div>
     </div>
   );
