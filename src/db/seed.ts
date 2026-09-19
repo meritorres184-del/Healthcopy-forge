@@ -146,6 +146,24 @@ const packs: SeedPack[] = [
       "Bookcover & images",
     ],
   },
+  {
+    slug: "product-reviews-buying-guides",
+    title: "Article Pack 8: Product Reviews & Buying Guides",
+    description:
+      "Create stronger product-focused content without starting from scratch. Article Pack 8: Product Reviews & Buying Guides is a complete PLR package (about 26,800 words) for bloggers, affiliate marketers, influencers, wellness website owners, and content creators who want to publish helpful health and wellness product content. Inside: original SEO-written product review content, buying guide content, product comparison content, and consumer education content — plus a ready-to-customize lead magnet, social media posts, email swipes, a PLR license, and health and product-related disclaimers.",
+    priceCents: 4700,
+    category: "Product Reviews",
+    comingSoon: false,
+    includes: [
+      "Original reviews, buying guides & comparisons (~26,800 words)",
+      "Email swipes & sequences",
+      "Social media posts",
+      "Lead magnet content",
+      "PLR license",
+      "Health & wellness disclaimers",
+      "Bookcover",
+    ],
+  },
 ];
 
 // Slugs that shipped with the original placeholder seed. Replacing the
