@@ -3,7 +3,8 @@
 #
 #   bash scripts/verify-live.sh              # 30 requests per URL, both hosts
 #   REQUESTS=10 bash scripts/verify-live.sh  # quicker pass
-#   HOSTS="https://www.healthcopyforge.com" bash scripts/verify-live.sh
+#   ALL_ROUTES=1 bash scripts/verify-live.sh # every route, not just the 10 sales URLs
+#   HOSTS=https://www.healthcopyforge.com bash scripts/verify-live.sh
 #
 # ‼️ WHY THIS SCRIPT EXISTS — the measurement trap that caused a false alarm:
 #   `curl -w '%{size_download}'` reports the bytes ON THE WIRE. When the edge
@@ -27,8 +28,8 @@ HOSTS="${HOSTS:-https://www.healthcopyforge.com https://36a900ec156b5c0aaac2aa59
 MIN_BYTES="${MIN_BYTES:-15000}"
 TIMEOUT="${TIMEOUT:-40}"
 
-# The 9 JVZoo sales pages (the lead's acceptance set) + every other route that must
-# also be served from disk rather than streamed.
+# The 9 JVZoo sales pages (the acceptance set) + every other route that must also
+# be served from disk rather than streamed.
 SALES_URLS=(
   /packs
   /library
@@ -67,35 +68,44 @@ printf 'verify-live: %s request(s) per URL, %s host(s), floor %s bytes\n\n' \
   "$REQUESTS" "$(wc -w <<<"$HOSTS")" "$MIN_BYTES"
 
 for host in $HOSTS; do
-  echo "── $host"
-  printf '  %-52s %-8s %-9s %-6s %s\n' URL PASS RANGE MIN_BUY PIXEL
+  echo "―― $host"
+  printf '  %-52s %-7s %-15s %-5s %-5s %s\n' URL PASS RANGE BUY PIXEL NOTES
   for url in "${URLS[@]}"; do
     case " ${SALES_URLS[*]} " in *" $url "*) want_buy=1 ;; *) want_buy=0 ;; esac
-    pass=0; fail=0; sizes=""; notes=""
+    pass=0; fail=0; sizes=""; buy=0; pix=0
+    e_http=0; e_size=0; e_close=0; e_deg=0; e_buy=0; e_pix=0
     for _ in $(seq 1 "$REQUESTS"); do
       code="$(curl -s --max-time "$TIMEOUT" -H 'Accept-Encoding: identity' \
                 -o "$BODY" -w '%{http_code}' "$host$url" || echo 000)"
       size="$(wc -c < "$BODY" | tr -d ' ')"
       sizes="$sizes $size"
       body_ok=1
-      [ "$code" = "200" ] || { body_ok=0; notes="$notes http=$code"; }
-      [ "$size" -ge "$MIN_BYTES" ] || { body_ok=0; notes="$notes size=$size"; }
-      grep -q '</html>' "$BODY" || { body_ok=0; notes="$notes no-</html>"; }
-      grep -q 'Content temporarily unavailable' "$BODY" && { body_ok=0; notes="$notes DEGRADED"; }
-      buy=0; pix=0
+      [ "$code" = "200" ] || { body_ok=0; e_http=$((e_http + 1)); }
+      [ "$size" -ge "$MIN_BYTES" ] || { body_ok=0; e_size=$((e_size + 1)); }
+      grep -q '</html>' "$BODY" || { body_ok=0; e_close=$((e_close + 1)); }
+      grep -q 'Content temporarily unavailable' "$BODY" && { body_ok=0; e_deg=$((e_deg + 1)); }
       grep -q 'jvzoo.com/b/' "$BODY" && buy=1
       grep -q 'i\.jvzoo\.com' "$BODY" && pix=1
       if [ "$want_buy" = "1" ]; then
-        [ "$buy" = "1" ] || { body_ok=0; notes="$notes no-buy-link"; }
-        [ "$pix" = "1" ] || { body_ok=0; notes="$notes no-pixel"; }
+        [ "$buy" = "1" ] || { body_ok=0; e_buy=$((e_buy + 1)); }
+        [ "$pix" = "1" ] || { body_ok=0; e_pix=$((e_pix + 1)); }
       fi
       if [ "$body_ok" = "1" ]; then pass=$((pass + 1)); else fail=$((fail + 1)); fi
     done
     lo="$(tr ' ' '\n' <<<"$sizes" | grep -E '^[0-9]+$' | sort -n | head -1)"
     hi="$(tr ' ' '\n' <<<"$sizes" | grep -E '^[0-9]+$' | sort -n | tail -1)"
-    verdict="$pass/$REQUESTS"
+    # One note per distinct problem, with how many requests hit it.
+    notes=""
+    [ "$e_http" -gt 0 ] && notes="$notes http!=200(×$e_http)"
+    [ "$e_size" -gt 0 ] && notes="$notes size<$MIN_BYTES(×$e_size)"
+    [ "$e_close" -gt 0 ] && notes="$notes no-</html>(×$e_close)"
+    [ "$e_deg" -gt 0 ] && notes="$notes DEGRADED(×$e_deg)"
+    [ "$e_buy" -gt 0 ] && notes="$notes no-buy-link(×$e_buy)"
+    [ "$e_pix" -gt 0 ] && notes="$notes no-pixel(×$e_pix)"
+    [ -n "$notes" ] || notes="ok"
     [ "$fail" -eq 0 ] || overall=1
-    printf '  %-52s %-8s %-9s %-6s %s%s\n' "$url" "$verdict" "$lo-$hi" "$buy" "$pix" "$notes"
+    printf '  %-52s %-7s %-15s %-5s %-5s %s\n' \
+      "$url" "$pass/$REQUESTS" "$lo-$hi" "$buy" "$pix" "$notes"
   done
   echo
 done
@@ -103,6 +113,6 @@ done
 if [ "$overall" -eq 0 ]; then
   echo "PASS — every request returned a full page served from disk."
 else
-  echo "FAIL — see the notes column above."
+  echo "FAIL — see the NOTES column above."
 fi
 exit "$overall"
