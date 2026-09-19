@@ -1,13 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // ─── Swap-ready CTA URLs ──────────────────────────────────────────────────────
-// Single place to edit later when the owner provides the real destinations.
-
-// Target for the "Apply to join the HealthCopy Forge Affiliate Program" CTAs
-// (Sections 12/14). The real JVZoo affiliate signup URL is NOT known yet — the
-// owner will provide it from her JVZoo vendor dashboard. TODO: replace "#"
-// with the JVZoo affiliate application URL once provided.
-const AFFILIATE_APPLY_URL = "#";
+// JVZoo affiliate offer pages — the "apply to promote" destination for each
+// live product. Format: https://www.jvzoo.com/affiliates/info/{productID}
+// (canonical redirect: /affiliate/affiliateinfonew/index/{id}). All 9 live.
+const AFFILIATE_APPLY_URL =
+  "https://www.jvzoo.com/affiliates/info/453431"; // 4-pack bundle (flagship $97)
+const AFFILIATE_PRODUCTS = [
+  { name: "Nutrition & Everyday Wellness", href: "https://www.jvzoo.com/affiliates/info/452429" },
+  { name: "Supplements & Nutritional Support", href: "https://www.jvzoo.com/affiliates/info/452431" },
+  { name: "Fitness & Exercise", href: "https://www.jvzoo.com/affiliates/info/452433" },
+  { name: "Sleep & Recovery", href: "https://www.jvzoo.com/affiliates/info/452435" },
+  { name: "Stress Management", href: "https://www.jvzoo.com/affiliates/info/452445" },
+  { name: "Healthy Aging & Lifestyle", href: "https://www.jvzoo.com/affiliates/info/452447" },
+  { name: "Natural & Holistic Wellness", href: "https://www.jvzoo.com/affiliates/info/452449" },
+  { name: "Product Reviews & Buying Guides", href: "https://www.jvzoo.com/affiliates/info/452451" },
+  { name: "4-Pack Bundle (Packs 1-4, $97)", href: "https://www.jvzoo.com/affiliates/info/453431" },
+];
 
 // Target for the Section 9 free-sample button. The free sample article link is
 // NOT known yet. TODO: replace "#" with the free sample article URL once the
@@ -343,23 +352,33 @@ function AffiliatesPage() {
             10. Current PLR Product Categories
           </h2>
           <p className="mt-6 text-base leading-relaxed text-gray-600 sm:text-lg">
-            The library covers seven health and wellness topics, each available
-            as a $47 pack:
+            Nine products are live and ready to promote: 8 packs at $47 each
+            plus the 4-pack bundle at $97.
           </p>
-          <ol className="mt-6 list-decimal space-y-3 pl-5 text-sm text-gray-600 sm:text-base">
-            {packCategories.map((item) => (
-              <li key={item}>
-                <strong className="font-semibold text-gray-900">{item}</strong>
+          <ul className="mt-6 space-y-3 text-sm text-gray-600 sm:text-base">
+            {AFFILIATE_PRODUCTS.map((item) => (
+              <li
+                key={item.name}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gray-100 bg-white px-4 py-3"
+              >
+                <strong className="font-semibold text-gray-900">{item.name}</strong>
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-emerald-600 underline underline-offset-2 hover:text-emerald-700"
+                >
+                  View offer & apply &rarr;
+                </a>
               </li>
             ))}
-          </ol>
+          </ul>
           <p className="mt-6 text-base leading-relaxed text-gray-600 sm:text-lg">
-            Packs 1–4 are also available together as a{" "}
+            Every product earns you 50% commission, and JVZoo{" "}
             <strong className="font-semibold text-gray-900">
-              $97 4-pack bundle — roughly 300,000 words
+              auto-approves applications
             </strong>{" "}
-            of long-form content covering nutrition, supplements, fitness, and
-            sleep.
+            — apply and start promoting right away.
           </p>
         </div>
       </section>
@@ -445,9 +464,9 @@ function AffiliatesPage() {
           </p>
           <ol className="mx-auto mt-6 max-w-xl list-decimal space-y-3 pl-5 text-left text-sm text-emerald-100 sm:text-base">
             <li>
-              <strong className="font-semibold text-white">Apply</strong> — your
-              application is personally reviewed and approved before you start
-              promoting.
+                <strong className="font-semibold text-white">Apply</strong> — JVZoo
+                auto-approves applications, so you can start promoting right
+                away.
             </li>
             <li>
               <strong className="font-semibold text-white">
@@ -552,8 +571,8 @@ const commissionStructure = [
     body: " A visitor who clicks your link has 90 days to buy, and the sale still counts as yours.",
   },
   {
-    title: "Manual review and approval.",
-    body: " Every affiliate applies and is personally reviewed and approved before they can promote. It's a quality program built with curated partners — which protects your audience and your reputation.",
+    title: "Instant approval.",
+    body: " JVZoo auto-approves affiliate applications — there's no review queue. The done-for-you promo kit and free sample are the quality gate: you get everything you need to promote confidently from day one.",
   },
 ];
 
@@ -582,21 +601,13 @@ const promoKit = [
   "A suggested promotional calendar",
 ];
 
-const packCategories = [
-  "Nutrition & Everyday Wellness",
-  "Supplements & Nutritional Support",
-  "Fitness & Exercise",
-  "Sleep & Recovery",
-  "Stress Management",
-  "Healthy Aging",
-  "Natural & Holistic Wellness",
-];
+
 
 const faqs = [
   {
     question: "How do I join?",
     answer:
-      "Apply through the button below. Every application is personally reviewed and approved before you start promoting, so you know each partner is a good match — and your audience only ever hears about a quality product.",
+      "Apply through the button below — JVZoo auto-approves applications, so there's no review queue. Grab your 90-day affiliate link and the done-for-you promo kit and you can start promoting the same day.",
   },
   {
     question: "What do I earn?",
@@ -633,7 +644,7 @@ const faqs = [
 const terms = [
   {
     title: "Commission terms.",
-    body: " Qualifying pack sales earn 50% commission; referred members earn 30% recurring commission while they remain active. Cookie duration is 90 days. Each affiliate is manually reviewed and approved before promoting. Prices and commission structures may change — always confirm current terms before you promote.",
+    body: " Qualifying pack sales earn 50% commission; referred members earn 30% recurring commission while they remain active. Cookie duration is 90 days. JVZoo auto-approves affiliate applications. Prices and commission structures may change — always confirm current terms before you promote.",
   },
   {
     title: "No income guarantees.",
