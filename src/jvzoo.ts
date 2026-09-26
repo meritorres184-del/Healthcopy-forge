@@ -126,7 +126,7 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "Brain Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand",
   ),
   "gut-health": jvzooProduct(
-    NOT_LISTED_YET,
+    "454695",
     "Gut Health for Beginners — PLR Ebook, Ready to Rebrand",
   ),
   "healthy-bones": jvzooProduct(
