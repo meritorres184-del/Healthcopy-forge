@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readWithRetry } from "../db";
 import { ContentUnavailable } from "../components/ContentUnavailable";
+import { packCover } from "../lib/packCovers";
 
 // Read all packs so we can resolve the requested slug server-side.
 const getPacks = createServerFn({ method: "GET" }).handler(async () => {
@@ -20,23 +21,10 @@ const getPacks = createServerFn({ method: "GET" }).handler(async () => {
     category: r.category,
     comingSoon: r.coming_soon as boolean,
     includes: r.includes as string[],
-    cover: `/covers/pack-${slugToPackNumber(r.slug)}.jpg`,
+    cover: packCover(r.slug),
   }));
 });
 
-function slugToPackNumber(slug: string): string {
-  const map: Record<string, string> = {
-    "nutrition-everyday-wellness": "1-1",
-    "supplements-nutritional-support": "2-1",
-    "fitness-exercise": "3-1",
-    "sleep-recovery": "4-1",
-    "stress-management-mind-body-wellness": "5-1",
-    "healthy-aging-lifestyle": "6-1",
-    "natural-holistic-wellness": "7",
-    "product-reviews-buying-guides": "8",
-  };
-  return map[slug] ?? "1-1";
-}
 
 export const Route = createFileRoute("/checkout/$slug")({
   loader: async ({ params }) => {
@@ -97,13 +85,15 @@ function CheckoutPage() {
           ← Back to packs
         </a>
         <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm sm:p-10">
-          <div className="mb-6 flex justify-center">
-            <img
-              src={pack.cover}
-              alt={`${pack.title} bookcover`}
-              className="h-64 w-auto rounded-lg object-contain shadow-sm"
-            />
-          </div>
+          {pack.cover ? (
+            <div className="mb-6 flex justify-center">
+              <img
+                src={pack.cover}
+                alt={`${pack.title} bookcover`}
+                className="h-64 w-auto rounded-lg object-contain shadow-sm"
+              />
+            </div>
+          ) : null}
           <span className="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
             {pack.category}
           </span>

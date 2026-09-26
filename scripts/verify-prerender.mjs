@@ -37,12 +37,46 @@ const PACK_SLUGS = [
   "healthy-aging-lifestyle",
   "natural-holistic-wellness",
   "product-reviews-buying-guides",
+  "protein-shakes-protein-nutrition",
+  "intermittent-fasting-time-restricted-eating",
+  "health-coaching-functional-nutrition-glp-1-support",
+  "functional-nutrition-glp-1-adaptation",
+  "womens-longevity-biology-specific-care",
 ];
 
-// Sales URLs that must be FULL pages with a working buy path. 15 KB is the floor
-// the team holds the live pages to; the real pages run 16.6-57 KB.
+// Sales URLs that must be FULL pages. 15 KB is the floor the team holds the live
+// pages to; the real pages run 16.6-57 KB.
 const SALES = ["/packs", "/library", ...PACK_SLUGS.map((s) => "/library/" + s)];
 const SALES_MIN_BYTES = 15000;
+
+// Which packs have a JVZoo listing, read from src/jvzoo.ts (the same source the
+// buy blocks are rendered from, so this can never drift). Needed here because
+// the buy-path requirement below is per page.
+//
+// A pack whose listing does not exist yet (packs 9-13 until the owner sends the
+// product IDs) must NOT be forced to carry a buy link: its page renders the
+// price and the "available for instant download" state instead. The moment an
+// ID is pasted into src/jvzoo.ts, that pack is back under the full check — see
+// wantsBuy() and the negative check in the loop.
+const jvzooSource = readFileSync(join(ROOT, "src", "jvzoo.ts"), "utf8");
+const idBySlug = new Map(
+  [...jvzooSource.matchAll(/^\s*"([a-z0-9-]+)":\s*jvzooProduct\(\s*"(\d+)"/gm)].map(
+    (m) => [m[1], m[2]],
+  ),
+);
+// /packs and /library always carry a working buy path (eight live packs + the
+// Packs 1-4 bundle). A /library/<slug> page is held to that only when the pack
+// has a live listing.
+function wantsBuy(path) {
+  if (path === "/packs" || path === "/library") return true;
+  const match = /^\/library\/(.+)$/.exec(path);
+  return match ? idBySlug.has(match[1]) : false;
+}
+// A pack page with no listing must not ship a half-built buy block either.
+function packSlugOf(path) {
+  const match = /^\/library\/(.+)$/.exec(path);
+  return match ? match[1] : null;
+}
 
 // Every other route the site pre-renders: it must exist and be a finished document.
 const OTHER = [
@@ -74,7 +108,7 @@ const failures = [];
 const rows = [];
 
 for (const [path, min, wantBuy] of [
-  ...SALES.map((p) => [p, SALES_MIN_BYTES, true]),
+  ...SALES.map((p) => [p, SALES_MIN_BYTES, wantsBuy(p)]),
   ...OTHER.map((p) => [p, OTHER_MIN_BYTES, false]),
 ]) {
   const f = file(path);
@@ -91,6 +125,15 @@ for (const [path, min, wantBuy] of [
     if (wantBuy) {
       for (const marker of BUY_MARKERS) {
         if (!html.includes(marker)) problems.push(`missing ${marker}`);
+      }
+    } else {
+      const slug = packSlugOf(path);
+      if (slug !== null && !idBySlug.has(slug)) {
+        for (const marker of BUY_MARKERS) {
+          if (html.includes(marker)) {
+            problems.push(`no JVZoo listing for this pack but the page ships ${marker}`);
+          }
+        }
       }
     }
   }
@@ -111,12 +154,6 @@ for (const [path, min, wantBuy] of [
 // button image inside the anchor, AND on the 1x1 tracking pixel. The product
 // IDs are read from src/jvzoo.ts, so this gate can never drift from the code
 // that renders the buttons.
-const jvzooSource = readFileSync(join(ROOT, "src", "jvzoo.ts"), "utf8");
-const idBySlug = new Map(
-  [...jvzooSource.matchAll(/^\s*"([a-z0-9-]+)":\s*jvzooProduct\(\s*"(\d+)"/gm)].map(
-    (m) => [m[1], m[2]],
-  ),
-);
 const bundleId = (jvzooSource.match(/bundleBuy\s*=\s*jvzooProduct\(\s*"(\d+)"/) || [])[1];
 const allIds = [...new Set([...idBySlug.values(), ...(bundleId ? [bundleId] : [])])];
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

@@ -3,7 +3,7 @@ import { getLibraryPacks } from "../lib/packs";
 import { ContentUnavailable } from "../components/ContentUnavailable";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 import { JvzooBuyButton } from "../components/JvzooBuyButton";
-import { jvzooProducts } from "../jvzoo";
+import { liveJvzooProduct } from "../jvzoo";
 
 export const Route = createFileRoute("/library/")({
   head: () => ({
@@ -67,7 +67,7 @@ function LibraryPage() {
   // carries the same buy button + tracking pixel + retailer disclaimer as every
   // other pack page: a visitor (or a reviewer) landing here always has a working
   // buy path, and a page that sells is never without the required disclaimer.
-  const buyable = packs.filter((pack) => jvzooProducts[pack.slug]);
+  const buyable = packs.filter((pack) => liveJvzooProduct(pack.slug));
 
   return (
     <main>
@@ -145,7 +145,8 @@ function LibraryPage() {
             </div>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {buyable.map((pack) => {
-                const j = jvzooProducts[pack.slug];
+                const j = liveJvzooProduct(pack.slug);
+                if (!j) return null;
                 return (
                   <div
                     key={pack.slug}

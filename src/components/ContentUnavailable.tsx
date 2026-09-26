@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { jvzooProducts } from "../jvzoo";
+import { liveJvzooProduct } from "../jvzoo";
 import { JvzooBuyButton } from "./JvzooBuyButton";
 import { JvzooDisclaimer } from "./JvzooDisclaimer";
 
@@ -36,7 +36,7 @@ interface Props {
 }
 
 export function ContentUnavailable({ heading, slug, children }: Props) {
-  const buy = slug ? jvzooProducts[slug] : undefined;
+  const buy = slug ? liveJvzooProduct(slug) : undefined;
   return (
     <>
       <section className="bg-gradient-to-b from-emerald-50 to-white px-4 py-16 sm:px-6 sm:py-20">

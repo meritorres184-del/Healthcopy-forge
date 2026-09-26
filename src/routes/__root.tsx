@@ -8,7 +8,7 @@ import {
 import type { ReactNode } from "react";
 
 import appCss from "~/styles/app.css?url";
-import { jvzooProducts } from "../jvzoo";
+import { liveJvzooProduct } from "../jvzoo";
 import { JvzooBuyButton } from "../components/JvzooBuyButton";
 import { UNAVAILABLE_MESSAGE } from "../components/ContentUnavailable";
 
@@ -149,7 +149,7 @@ function RootErrorComponent({
   const slug = pathname.startsWith("/library/")
     ? pathname.slice("/library/".length).replace(/\/+$/, "")
     : "";
-  const buy = slug ? jvzooProducts[slug] : undefined;
+  const buy = slug ? liveJvzooProduct(slug) : undefined;
 
   return (
     <main className="px-4 py-16 sm:px-6 sm:py-20">

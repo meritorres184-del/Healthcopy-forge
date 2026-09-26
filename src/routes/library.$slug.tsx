@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { readWithRetry } from "../db";
-import { jvzooProducts } from "../jvzoo";
+import { jvzooProducts, liveJvzooProduct } from "../jvzoo";
+import { packCover } from "../lib/packCovers";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 import { JvzooBuyButton } from "../components/JvzooBuyButton";
 import {
@@ -77,6 +78,63 @@ export const Route = createFileRoute("/library/$slug")({
   component: PackDetailPage,
 });
 
+// The owner's own description text, rendered verbatim.
+//
+// Her pack descriptions are line-based: most lines are a paragraph, and lines
+// starting with "* " are list items (pack documents run to 100+ lines). Rendering
+// each line as its own block keeps her copy — and her bullets — exactly as she
+// wrote it instead of collapsing the whole description into one run-on
+// paragraph. Packs 1-8 have a single-line description, which renders as the same
+// paragraph they have today.
+type DescriptionBlock =
+  | { kind: "p"; text: string }
+  | { kind: "ul"; items: string[] };
+function toDescriptionBlocks(text: string): DescriptionBlock[] {
+  const lines = text
+    .replace(/^\uFEFF/, "")
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+  const blocks: DescriptionBlock[] = [];
+  for (const line of lines) {
+    if (line.startsWith("* ")) {
+      const last = blocks[blocks.length - 1];
+      const item = line.slice(2).trim();
+      if (last && last.kind === "ul") last.items.push(item);
+      else blocks.push({ kind: "ul", items: [item] });
+    } else {
+      blocks.push({ kind: "p", text: line });
+    }
+  }
+  return blocks;
+}
+function PackDescription({ text }: { text: string }) {
+  const blocks = toDescriptionBlocks(text);
+  return (
+    <div className="mt-4 space-y-3">
+      {blocks.map((block, index) =>
+        block.kind === "p" ? (
+          <p
+            key={index}
+            className="text-lg leading-relaxed text-gray-600"
+          >
+            {block.text}
+          </p>
+        ) : (
+          <ul
+            key={index}
+            className="ml-5 list-disc space-y-1.5 text-base leading-relaxed text-gray-600"
+          >
+            {block.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        ),
+      )}
+    </div>
+  );
+}
 function PackDetailPage() {
   const pack = Route.useLoaderData<PackView | null>();
 
@@ -109,6 +167,10 @@ function PackDetailPage() {
     );
   }
 
+  // Bookcover (from the one cover map) and the JVZoo buy block for this
+  // pack, if its listing exists yet (see liveJvzooProduct).
+  const cover = packCover(pack.slug);
+  const buy = liveJvzooProduct(pack.slug);
   return (
     <main>
       {/* Header */}
@@ -128,9 +190,14 @@ function PackDetailPage() {
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
             {pack.title}
           </h1>
-          <p className="mt-4 text-lg leading-relaxed text-gray-600">
-            {pack.description}
-          </p>
+          <PackDescription text={pack.description} />
+          {cover ? (
+            <img
+              src={cover}
+              alt={`${pack.title} bookcover`}
+              className="mx-auto mt-10 h-80 w-auto rounded-2xl shadow-xl"
+            />
+          ) : null}
         </div>
       </section>
 
@@ -208,28 +275,57 @@ function PackDetailPage() {
         </div>
       </section>
 
-      {/* JVZoo purchase */}
-      {(() => {
-        const j = jvzooProducts[pack.slug];
-        return j ? (
-          <section className="bg-white px-4 py-14 sm:px-6">
-            <div className="mx-auto max-w-xl text-center">
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                Get Instant Access
-              </h2>
-              <p className="mt-3 text-sm text-gray-600">
-                Buy securely through JVZoo — instant download after checkout.
-              </p>
-              <div className="mt-6 flex flex-col items-center gap-3">
-                <JvzooBuyButton
-                  product={j}
-                  imgClassName="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
-                />
-              </div>
+      {/* JVZoo purchase — rendered only for a pack whose JVZoo listing
+          exists yet (see liveJvzooProduct). A pack whose listing is not
+          live yet shows its price and the instant-download state instead of
+          a buy block: never a dead href, never a button that goes nowhere.
+          Paste the product ID in src/jvzoo.ts to switch the pack over. */}
+      {buy ? (
+        <section className="bg-white px-4 py-14 sm:px-6">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+              Get Instant Access
+            </h2>
+            <p className="mt-3 text-sm text-gray-600">
+              Buy securely through JVZoo — instant download after checkout.
+            </p>
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <JvzooBuyButton
+                product={buy}
+                imgClassName="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
+              />
             </div>
-          </section>
-        ) : null;
-      })()}
+          </div>
+        </section>
+      ) : (
+        <section className="bg-white px-4 py-14 sm:px-6">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+              Get Instant Access
+            </h2>
+            <p className="mt-4 text-4xl font-extrabold tracking-tight text-gray-900">
+              ${pack.price}
+              <span className="ml-2 align-middle text-base font-medium text-gray-500">
+                one-time payment
+              </span>
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-gray-600">
+              Instant download of one ZIP containing all files — the
+              in-depth article, the lead magnet, the social media posts, the
+              email swipes, the PLR license and the medical disclaimer.
+            </p>
+            <p className="mt-6 rounded-xl border border-emerald-100 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-800">
+              Available for instant download
+            </p>
+            <a
+              href="/support"
+              className="mt-5 inline-flex items-center text-sm font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
+            >
+              Questions about this pack? Contact support →
+            </a>
+          </div>
+        </section>
+      )}
       {/* JVZoo retailer disclosure — required on every product sales page */}
       {jvzooProducts[pack.slug] ? <JvzooDisclaimer /> : null}
     </main>

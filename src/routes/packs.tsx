@@ -4,7 +4,8 @@ import { readFile } from "node:fs/promises";
 import { readWithRetry } from "../db";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 import { JvzooBuyButton } from "../components/JvzooBuyButton";
-import { bundleBuy, jvzooProducts } from "../jvzoo";
+import { bundleBuy, jvzooProducts, liveJvzooProduct } from "../jvzoo";
+import { packCover } from "../lib/packCovers";
 import { UNAVAILABLE_MESSAGE } from "../components/ContentUnavailable";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
@@ -35,24 +36,10 @@ const getPacks = createServerFn({ method: "GET" }).handler(async () => {
     category: r.category,
     comingSoon: r.coming_soon as boolean,
     includes: r.includes as string[],
-    cover: `/covers/pack-${slugToPackNumber(r.slug)}.jpg`,
+    cover: packCover(r.slug),
   }));
 });
 
-// Map a pack slug back to its 1–7 cover image file.
-function slugToPackNumber(slug: string): string {
-  const map: Record<string, string> = {
-    "nutrition-everyday-wellness": "1-1",
-    "supplements-nutritional-support": "2-1",
-    "fitness-exercise": "3-1",
-    "sleep-recovery": "4-1",
-    "stress-management-mind-body-wellness": "5-1",
-    "healthy-aging-lifestyle": "6-1",
-    "natural-holistic-wellness": "7",
-    "product-reviews-buying-guides": "8",
-  };
-  return map[slug] ?? "1-1";
-}
 
 export const Route = createFileRoute("/packs")({
   head: () => ({
@@ -199,9 +186,12 @@ function packNameFromAlt(alt: string): string {
 }
 
 function FallbackPackButtons() {
+  // Only products with a live listing: an empty ID would render a broken
+  // button image and an empty href.
+  const live = Object.entries(jvzooProducts).filter(([, j]) => j.id);
   return (
     <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {Object.entries(jvzooProducts).map(([slug, j]) => (
+      {live.map(([slug, j]) => (
         <div
           key={slug}
           className="flex flex-col items-center gap-3 rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm"
@@ -223,6 +213,7 @@ function FallbackPackButtons() {
 // --- Pack Card Component ---
 
 function PackCard({ pack }: { pack: Pack }) {
+  const buy = liveJvzooProduct(pack.slug);
   return (
     <div className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg hover:border-emerald-100">
       {/* Cover */}
@@ -297,12 +288,21 @@ function PackCard({ pack }: { pack: Pack }) {
             <span className="rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 cursor-not-allowed">
               Coming Soon
             </span>
-          ) : jvzooProducts[pack.slug] ? (
+          ) : buy ? (
             <JvzooBuyButton
-              product={jvzooProducts[pack.slug]}
+              product={buy}
               imgClassName="h-11 w-auto rounded-lg shadow-sm transition-transform hover:scale-105"
             />
-          ) : null}
+          ) : (
+            // Listing not created yet: no buy block, but the card still
+            // leads to the pack's own page.
+            <a
+              href={`/library/${pack.slug}`}
+              className="rounded-lg border border-emerald-200 bg-white px-4 py-2 text-xs font-semibold text-emerald-700 transition-all hover:bg-emerald-50"
+            >
+              View pack
+            </a>
+          )}
         </div>
         <JvzooDisclaimer compact />
       </div>
@@ -320,5 +320,5 @@ interface Pack {
   category: string;
   comingSoon: boolean;
   includes: string[];
-  cover: string;
+  cover?: string;
 }
