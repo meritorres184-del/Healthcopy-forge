@@ -154,7 +154,7 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "Joint Friendly Fitness — PLR Ebook, Ready to Rebrand",
   ),
   "posture": jvzooProduct(
-    NOT_LISTED_YET,
+    "454749",
     "Posture and Everyday Movement — PLR Ebook, Ready to Rebrand",
   ),
   "protein-aging": jvzooProduct(
