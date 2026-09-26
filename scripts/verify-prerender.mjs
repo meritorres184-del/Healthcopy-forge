@@ -91,7 +91,7 @@ const idBySlug = new Map(
 // ebook (/ebooks/<slug>). Both render from the same slug-keyed map in src/jvzoo.ts.
 const PRODUCT_PATH = /^\/(?:library|ebooks)\/(.+)$/;
 
-// /packs and /library always carry a working buy path (eleven live packs + the
+// /packs and /library always carry a working buy path (twelve live packs + the
 // Packs 1-4 bundle). A product page (/library/<pack>, /ebooks/<ebook>) is held to
 // that only when that product has a live listing. /ebooks is the ebook hub: a page
 // of links to the ebook sales pages, not a buy page.
@@ -204,16 +204,16 @@ function canonicalBuyProblems(html, id) {
   if (html.includes(`/0/${id}/1`)) problems.push(`non-canonical /1 image for product ${id}`);
   return problems;
 }
-if (allIds.length !== 12) {
+if (allIds.length !== 13) {
   failures.push([
     "src/jvzoo.ts",
-    [`expected 12 product IDs (11 packs + 1 bundle), read ${allIds.length}`],
+    [`expected 13 product IDs (12 packs + 1 bundle), read ${allIds.length}`],
   ]);
 }
 const buyPages = [
-  // /packs shows all eleven live packs plus the Packs 1-4 bundle.
+  // /packs shows all twelve live packs plus the Packs 1-4 bundle.
   ["/packs", allIds],
-  // /library shows the eleven live pack buy buttons; the bundle is only sold on /packs.
+  // /library shows the twelve live pack buy buttons; the bundle is only sold on /packs.
   ["/library", packIds],
   ...PACK_SLUGS.map((s) => [
     "/library/" + s,
