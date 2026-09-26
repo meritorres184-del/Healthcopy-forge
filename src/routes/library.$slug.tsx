@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { readWithRetry } from "../db";
 import { jvzooProducts, liveJvzooProduct } from "../jvzoo";
 import { packCover } from "../lib/packCovers";
+import { ProductDescription } from "../components/ProductDescription";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 import { JvzooBuyButton } from "../components/JvzooBuyButton";
 import {
@@ -78,63 +79,10 @@ export const Route = createFileRoute("/library/$slug")({
   component: PackDetailPage,
 });
 
-// The owner's own description text, rendered verbatim.
-//
-// Her pack descriptions are line-based: most lines are a paragraph, and lines
-// starting with "* " are list items (pack documents run to 100+ lines). Rendering
-// each line as its own block keeps her copy — and her bullets — exactly as she
-// wrote it instead of collapsing the whole description into one run-on
-// paragraph. Packs 1-8 have a single-line description, which renders as the same
-// paragraph they have today.
-type DescriptionBlock =
-  | { kind: "p"; text: string }
-  | { kind: "ul"; items: string[] };
-function toDescriptionBlocks(text: string): DescriptionBlock[] {
-  const lines = text
-    .replace(/^\uFEFF/, "")
-    .replace(/\r\n?/g, "\n")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
-  const blocks: DescriptionBlock[] = [];
-  for (const line of lines) {
-    if (line.startsWith("* ")) {
-      const last = blocks[blocks.length - 1];
-      const item = line.slice(2).trim();
-      if (last && last.kind === "ul") last.items.push(item);
-      else blocks.push({ kind: "ul", items: [item] });
-    } else {
-      blocks.push({ kind: "p", text: line });
-    }
-  }
-  return blocks;
-}
-function PackDescription({ text }: { text: string }) {
-  const blocks = toDescriptionBlocks(text);
-  return (
-    <div className="mt-4 space-y-3">
-      {blocks.map((block, index) =>
-        block.kind === "p" ? (
-          <p
-            key={index}
-            className="text-lg leading-relaxed text-gray-600"
-          >
-            {block.text}
-          </p>
-        ) : (
-          <ul
-            key={index}
-            className="ml-5 list-disc space-y-1.5 text-base leading-relaxed text-gray-600"
-          >
-            {block.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        ),
-      )}
-    </div>
-  );
-}
+// The owner's own pack description is rendered by the shared ProductDescription
+// component (src/components/ProductDescription.tsx) — the same renderer the ebook
+// sales pages use, so both product lines interpret her line-based copy (paragraphs,
+// "* " bullets, blank-line breaks) identically instead of each keeping its own copy.
 function PackDetailPage() {
   const pack = Route.useLoaderData<PackView | null>();
 
@@ -190,7 +138,7 @@ function PackDetailPage() {
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
             {pack.title}
           </h1>
-          <PackDescription text={pack.description} />
+          <ProductDescription text={pack.description} />
           {cover ? (
             <img
               src={cover}
