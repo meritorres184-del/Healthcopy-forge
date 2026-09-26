@@ -118,7 +118,7 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
   // buy block for an ebook only once its ID is present (and forbids any JVZoo
   // markup on an ebook page whose ID is still empty).
   "balanced-nutrition": jvzooProduct(
-    NOT_LISTED_YET,
+    "454681",
     "Balanced Nutrition Made Simple — PLR Ebook, Ready to Rebrand",
   ),
   "brain-habits": jvzooProduct(
