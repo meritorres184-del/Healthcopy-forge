@@ -94,7 +94,7 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "Article Pack 10 Intermittent Fasting & Time-Restricted Eating",
   ),
   "health-coaching-functional-nutrition-glp-1-support": jvzooProduct(
-    NOT_LISTED_YET,
+    "454673",
     "Article Pack 11 Health Coaching, Functional Nutrition & GLP-1 Support in 2026",
   ),
   "functional-nutrition-glp-1-adaptation": jvzooProduct(
