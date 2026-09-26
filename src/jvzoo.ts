@@ -102,7 +102,7 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "Article Pack 12 Functional Nutrition, GLP-1 & Adaptation in 2026",
   ),
   "womens-longevity-biology-specific-care": jvzooProduct(
-    NOT_LISTED_YET,
+    "454679",
     "Article Pack 13 Women's Longevity & Biology-Specific Care",
   ),
 
