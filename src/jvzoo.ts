@@ -75,17 +75,18 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "Article Pack 2 Supplements & Nutritional Support",
   ),
   // ---------------------------------------------------------------------------
-  // Packs 9–13 — listings not created yet (owner creates them).
+  // Packs 9–13 — wired as the owner sends listing IDs. Pack 9 live (454667,
+  // owner 9/26); 10–13 still awaiting their JVZoo product IDs.
   //
   // This is the ONE place to wire them up: replace NOT_LISTED_YET with the
   // JVZoo product ID once the owner sends it, e.g.
-  //   "protein-shakes-protein-nutrition": jvzooProduct("452460", "Article Pack 9 Protein Shakes & Protein Nutrition"),
+  //   "intermittent-fasting-time-restricted-eating": jvzooProduct("452460", "Article Pack 10 Intermittent Fasting & Time-Restricted Eating"),
   // then republish. While an ID is missing, that pack's page renders the price
   // and the "instant download" state instead of a buy block — never a dead link
   // — and scripts/verify-prerender.mjs requires the canonical buy block for a
   // pack only once its ID is present.
   "protein-shakes-protein-nutrition": jvzooProduct(
-    NOT_LISTED_YET,
+    "454667",
     "Article Pack 9 Protein Shakes & Protein Nutrition",
   ),
   "intermittent-fasting-time-restricted-eating": jvzooProduct(
