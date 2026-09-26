@@ -274,8 +274,9 @@ function PackDetailPage() {
           </div>
         </section>
       )}
-      {/* JVZoo retailer disclosure — required on every product sales page */}
-      {jvzooProducts[pack.slug] ? <JvzooDisclaimer /> : null}
+      {/* JVZoo retailer disclosure — required on every product sales page,
+          listed or not (compliance reviews the live URL before launch) */}
+      <JvzooDisclaimer />
     </main>
   );
 }

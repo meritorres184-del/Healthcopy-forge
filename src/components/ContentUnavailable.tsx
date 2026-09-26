@@ -85,7 +85,7 @@ export function ContentUnavailable({ heading, slug, children }: Props) {
           {children}
         </div>
       </section>
-      {buy ? <JvzooDisclaimer /> : null}
+      <JvzooDisclaimer />
     </>
   );
 }
