@@ -90,7 +90,7 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "Article Pack 9 Protein Shakes & Protein Nutrition",
   ),
   "intermittent-fasting-time-restricted-eating": jvzooProduct(
-    NOT_LISTED_YET,
+    "454669",
     "Article Pack 10 Intermittent Fasting & Time-Restricted Eating",
   ),
   "health-coaching-functional-nutrition-glp-1-support": jvzooProduct(
