@@ -33,6 +33,11 @@ const PACK_SLUGS = [
   "healthy-aging-lifestyle",
   "natural-holistic-wellness",
   "product-reviews-buying-guides",
+  "protein-shakes-protein-nutrition",
+  "intermittent-fasting-time-restricted-eating",
+  "health-coaching-functional-nutrition-glp-1-support",
+  "functional-nutrition-glp-1-adaptation",
+  "womens-longevity-biology-specific-care",
 ];
 const TIER_SLUGS = ["essentials", "pro"];
 

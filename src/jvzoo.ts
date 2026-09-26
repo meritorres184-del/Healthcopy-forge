@@ -33,6 +33,11 @@ function jvzooProduct(id: string, alt: string): JvzooProduct {
   };
 }
 
+// A pack whose JVZoo listing does not exist yet. Kept as a named constant (not a
+// literal "") so the ID reader in scripts/verify-prerender.mjs — which matches
+// digit IDs only — can never mistake a not-yet-listed pack for a live one.
+const NOT_LISTED_YET = "";
+
 // Live JVZoo listings, keyed by site pack slug.
 export const jvzooProducts: Record<string, JvzooProduct> = {
   // Pack 1 — Nutrition & Everyday Wellness
@@ -69,7 +74,47 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "452431",
     "Article Pack 2 Supplements & Nutritional Support",
   ),
+  // ---------------------------------------------------------------------------
+  // Packs 9–13 — listings not created yet (owner creates them).
+  //
+  // This is the ONE place to wire them up: replace NOT_LISTED_YET with the
+  // JVZoo product ID once the owner sends it, e.g.
+  //   "protein-shakes-protein-nutrition": jvzooProduct("452460", "Article Pack 9 Protein Shakes & Protein Nutrition"),
+  // then republish. While an ID is missing, that pack's page renders the price
+  // and the "instant download" state instead of a buy block — never a dead link
+  // — and scripts/verify-prerender.mjs requires the canonical buy block for a
+  // pack only once its ID is present.
+  "protein-shakes-protein-nutrition": jvzooProduct(
+    NOT_LISTED_YET,
+    "Article Pack 9 Protein Shakes & Protein Nutrition",
+  ),
+  "intermittent-fasting-time-restricted-eating": jvzooProduct(
+    NOT_LISTED_YET,
+    "Article Pack 10 Intermittent Fasting & Time-Restricted Eating",
+  ),
+  "health-coaching-functional-nutrition-glp-1-support": jvzooProduct(
+    NOT_LISTED_YET,
+    "Article Pack 11 Health Coaching, Functional Nutrition & GLP-1 Support in 2026",
+  ),
+  "functional-nutrition-glp-1-adaptation": jvzooProduct(
+    NOT_LISTED_YET,
+    "Article Pack 12 Functional Nutrition, GLP-1 & Adaptation in 2026",
+  ),
+  "womens-longevity-biology-specific-care": jvzooProduct(
+    NOT_LISTED_YET,
+    "Article Pack 13 Women's Longevity & Biology-Specific Care",
+  ),
 };
+
+/**
+ * The buy block for a slug, or `undefined` when that pack has no live JVZoo
+ * listing yet. Render every buy button through this: it is what keeps a pack
+ * with an empty ID from emitting a broken href / a blank button image.
+ */
+export function liveJvzooProduct(slug: string): JvzooProduct | undefined {
+  const product = jvzooProducts[slug];
+  return product && product.id ? product : undefined;
+}
 
 // Fixed Packs 1–4 bundle (JVZoo product 453431) — same canonical shape.
 export const bundleBuy = jvzooProduct(
