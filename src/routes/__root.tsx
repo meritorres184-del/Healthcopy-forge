@@ -46,6 +46,11 @@ const ROUTE_SEO: Record<string, { title: string; description: string }> = {
     description:
       "Get new SEO-written health & wellness PLR monthly: articles, ebooks, courses, journals & trackers. Essentials $47, Pro $97.",
   },
+  "/ebooks": {
+    title: "Ready-to-Rebrand PLR Ebooks: Health & Wellness",
+    description:
+      "11 ready-to-rebrand health & wellness PLR ebooks: editable Word files with a PLR license, a medical disclaimer and a cover image. $27 each, instant download.",
+  },
   "/affiliates": {
     title: "Affiliates: Earn 50% Promoting Health & Wellness PLR",
     description:
@@ -241,7 +246,10 @@ function RootDocument({ children }: { children: ReactNode }) {
 
 function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isSalesPage = pathname === "/packs" || pathname.startsWith("/library/");
+  const isSalesPage =
+    pathname === "/packs" ||
+    pathname.startsWith("/library/") ||
+    pathname.startsWith("/ebooks");
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
@@ -277,7 +285,10 @@ function Header() {
 
 function Footer() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isSalesPage = pathname === "/packs" || pathname.startsWith("/library/");
+  const isSalesPage =
+    pathname === "/packs" ||
+    pathname.startsWith("/library/") ||
+    pathname.startsWith("/ebooks");
   return (
     <footer className="border-t border-gray-100 bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -314,6 +325,11 @@ function Footer() {
               <li>
                 <a href="/library" className="hover:text-emerald-600 transition-colors">
                   Library
+                </a>
+              </li>
+              <li>
+                <a href="/ebooks" className="hover:text-emerald-600 transition-colors">
+                  Ebooks
                 </a>
               </li>
               <li>

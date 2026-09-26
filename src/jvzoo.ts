@@ -104,6 +104,62 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     NOT_LISTED_YET,
     "Article Pack 13 Women's Longevity & Biology-Specific Care",
   ),
+
+  // ---------------------------------------------------------------------------
+  // Ebooks E1-E11 — the standalone PLR ebook line, $27 each (src/lib/ebooks.ts).
+  //
+  // Same rule as the packs above: this is the ONE place to wire them up. Replace
+  // NOT_LISTED_YET with the JVZoo product ID once the owner sends it, e.g.
+  //   "balanced-nutrition": jvzooProduct("452470", "Balanced Nutrition Made Simple — PLR Ebook, Ready to Rebrand"),
+  // then republish. While an ID is missing, that ebook's page (/ebooks/<slug>)
+  // renders its price and the "instant download" state instead of a buy block —
+  // never a dead link — and scripts/verify-prerender.mjs requires the canonical
+  // buy block for an ebook only once its ID is present (and forbids any JVZoo
+  // markup on an ebook page whose ID is still empty).
+  "balanced-nutrition": jvzooProduct(
+    NOT_LISTED_YET,
+    "Balanced Nutrition Made Simple — PLR Ebook, Ready to Rebrand",
+  ),
+  "brain-habits": jvzooProduct(
+    NOT_LISTED_YET,
+    "Brain Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand",
+  ),
+  "gut-health": jvzooProduct(
+    NOT_LISTED_YET,
+    "Gut Health for Beginners — PLR Ebook, Ready to Rebrand",
+  ),
+  "healthy-bones": jvzooProduct(
+    NOT_LISTED_YET,
+    "Healthy Bones and Everyday Lifestyle — PLR Ebook, Ready to Rebrand",
+  ),
+  "healthy-feet": jvzooProduct(
+    NOT_LISTED_YET,
+    "Healthy Feet and Foot Care — PLR Ebook, Ready to Rebrand",
+  ),
+  "hair-scalp": jvzooProduct(
+    NOT_LISTED_YET,
+    "Healthy Hair and Scalp Wellness — PLR Ebook, Ready to Rebrand",
+  ),
+  "heart-habits": jvzooProduct(
+    NOT_LISTED_YET,
+    "Heart Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand",
+  ),
+  "hydration": jvzooProduct(
+    NOT_LISTED_YET,
+    "Hydration and Wellness — PLR Ebook, Ready to Rebrand",
+  ),
+  "joint-fitness": jvzooProduct(
+    NOT_LISTED_YET,
+    "Joint Friendly Fitness — PLR Ebook, Ready to Rebrand",
+  ),
+  "posture": jvzooProduct(
+    NOT_LISTED_YET,
+    "Posture and Everyday Movement — PLR Ebook, Ready to Rebrand",
+  ),
+  "protein-aging": jvzooProduct(
+    NOT_LISTED_YET,
+    "Protein for Healthy Aging — PLR Ebook, Ready to Rebrand",
+  ),
 };
 
 /**

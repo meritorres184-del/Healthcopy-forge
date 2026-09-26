@@ -41,6 +41,23 @@ const PACK_SLUGS = [
 ];
 const TIER_SLUGS = ["essentials", "pro"];
 
+// The 11 standalone PLR ebooks (src/lib/ebooks.ts exports EBOOK_SLUGS). One entry
+// per concrete /ebooks/<slug> sales page, so the ebook URLs the owner hands to JVZoo
+// are baked to static HTML exactly like the pack pages.
+const EBOOK_SLUGS = [
+  "balanced-nutrition",
+  "brain-habits",
+  "gut-health",
+  "healthy-bones",
+  "healthy-feet",
+  "hair-scalp",
+  "heart-habits",
+  "hydration",
+  "joint-fitness",
+  "posture",
+  "protein-aging",
+];
+
 // Static (non-dynamic) routes. `autoStaticPathsDiscovery` also picks up static
 // routes automatically, so a newly added page is covered without editing this
 // list; these are listed explicitly to keep the pre-rendered set auditable.
@@ -49,6 +66,7 @@ const STATIC_PATHS = [
   "/affiliates",
   "/disclaimer",
   "/downloads",
+  "/ebooks/",
   "/join/",
   "/library/",
   "/membership",
@@ -65,6 +83,7 @@ const STATIC_PATHS = [
 const PRERENDER_PAGES = [
   ...STATIC_PATHS.map((path) => ({ path })),
   ...PACK_SLUGS.map((slug) => ({ path: "/library/" + slug })),
+  ...EBOOK_SLUGS.map((slug) => ({ path: "/ebooks/" + slug })),
   ...PACK_SLUGS.map((slug) => ({ path: "/checkout/" + slug })),
   ...TIER_SLUGS.map((tier) => ({ path: "/join/" + tier })),
 ];
