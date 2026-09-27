@@ -61,6 +61,29 @@ const EBOOK_SLUGS = [
   "protein-aging",
 ];
 
+// JVZoo COMPLIANCE "CLEAN" SALES PAGES — /sales/<slug>, one per FLAGGED listing
+// (the five article packs + five ebooks a JVZoo reviewer rejected with "remove
+// ALL links that direct away from the sales page"). Canonical list:
+// src/lib/cleanSales.ts; kept in sync with CLEAN_SALES_SLUGS in vite.config.ts,
+// which is what actually bakes them. protein-aging (ebook 454751) is NOT here:
+// the owner is deactivating that listing as a duplicate.
+//
+// These pages map to products whose JVZoo IDs are ALREADY counted below (packs
+// 9-13 are in PACK_SLUGS; ebooks are read from src/jvzoo.ts), so this list must
+// NOT feed the "14 product IDs" count — it is only an extra page family.
+const CLEAN_SALES_SLUGS = [
+  "protein-shakes-protein-nutrition",
+  "intermittent-fasting-time-restricted-eating",
+  "health-coaching-functional-nutrition-glp-1-support",
+  "functional-nutrition-glp-1-adaptation",
+  "womens-longevity-biology-specific-care",
+  "healthy-bones",
+  "gut-health",
+  "hair-scalp",
+  "joint-fitness",
+  "hydration",
+];
+
 // Sales URLs that must be FULL pages. 15 KB is the floor the team holds the live
 // pages to; the real pages run 16.6-57 KB.
 const SALES = [
@@ -69,6 +92,7 @@ const SALES = [
   "/ebooks",
   ...PACK_SLUGS.map((s) => "/library/" + s),
   ...EBOOK_SLUGS.map((s) => "/ebooks/" + s),
+  ...CLEAN_SALES_SLUGS.map((s) => "/sales/" + s),
 ];
 const SALES_MIN_BYTES = 15000;
 
@@ -89,7 +113,11 @@ const idBySlug = new Map(
 );
 // The two product-page shapes: an article pack (/library/<slug>) and a standalone
 // ebook (/ebooks/<slug>). Both render from the same slug-keyed map in src/jvzoo.ts.
-const PRODUCT_PATH = /^\/(?:library|ebooks)\/(.+)$/;
+// `/sales/<slug>` is the JVZoo compliance clean page for the same product as its
+// `/library/<slug>` or `/ebooks/<slug>` page, so it resolves through the same
+// slug -> ID map and is held to the same buy-block requirement. It adds no new
+// product IDs: allIds below counts PACK_SLUGS + the bundle only.
+const PRODUCT_PATH = /^\/(?:library|ebooks|sales)\/(.+)$/;
 
 // /packs and /library always carry a working buy path (thirteen live packs + the
 // Packs 1-4 bundle). A product page (/library/<pack>, /ebooks/<ebook>) is held to
@@ -223,6 +251,12 @@ const buyPages = [
     "/ebooks/" + s,
     idBySlug.has(s) ? [idBySlug.get(s)] : [],
   ]),
+  // The clean pages for the ten flagged listings: each must carry the canonical
+  // buy block for its OWN product ID (the same IDs counted above — no new ones).
+  ...CLEAN_SALES_SLUGS.map((s) => [
+    "/sales/" + s,
+    idBySlug.has(s) ? [idBySlug.get(s)] : [],
+  ]),
 ];
 const buyRows = [];
 for (const [path, ids] of buyPages) {
@@ -239,6 +273,107 @@ for (const [path, ids] of buyPages) {
   }
   buyRows.push([path, ids.length, problems]);
   if (problems.length) failures.push(["buy-block " + path, problems]);
+}
+
+// --- Clean-sales-page gate (JVZoo link removal, added 2026-09-27) ---
+//
+// The reviewer requirement on the ten flagged listings, verbatim: "Please remove
+// ALL links that direct away from the sales page. You can keep the terms,
+// privacy, disclaimers, support, etc. All other links must be removed."
+//
+// So a /sales/<slug> page may carry ONLY:
+//   * its own JVZoo buy link and the button image / 1x1 pixel on i.jvzoo.com,
+//   * the four pages the reviewer allows by name: /terms, /privacy,
+//     /disclaimer, /support,
+//   * the local cover image and the site's own JS/CSS/font assets,
+//   * its self-canonical URL (fine, and it keeps the page out of a duplicate
+//     content mess — the buyer must be able to reach it, so it is not noindexed).
+//
+// This reads the raw href attributes out of the BAKED HTML (not the React tree),
+// so a link added anywhere — including inside a fallback branch, the shared
+// disclaimer component or the root layout's header/footer — fails the build
+// instead of reaching a reviewer. Every href is checked twice: it must match the
+// allowlist, and it must not match a forbidden pattern (the explicit messages
+// make a failure obvious at a glance).
+const ALLOWED_HREF = [
+  /^https:\/\/jvzoo\.com\/b\//,
+  /^https:\/\/i\.jvzoo\.com\//,
+  /^\/terms$/,
+  /^\/privacy$/,
+  /^\/disclaimer$/,
+  /^\/support$/,
+  /^\/covers\//,
+  /^\/assets\//,
+  // Font preconnects + stylesheet (bare host on the preconnect, no path).
+  /^https:\/\/fonts\.googleapis\.com(\/|$)/,
+  /^https:\/\/fonts\.gstatic\.com(\/|$)/,
+  /^https:\/\/www\.healthcopyforge\.com\/sales\//, // self-canonical
+];
+const FORBIDDEN_HREF = [
+  [/^\/$/, "link back to the site home page"],
+  [/^\/library/, "link to /library"],
+  [/^\/packs/, "link to /packs"],
+  [/^\/ebooks/, "link to /ebooks"],
+  [/^\/affiliates/, "link to /affiliates"],
+  [/^\/membership/, "link to /membership"],
+  [/^\/pricing/, "link to /pricing"],
+  [/^\/join/, "link to /join"],
+  [/^\/checkout/, "link to /checkout"],
+  [/^\/downloads/, "link to /downloads"],
+  [/^\/zips\//, "link to a /zips download"],
+  [/^mailto:/, "mailto link"],
+  [/^https?:\/\/(?!jvzoo\.com|i\.jvzoo\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|www\.healthcopyforge\.com\/sales\/)/, "external link off the sales page"],
+];
+// Text that must / must not appear in a clean page's baked HTML.
+const CLEAN_REQUIRED_TEXT = [
+  "jvzoo.com/b/",
+  "i.jvzoo.com",
+  "I understand and agree that this purchase is non-refundable",
+  "JVZoo serves as the retailer",
+];
+const CLEAN_FORBIDDEN_TEXT = [
+  "Available for instant download",
+  "Content temporarily unavailable",
+  "www.jvzoo.com",
+];
+const cleanRows = [];
+for (const slug of CLEAN_SALES_SLUGS) {
+  const path = "/sales/" + slug;
+  const f = file(path);
+  const problems = [];
+  if (!existsSync(f)) {
+    problems.push("no baked file (route missing from the prerender list?)");
+  } else {
+    const html = readFileSync(f, "utf8");
+    const hrefs = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]);
+    const checked = new Set();
+    for (const href of hrefs) {
+      if (checked.has(href)) continue;
+      checked.add(href);
+      const forbidden = FORBIDDEN_HREF.find(([re]) => re.test(href));
+      if (forbidden) {
+        problems.push(`forbidden href "${href}" — ${forbidden[1]}`);
+      } else if (!ALLOWED_HREF.some((re) => re.test(href))) {
+        problems.push(`href not on the clean-page allowlist: "${href}"`);
+      }
+    }
+    for (const text of CLEAN_REQUIRED_TEXT) {
+      if (!html.includes(text)) {
+        problems.push(`missing required text "${text}"`);
+      }
+    }
+    for (const text of CLEAN_FORBIDDEN_TEXT) {
+      if (html.includes(text)) problems.push(`must not contain "${text}"`);
+    }
+    const id = idBySlug.get(slug);
+    if (!id) {
+      problems.push("no JVZoo product ID for this clean sales slug in src/jvzoo.ts");
+    } else {
+      problems.push(...canonicalBuyProblems(html, id));
+    }
+  }
+  cleanRows.push([path, problems]);
+  if (problems.length) failures.push(["clean-sales " + path, problems]);
 }
 console.log("pre-render gate — dist/client");
 for (const [path, size, problems] of rows) {
@@ -258,6 +393,14 @@ for (const [path, count, problems] of buyRows) {
       "; ",
     )}`,
   );
+}
+
+console.log(
+  "\nJVZoo link-removal clean pages \u2014 /sales/<slug> (only the buy link + terms/privacy/disclaimer/support allowed)",
+);
+for (const [path, problems] of cleanRows) {
+  const status = problems.length ? "FAIL" : "ok  ";
+  console.log(`  ${status} ${pad(path, 56)}${problems.join("; ")}`);
 }
 if (failures.length) {
   console.error(
