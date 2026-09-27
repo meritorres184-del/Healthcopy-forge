@@ -210,11 +210,21 @@ function RootErrorComponent({
 }
 
 function RootComponent() {
+  // JVZoo compliance "clean" sales pages (/sales/<slug>) must not carry a single
+  // link away from the offer. The header (logo -> "/", Home / Packs / Library /
+  // Ebooks / Affiliates) and the site footer (Home, Packs, Library, Ebooks,
+  // Affiliates, mailto, Pricing) are exactly the links a JVZoo reviewer flagged,
+  // so both are omitted for this route family. The page renders its own minimal
+  // footer with only the four links JVZoo allows (terms, privacy, disclaimer,
+  // support) — see src/routes/sales.$slug.tsx. Every other route is unchanged.
+  const isCleanSalesPage = useRouterState({
+    select: (s) => s.location.pathname.startsWith("/sales/"),
+  });
   return (
     <RootDocument>
-      <Header />
+      {isCleanSalesPage ? null : <Header />}
       <Outlet />
-      <Footer />
+      {isCleanSalesPage ? null : <Footer />}
     </RootDocument>
   );
 }

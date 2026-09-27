@@ -39,6 +39,26 @@ const PACK_SLUGS = [
   "functional-nutrition-glp-1-adaptation",
   "womens-longevity-biology-specific-care",
 ];
+// JVZoo compliance "clean" sales pages — /sales/<slug>, one per FLAGGED listing
+// (five article packs + five ebooks). Each renders the product's own copy, cover,
+// canonical JVZoo buy block and retailer disclaimer with NO link away from the
+// offer, so the owner can paste the clean URL into the listing's Sales Page field
+// and resubmit for re-review. Canonical list: src/lib/cleanSales.ts — keep this
+// copy, the one in scripts/verify-prerender.mjs and that module in sync.
+// protein-aging (ebook 454751) is deliberately absent: the owner is deactivating
+// that listing as a duplicate.
+const CLEAN_SALES_SLUGS = [
+  "protein-shakes-protein-nutrition",
+  "intermittent-fasting-time-restricted-eating",
+  "health-coaching-functional-nutrition-glp-1-support",
+  "functional-nutrition-glp-1-adaptation",
+  "womens-longevity-biology-specific-care",
+  "healthy-bones",
+  "gut-health",
+  "hair-scalp",
+  "joint-fitness",
+  "hydration",
+];
 const TIER_SLUGS = ["essentials", "pro"];
 
 // The 11 standalone PLR ebooks (src/lib/ebooks.ts exports EBOOK_SLUGS). One entry
@@ -84,6 +104,7 @@ const PRERENDER_PAGES = [
   ...STATIC_PATHS.map((path) => ({ path })),
   ...PACK_SLUGS.map((slug) => ({ path: "/library/" + slug })),
   ...EBOOK_SLUGS.map((slug) => ({ path: "/ebooks/" + slug })),
+  ...CLEAN_SALES_SLUGS.map((slug) => ({ path: "/sales/" + slug })),
   ...PACK_SLUGS.map((slug) => ({ path: "/checkout/" + slug })),
   ...TIER_SLUGS.map((tier) => ({ path: "/join/" + tier })),
 ];
