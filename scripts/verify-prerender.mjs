@@ -62,7 +62,7 @@ const EBOOK_SLUGS = [
 ];
 
 // JVZoo COMPLIANCE "CLEAN" SALES PAGES — /sales/<slug>, one per FLAGGED listing
-// (the five article packs + five ebooks a JVZoo reviewer rejected with "remove
+// (the five article packs + nine ebooks a JVZoo reviewer rejected with "remove
 // ALL links that direct away from the sales page"). Canonical list:
 // src/lib/cleanSales.ts; kept in sync with CLEAN_SALES_SLUGS in vite.config.ts,
 // which is what actually bakes them. protein-aging (ebook 454751) is NOT here:
@@ -71,6 +71,17 @@ const EBOOK_SLUGS = [
 // These pages map to products whose JVZoo IDs are ALREADY counted below (packs
 // 9-13 are in PACK_SLUGS; ebooks are read from src/jvzoo.ts), so this list must
 // NOT feed the "14 product IDs" count — it is only an extra page family.
+//
+// Second flag round (2026-09-28): the four remaining ebook listings whose JVZoo
+// sales URL still pointed at the full-chrome /ebooks/<slug> page. Same page
+// family, same checks; kept as their own const so the rounds stay readable —
+// they are NOT new product IDs, so `allIds` below must stay at 14.
+const CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND = [
+  "balanced-nutrition",
+  "brain-habits",
+  "heart-habits",
+  "posture",
+];
 const CLEAN_SALES_SLUGS = [
   "protein-shakes-protein-nutrition",
   "intermittent-fasting-time-restricted-eating",
@@ -82,6 +93,7 @@ const CLEAN_SALES_SLUGS = [
   "hair-scalp",
   "joint-fitness",
   "hydration",
+  ...CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND,
 ];
 
 // Sales URLs that must be FULL pages. 15 KB is the floor the team holds the live
@@ -251,7 +263,7 @@ const buyPages = [
     "/ebooks/" + s,
     idBySlug.has(s) ? [idBySlug.get(s)] : [],
   ]),
-  // The clean pages for the ten flagged listings: each must carry the canonical
+  // The clean pages for the fourteen flagged listings: each must carry the canonical
   // buy block for its OWN product ID (the same IDs counted above — no new ones).
   ...CLEAN_SALES_SLUGS.map((s) => [
     "/sales/" + s,
@@ -277,7 +289,7 @@ for (const [path, ids] of buyPages) {
 
 // --- Clean-sales-page gate (JVZoo link removal, added 2026-09-27) ---
 //
-// The reviewer requirement on the ten flagged listings, verbatim: "Please remove
+// The reviewer requirement on the flagged listings, verbatim: "Please remove
 // ALL links that direct away from the sales page. You can keep the terms,
 // privacy, disclaimers, support, etc. All other links must be removed."
 //
