@@ -169,6 +169,14 @@ const idBySlug = new Map(
 // reader. It is one of the 14 counted IDs, and it is the product behind the
 // /sales/packs-1-4-bundle clean page.
 const bundleId = (jvzooSource.match(/bundleBuy\s*=\s*jvzooProduct\(\s*"(\d+)"/) || [])[1];
+// The bundle's listing NAME, read from the same `bundleBuy` export the buy button
+// uses. Its clean page (see the bundle check further down) is reached from that
+// FIXED listing, so it must present this exact name — and must never carry the
+// site's flexible "any four packs" copy, which describes the /packs checkout
+// mechanic rather than the fixed product.
+const bundleListingName = (jvzooSource.match(
+  /bundleBuy\s*=\s*jvzooProduct\(\s*"\d+",\s*"((?:[^"\\]|\\.)*)"/,
+) || [])[1];
 
 // The slug -> JVZoo ID lookup used below. It is idBySlug plus the bundle, so a buy
 // requirement and the canonical-buy-block check resolve for every product page —
@@ -361,7 +369,8 @@ for (const [path, ids] of buyPages) {
 //   * its own JVZoo buy link and the button image / 1x1 pixel on i.jvzoo.com,
 //   * the four pages the reviewer allows by name: /terms, /privacy,
 //     /disclaimer, /support,
-//   * the local cover image and the site's own JS/CSS/font assets,
+//   * the local cover image and the site's own JS/CSS assets (no webfont: fonts
+//     are stripped from these pages too — see the note in ALLOWED_HREF),
 //   * its self-canonical URL (fine, and it keeps the page out of a duplicate
 //     content mess — the buyer must be able to reach it, so it is not noindexed).
 //
@@ -380,9 +389,12 @@ const ALLOWED_HREF = [
   /^\/support$/,
   /^\/covers\//,
   /^\/assets\//,
-  // Font preconnects + stylesheet (bare host on the preconnect, no path).
-  /^https:\/\/fonts\.googleapis\.com(\/|$)/,
-  /^https:\/\/fonts\.gstatic\.com(\/|$)/,
+  // NOTE: Google Fonts used to be allowed here (two preconnects + the Inter
+  // stylesheet). They are FORBIDDEN now — the reviewer's rule is that the only
+  // hosts a clean page may touch are jvzoo.com and i.jvzoo.com, and the font
+  // <link>s were the last non-JVZoo external hrefs on these pages. The links are
+  // suppressed for /sales/* in __root.tsx (RootDocument); the FORBIDDEN_HREF
+  // entries below fail the build if they ever come back. Do not re-add them.
   /^https:\/\/www\.healthcopyforge\.com\/sales\//, // self-canonical
 ];
 const FORBIDDEN_HREF = [
@@ -398,7 +410,15 @@ const FORBIDDEN_HREF = [
   [/^\/downloads/, "link to /downloads"],
   [/^\/zips\//, "link to a /zips download"],
   [/^mailto:/, "mailto link"],
-  [/^https?:\/\/(?!jvzoo\.com|i\.jvzoo\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|www\.healthcopyforge\.com\/sales\/)/, "external link off the sales page"],
+  [
+    /^https:\/\/fonts\.googleapis\.com(\/|$)/,
+    "Google Fonts preconnect/stylesheet \u2014 fonts must be stripped from clean pages",
+  ],
+  [
+    /^https:\/\/fonts\.gstatic\.com(\/|$)/,
+    "Google Fonts gstatic preconnect \u2014 fonts must be stripped from clean pages",
+  ],
+  [/^https?:\/\/(?!jvzoo\.com|i\.jvzoo\.com|www\.healthcopyforge\.com\/sales\/)/, "external link off the sales page"],
 ];
 // Text that must / must not appear in a clean page's baked HTML.
 const CLEAN_REQUIRED_TEXT = [
@@ -411,6 +431,10 @@ const CLEAN_FORBIDDEN_TEXT = [
   "Available for instant download",
   "Content temporarily unavailable",
   "www.jvzoo.com",
+  // The site's flexible "any four packs" mechanic, not the fixed bundle JVZoo
+  // sells (453431) — it must not appear on any clean page, and least of all on
+  // the bundle page.
+  "Any 4 Packs",
 ];
 const cleanRows = [];
 for (const slug of CLEAN_SALES_SLUGS) {
@@ -440,6 +464,22 @@ for (const slug of CLEAN_SALES_SLUGS) {
     }
     for (const text of CLEAN_FORBIDDEN_TEXT) {
       if (html.includes(text)) problems.push(`must not contain "${text}"`);
+    }
+    if (slug === CLEAN_SALES_BUNDLE_SLUG) {
+      // The bundle page sells the FIXED listing, so it has to carry that
+      // listing's exact name (React escapes "&" as "&amp;" in the baked HTML).
+      if (!bundleListingName) {
+        problems.push(
+          "could not read the bundle listing name from src/jvzoo.ts (bundleBuy)",
+        );
+      } else if (
+        !html.includes(bundleListingName) &&
+        !html.includes(bundleListingName.replace(/&/g, "&amp;"))
+      ) {
+        problems.push(
+          `bundle clean page must present the fixed listing name "${bundleListingName}"`,
+        );
+      }
     }
     const id = idForSlug(slug);
     if (!id) {

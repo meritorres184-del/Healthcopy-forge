@@ -56,18 +56,24 @@ import {
 // $27 one-time — LOCKED by the owner (2026-09-13) for the standalone ebook line.
 const EBOOK_PRICE = 27;
 
-// The fixed Packs 1-4 bundle (JVZoo 453431). It is not a pack and has no
-// content_packs row, so there is no owner ProductDescription to read: the page
-// copy is taken VERBATIM from the bundle block on /packs (src/routes/packs.tsx).
-// Nothing is invented, added or reworded — if the bundle block's wording changes,
-// change it here too.
-const BUNDLE_TITLE = "Any 4 Packs for $97";
+// The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
+// four packs" mechanic: the listing sells one fixed product, Packs 1-4, so this
+// page must sell that same fixed product — a "choose any four" promise on a page
+// reached from a fixed listing would be misleading, and a name that does not
+// match the listing invites another "product name must be unique" flag.
+//
+// It is not a pack and has no content_packs row, so there is no owner
+// ProductDescription to read. Everything below is OWNED data: the name comes
+// straight from src/jvzoo.ts (`bundleBuy`, the same object the buy button uses,
+// so page and listing can never drift), and the description is built only from
+// the pack names in src/jvzoo.ts, the article count in the listing name
+// (15 per pack x 4), and the house positioning line already used on the other
+// clean pages. No stats, testimonials or superlatives are invented.
+const BUNDLE_TITLE = bundleBuy.alt;
 const BUNDLE_PRICE = 97;
 const BUNDLE_CATEGORY = "Article Pack Bundle (PLR)";
 const BUNDLE_DESCRIPTION =
-  "Choose any four packs and save over $90 compared to buying them individually — or grab the ready-made Packs 1–4 Mega Bundle below and get started right away.";
-// The bundle block on /packs shows no cover of its own, so the page uses Pack 1's
-// cover (the first pack in the bundle).
+  "The complete Packs 1-4 set — Article Pack 1 Nutrition & Everyday Wellness, Article Pack 2 Supplements & Nutritional Support, Article Pack 3 Fitness & Exercise and Article Pack 4 Sleep & Recovery — 60 SEO-written articles. SEO-written health & wellness PLR content from HealthCopy Forge — ready to customize, brand & promote.";
 const BUNDLE_COVER_SLUG = "nutrition-everyday-wellness";
 
 interface CleanSale {
@@ -162,9 +168,10 @@ export const Route = createFileRoute("/sales/$slug")({
 
     if (entry.kind === "bundle") {
       // The fixed Packs 1-4 bundle: no database read (there is no row) and no
-      // owner ProductDescription, so the copy comes from the /packs bundle block
-      // via the BUNDLE_* constants above. Its buy block is the named `bundleBuy`
-      // export (JVZoo 453431) rather than a slug-keyed entry in src/jvzoo.ts.
+      // owner ProductDescription, so name and copy come from the BUNDLE_*
+      // constants above — the listing name taken from `bundleBuy` plus the four
+      // pack names. Its buy block is the same named `bundleBuy` export (JVZoo
+      // 453431) rather than a slug-keyed entry in src/jvzoo.ts.
       const sale: CleanSale = {
         slug: entry.slug,
         kind: "bundle",
