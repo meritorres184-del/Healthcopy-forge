@@ -62,11 +62,12 @@ const EBOOK_SLUGS = [
 ];
 
 // JVZoo COMPLIANCE "CLEAN" SALES PAGES — /sales/<slug>, one per FLAGGED listing
-// (the five article packs + nine ebooks a JVZoo reviewer rejected with "remove
-// ALL links that direct away from the sales page"). Canonical list:
+// (the thirteen article packs + the fixed Packs 1-4 bundle + eleven ebooks = 25,
+// the whole catalog: nine ebooks a JVZoo reviewer rejected with "remove ALL links
+// that direct away from the sales page", plus Healthy Feet and Protein for
+// Healthy Aging, which the owner asked for). Canonical list:
 // src/lib/cleanSales.ts; kept in sync with CLEAN_SALES_SLUGS in vite.config.ts,
-// which is what actually bakes them. protein-aging (ebook 454751) is NOT here:
-// the owner is deactivating that listing as a duplicate.
+// which is what actually bakes them. Nothing is excluded.
 //
 // These pages map to products whose JVZoo IDs are ALREADY counted below (packs
 // 9-13 are in PACK_SLUGS; ebooks are read from src/jvzoo.ts), so this list must
@@ -82,7 +83,51 @@ const CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND = [
   "heart-habits",
   "posture",
 ];
-const CLEAN_SALES_SLUGS = [
+// Third flag round (2026-09-28): the eight original article packs (Packs 1-8) and
+// the fixed Packs 1-4 bundle listing (JVZoo 453431). Same page family, same
+// checks; kept as their own consts so the rounds stay readable. The pack IDs and
+// the bundle ID are ALREADY counted in `allIds` below (13 packs + 1 bundle = 14),
+// so these are extra *pages* for IDs already counted, never new IDs.
+const CLEAN_SALES_PACKS_3RD_ROUND = [
+  "nutrition-everyday-wellness",
+  "supplements-nutritional-support",
+  "fitness-exercise",
+  "sleep-recovery",
+  "stress-management-mind-body-wellness",
+  "healthy-aging-lifestyle",
+  "natural-holistic-wellness",
+  "product-reviews-buying-guides",
+];
+// The fixed Packs 1-4 bundle is not a pack and is NOT in the slug -> ID map read
+// out of src/jvzoo.ts: it is the single `bundleBuy` export (JVZoo 453431). That is
+// why it resolves through idForSlug() below instead of idBySlug.
+const CLEAN_SALES_BUNDLE_SLUG = "packs-1-4-bundle";
+// The third-round clean pages: the eight original packs + the fixed bundle, in the
+// same order as src/lib/cleanSales.ts.
+const CLEAN_SALES_ROUND_3_SLUGS = [
+  ...CLEAN_SALES_PACKS_3RD_ROUND,
+  CLEAN_SALES_BUNDLE_SLUG,
+];
+// Fourth flag round (2026-09-28, after round 3 shipped): the Healthy Feet ebook
+// (JVZoo 454739). That listing was never flagged — the owner asked for its
+// link-free page herself — but it is the same page family and the same checks,
+// so it is its own const for the same reason as the other rounds. Its ID already
+// exists in src/jvzoo.ts, so it adds no new product ID: `allIds` stays at 14.
+// Held to the standard 15 KB SALES floor (it joins the rounds 1-2 spread below),
+// because it is an ebook with a full owner description like those pages, not one
+// of the shorter third-round pages.
+const CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND = ["healthy-feet"];
+// Fifth round (2026-09-28, after round 4 shipped): the Protein for Healthy Aging
+// ebook (JVZoo 454751), also requested by the owner — she had previously been
+// leaving it out of the clean pages while considering deactivating it as a
+// duplicate, then asked for its page, so it completes the catalog (25 pages).
+// Same page family, same checks, its own const for the same reason as the other
+// rounds. Its ID already exists in src/jvzoo.ts, so it adds no new product ID:
+// `allIds` stays at 14. Held to the standard 15 KB SALES floor (it is an ebook
+// with a full owner description), like round 4.
+const CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND = ["protein-aging"];
+// Rounds 1-2: the five Packs 9-13 and the nine ebooks flagged before them.
+const CLEAN_SALES_SLUGS_ROUNDS_1_2 = [
   "protein-shakes-protein-nutrition",
   "intermittent-fasting-time-restricted-eating",
   "health-coaching-functional-nutrition-glp-1-support",
@@ -95,16 +140,37 @@ const CLEAN_SALES_SLUGS = [
   "hydration",
   ...CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND,
 ];
+// The canonical clean-page set the gate checks: every flag round.
+const CLEAN_SALES_SLUGS = [
+  ...CLEAN_SALES_ROUND_3_SLUGS,
+  ...CLEAN_SALES_SLUGS_ROUNDS_1_2,
+  ...CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND,
+  ...CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND,
+];
 
 // Sales URLs that must be FULL pages. 15 KB is the floor the team holds the live
 // pages to; the real pages run 16.6-57 KB.
+//
+// The third-round clean pages are held to their own, lower floor: a clean page
+// renders no site chrome at all, Packs 1-8 carry shorter owner descriptions than
+// Packs 9-13, and the bundle has no owner description of its own — so those pages
+// are legitimately 8.7-12.7 KB. 8 KB still catches the truncated bake this floor
+// exists for (the live edge cuts streamed responses at ~5-7 KB — see the note at
+// the top of vite.config.ts), and the closed-document check, the required text
+// and the href allowlist below carry the rest.
+const SALES_MIN_BYTES_3RD_ROUND = 8000;
 const SALES = [
   "/packs",
   "/library",
   "/ebooks",
   ...PACK_SLUGS.map((s) => "/library/" + s),
   ...EBOOK_SLUGS.map((s) => "/ebooks/" + s),
-  ...CLEAN_SALES_SLUGS.map((s) => "/sales/" + s),
+  ...CLEAN_SALES_SLUGS_ROUNDS_1_2.map((s) => "/sales/" + s),
+  // The fourth-round clean page (Healthy Feet) joins them at the same 15 KB floor.
+  ...CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND.map((s) => "/sales/" + s),
+  // The fifth-round clean page (Protein for Healthy Aging) too: full owner
+  // description, same 15 KB floor.
+  ...CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND.map((s) => "/sales/" + s),
 ];
 const SALES_MIN_BYTES = 15000;
 
@@ -123,12 +189,35 @@ const idBySlug = new Map(
     (m) => [m[1], m[2]],
   ),
 );
+// The fixed Packs 1-4 bundle (JVZoo 453431): the one product whose buy block is a
+// named export (`bundleBuy`) instead of a slug-keyed entry, so it needs its own ID
+// reader. It is one of the 14 counted IDs, and it is the product behind the
+// /sales/packs-1-4-bundle clean page.
+const bundleId = (jvzooSource.match(/bundleBuy\s*=\s*jvzooProduct\(\s*"(\d+)"/) || [])[1];
+// The bundle's listing NAME, read from the same `bundleBuy` export the buy button
+// uses. Its clean page (see the bundle check further down) is reached from that
+// FIXED listing, so it must present this exact name — and must never carry the
+// site's flexible "any four packs" copy, which describes the /packs checkout
+// mechanic rather than the fixed product.
+const bundleListingName = (jvzooSource.match(
+  /bundleBuy\s*=\s*jvzooProduct\(\s*"\d+",\s*"((?:[^"\\]|\\.)*)"/,
+) || [])[1];
+
+// The slug -> JVZoo ID lookup used below. It is idBySlug plus the bundle, so a buy
+// requirement and the canonical-buy-block check resolve for every product page —
+// including the bundle's clean page — through ONE function.
+function idForSlug(slug) {
+  if (slug === CLEAN_SALES_BUNDLE_SLUG) return bundleId;
+  return idBySlug.get(slug);
+}
+
 // The two product-page shapes: an article pack (/library/<slug>) and a standalone
 // ebook (/ebooks/<slug>). Both render from the same slug-keyed map in src/jvzoo.ts.
 // `/sales/<slug>` is the JVZoo compliance clean page for the same product as its
 // `/library/<slug>` or `/ebooks/<slug>` page, so it resolves through the same
-// slug -> ID map and is held to the same buy-block requirement. It adds no new
-// product IDs: allIds below counts PACK_SLUGS + the bundle only.
+// slug -> ID map and is held to the same buy-block requirement (the bundle's clean
+// page resolves through idForSlug). It adds no new product IDs: allIds below
+// counts PACK_SLUGS + the bundle only.
 const PRODUCT_PATH = /^\/(?:library|ebooks|sales)\/(.+)$/;
 
 // /packs and /library always carry a working buy path (thirteen live packs + the
@@ -138,7 +227,7 @@ const PRODUCT_PATH = /^\/(?:library|ebooks|sales)\/(.+)$/;
 function wantsBuy(path) {
   if (path === "/packs" || path === "/library") return true;
   const match = PRODUCT_PATH.exec(path);
-  return match ? idBySlug.has(match[1]) : false;
+  return match ? Boolean(idForSlug(match[1])) : false;
 }
 // A product page with no listing must not ship a half-built buy block either.
 function listingSlugOf(path) {
@@ -177,6 +266,13 @@ const rows = [];
 
 for (const [path, min, wantBuy] of [
   ...SALES.map((p) => [p, SALES_MIN_BYTES, wantsBuy(p)]),
+  // The third-round clean pages, at their own floor (see the comment above). Every
+  // one of them has a live listing, so the buy path is required.
+  ...CLEAN_SALES_ROUND_3_SLUGS.map((s) => [
+    "/sales/" + s,
+    SALES_MIN_BYTES_3RD_ROUND,
+    true,
+  ]),
   ...OTHER.map((p) => [p, OTHER_MIN_BYTES, false]),
 ]) {
   const f = file(path);
@@ -196,7 +292,7 @@ for (const [path, min, wantBuy] of [
       }
     } else {
       const slug = listingSlugOf(path);
-      if (slug !== null && !idBySlug.has(slug)) {
+      if (slug !== null && !idForSlug(slug)) {
         for (const marker of BUY_MARKERS) {
           if (html.includes(marker)) {
             problems.push(`no JVZoo listing for this product but the page ships ${marker}`);
@@ -222,7 +318,8 @@ for (const [path, min, wantBuy] of [
 // button image inside the anchor, AND on the 1x1 tracking pixel. The product
 // IDs are read from src/jvzoo.ts, so this gate can never drift from the code
 // that renders the buttons.
-const bundleId = (jvzooSource.match(/bundleBuy\s*=\s*jvzooProduct\(\s*"(\d+)"/) || [])[1];
+// (bundleId is read above, next to the slug -> ID map, because the page-level
+// checks that run before this point need it too.)
 // The article-pack IDs + the bundle. Read from the pack slugs explicitly rather
 // than "every ID in the file" so that wiring up the 11 ebook listings later (one
 // line each in src/jvzoo.ts) can never make this count check fire.
@@ -263,11 +360,13 @@ const buyPages = [
     "/ebooks/" + s,
     idBySlug.has(s) ? [idBySlug.get(s)] : [],
   ]),
-  // The clean pages for the fourteen flagged listings: each must carry the canonical
-  // buy block for its OWN product ID (the same IDs counted above — no new ones).
+  // The clean pages for the twenty-five listings (flag rounds 1-4 plus the
+  // owner-requested Protein for Healthy Aging page): each must carry the
+  // canonical buy block for its OWN product ID (the same IDs counted above — no
+  // new ones).
   ...CLEAN_SALES_SLUGS.map((s) => [
     "/sales/" + s,
-    idBySlug.has(s) ? [idBySlug.get(s)] : [],
+    idForSlug(s) ? [idForSlug(s)] : [],
   ]),
 ];
 const buyRows = [];
@@ -297,7 +396,8 @@ for (const [path, ids] of buyPages) {
 //   * its own JVZoo buy link and the button image / 1x1 pixel on i.jvzoo.com,
 //   * the four pages the reviewer allows by name: /terms, /privacy,
 //     /disclaimer, /support,
-//   * the local cover image and the site's own JS/CSS/font assets,
+//   * the local cover image and the site's own JS/CSS assets (no webfont: fonts
+//     are stripped from these pages too — see the note in ALLOWED_HREF),
 //   * its self-canonical URL (fine, and it keeps the page out of a duplicate
 //     content mess — the buyer must be able to reach it, so it is not noindexed).
 //
@@ -316,9 +416,12 @@ const ALLOWED_HREF = [
   /^\/support$/,
   /^\/covers\//,
   /^\/assets\//,
-  // Font preconnects + stylesheet (bare host on the preconnect, no path).
-  /^https:\/\/fonts\.googleapis\.com(\/|$)/,
-  /^https:\/\/fonts\.gstatic\.com(\/|$)/,
+  // NOTE: Google Fonts used to be allowed here (two preconnects + the Inter
+  // stylesheet). They are FORBIDDEN now — the reviewer's rule is that the only
+  // hosts a clean page may touch are jvzoo.com and i.jvzoo.com, and the font
+  // <link>s were the last non-JVZoo external hrefs on these pages. The links are
+  // suppressed for /sales/* in __root.tsx (RootDocument); the FORBIDDEN_HREF
+  // entries below fail the build if they ever come back. Do not re-add them.
   /^https:\/\/www\.healthcopyforge\.com\/sales\//, // self-canonical
 ];
 const FORBIDDEN_HREF = [
@@ -334,7 +437,15 @@ const FORBIDDEN_HREF = [
   [/^\/downloads/, "link to /downloads"],
   [/^\/zips\//, "link to a /zips download"],
   [/^mailto:/, "mailto link"],
-  [/^https?:\/\/(?!jvzoo\.com|i\.jvzoo\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|www\.healthcopyforge\.com\/sales\/)/, "external link off the sales page"],
+  [
+    /^https:\/\/fonts\.googleapis\.com(\/|$)/,
+    "Google Fonts preconnect/stylesheet \u2014 fonts must be stripped from clean pages",
+  ],
+  [
+    /^https:\/\/fonts\.gstatic\.com(\/|$)/,
+    "Google Fonts gstatic preconnect \u2014 fonts must be stripped from clean pages",
+  ],
+  [/^https?:\/\/(?!jvzoo\.com|i\.jvzoo\.com|www\.healthcopyforge\.com\/sales\/)/, "external link off the sales page"],
 ];
 // Text that must / must not appear in a clean page's baked HTML.
 const CLEAN_REQUIRED_TEXT = [
@@ -347,6 +458,10 @@ const CLEAN_FORBIDDEN_TEXT = [
   "Available for instant download",
   "Content temporarily unavailable",
   "www.jvzoo.com",
+  // The site's flexible "any four packs" mechanic, not the fixed bundle JVZoo
+  // sells (453431) — it must not appear on any clean page, and least of all on
+  // the bundle page.
+  "Any 4 Packs",
 ];
 const cleanRows = [];
 for (const slug of CLEAN_SALES_SLUGS) {
@@ -377,9 +492,27 @@ for (const slug of CLEAN_SALES_SLUGS) {
     for (const text of CLEAN_FORBIDDEN_TEXT) {
       if (html.includes(text)) problems.push(`must not contain "${text}"`);
     }
-    const id = idBySlug.get(slug);
+    if (slug === CLEAN_SALES_BUNDLE_SLUG) {
+      // The bundle page sells the FIXED listing, so it has to carry that
+      // listing's exact name (React escapes "&" as "&amp;" in the baked HTML).
+      if (!bundleListingName) {
+        problems.push(
+          "could not read the bundle listing name from src/jvzoo.ts (bundleBuy)",
+        );
+      } else if (
+        !html.includes(bundleListingName) &&
+        !html.includes(bundleListingName.replace(/&/g, "&amp;"))
+      ) {
+        problems.push(
+          `bundle clean page must present the fixed listing name "${bundleListingName}"`,
+        );
+      }
+    }
+    const id = idForSlug(slug);
     if (!id) {
-      problems.push("no JVZoo product ID for this clean sales slug in src/jvzoo.ts");
+      problems.push(
+        "no JVZoo product ID for this clean sales slug (src/jvzoo.ts / bundleBuy)",
+      );
     } else {
       problems.push(...canonicalBuyProblems(html, id));
     }

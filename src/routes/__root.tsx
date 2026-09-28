@@ -230,21 +230,34 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
+  // The JVZoo compliance "clean" sales pages (/sales/<slug>) must not carry a
+  // single link away from the offer. After the header and footer were dropped,
+  // the Inter <link>s (two preconnects + the stylesheet) were the last
+  // non-JVZoo external hrefs on those pages, so they are omitted here too and
+  // /sales/* falls back to the system font stack declared in src/styles/app.css.
+  // Every other route keeps the webfont exactly as before.
+  const isCleanSalesPage = useRouterState({
+    select: (s) => s.location.pathname.startsWith("/sales/"),
+  });
   return (
     <html lang="en" className="scroll-smooth">
       <head>
         <HeadContent />
         <SeoHead />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
+        {isCleanSalesPage ? null : (
+          <>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link
+              rel="preconnect"
+              href="https://fonts.gstatic.com"
+              crossOrigin="anonymous"
+            />
+            <link
+              href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+              rel="stylesheet"
+            />
+          </>
+        )}
       </head>
       <body className="min-h-dvh bg-white text-gray-900 antialiased">
         {children}
