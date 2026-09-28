@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { readWithRetry } from "../db";
-import { liveJvzooProduct } from "../jvzoo";
+import { bundleBuy, liveJvzooProduct } from "../jvzoo";
 import { packCover } from "../lib/packCovers";
 import { ebookBySlug } from "../lib/ebooks";
 import { ebookCover } from "../lib/ebookCovers";
@@ -15,8 +15,9 @@ import {
 
 // JVZoo COMPLIANCE "CLEAN" SALES PAGE — /sales/<slug>
 //
-// One page per flagged JVZoo listing (the fourteen in src/lib/cleanSales.ts): five
-// article packs, nine ebooks. JVZoo's reviewer requirement is verbatim
+// One page per flagged JVZoo listing (the twenty-three in src/lib/cleanSales.ts):
+// thirteen article packs, the fixed Packs 1-4 bundle and nine ebooks. JVZoo's
+// reviewer requirement is verbatim
 //
 //   "Please remove ALL links that direct away from the sales page. You can keep
 //    the terms, privacy, disclaimers, support, etc. All other links must be
@@ -46,9 +47,28 @@ import {
 // database exactly like /library/<slug> does (same readWithRetry + degraded
 // fallback), ebooks read src/lib/ebooks.ts like /ebooks/<slug> does. Nothing is
 // reworded or shortened.
+//
+// The fixed Packs 1-4 bundle is the one product with no owner-written long
+// description and no database row: its page reuses the bundle block on /packs
+// (src/routes/packs.tsx) VERBATIM — heading, price, supporting sentence — see the
+// BUNDLE_* constants below. Nothing beyond that block is claimed.
 
 // $27 one-time — LOCKED by the owner (2026-09-13) for the standalone ebook line.
 const EBOOK_PRICE = 27;
+
+// The fixed Packs 1-4 bundle (JVZoo 453431). It is not a pack and has no
+// content_packs row, so there is no owner ProductDescription to read: the page
+// copy is taken VERBATIM from the bundle block on /packs (src/routes/packs.tsx).
+// Nothing is invented, added or reworded — if the bundle block's wording changes,
+// change it here too.
+const BUNDLE_TITLE = "Any 4 Packs for $97";
+const BUNDLE_PRICE = 97;
+const BUNDLE_CATEGORY = "Article Pack Bundle (PLR)";
+const BUNDLE_DESCRIPTION =
+  "Choose any four packs and save over $90 compared to buying them individually — or grab the ready-made Packs 1–4 Mega Bundle below and get started right away.";
+// The bundle block on /packs shows no cover of its own, so the page uses Pack 1's
+// cover (the first pack in the bundle).
+const BUNDLE_COVER_SLUG = "nutrition-everyday-wellness";
 
 interface CleanSale {
   slug: string;
@@ -73,9 +93,15 @@ function degradedSale(slug: string, kind: CleanSaleKind): CleanSale {
   return {
     slug,
     kind,
-    title: slugToHeading(slug),
-    category: kind === "ebook" ? "PLR Ebook" : "Article Pack (PLR)",
-    price: kind === "ebook" ? EBOOK_PRICE : 47,
+    title: kind === "bundle" ? BUNDLE_TITLE : slugToHeading(slug),
+    category:
+      kind === "ebook"
+        ? "PLR Ebook"
+        : kind === "bundle"
+          ? BUNDLE_CATEGORY
+          : "Article Pack (PLR)",
+    price:
+      kind === "ebook" ? EBOOK_PRICE : kind === "bundle" ? BUNDLE_PRICE : 47,
     description:
       "SEO-written health & wellness PLR content from HealthCopy Forge — ready to customize, brand & promote.",
     includes: [],
@@ -97,7 +123,11 @@ function saleMeta(sale: CleanSale | null): { title: string; description: string 
     };
   }
   const shape =
-    sale.kind === "ebook" ? "a ready-to-rebrand PLR ebook" : "a ready-to-rebrand PLR article pack";
+    sale.kind === "ebook"
+      ? "a ready-to-rebrand PLR ebook"
+      : sale.kind === "bundle"
+        ? "a ready-to-rebrand PLR article-pack bundle"
+        : "a ready-to-rebrand PLR article pack";
   return {
     title: sale.title + " | HealthCopy Forge",
     description:
@@ -128,6 +158,25 @@ export const Route = createFileRoute("/sales/$slug")({
       // (Only the fourteen slugs are pre-rendered; anything else is an SSR request.)
       const meta = saleMeta(null);
       return { sale: null, title: meta.title, description: meta.description };
+    }
+
+    if (entry.kind === "bundle") {
+      // The fixed Packs 1-4 bundle: no database read (there is no row) and no
+      // owner ProductDescription, so the copy comes from the /packs bundle block
+      // via the BUNDLE_* constants above. Its buy block is the named `bundleBuy`
+      // export (JVZoo 453431) rather than a slug-keyed entry in src/jvzoo.ts.
+      const sale: CleanSale = {
+        slug: entry.slug,
+        kind: "bundle",
+        title: BUNDLE_TITLE,
+        category: BUNDLE_CATEGORY,
+        price: BUNDLE_PRICE,
+        description: BUNDLE_DESCRIPTION,
+        includes: [],
+        stats: [],
+      };
+      const meta = saleMeta(sale);
+      return { sale, title: meta.title, description: meta.description };
     }
 
     if (entry.kind === "ebook") {
@@ -219,11 +268,18 @@ function CleanSalePage() {
     );
   }
 
-  const cover = sale.kind === "ebook" ? ebookCover(sale.slug) : packCover(sale.slug);
+  const cover =
+    sale.kind === "ebook"
+      ? ebookCover(sale.slug)
+      : sale.kind === "bundle"
+        ? packCover(BUNDLE_COVER_SLUG)
+        : packCover(sale.slug);
   // The canonical buy block for THIS product's own JVZoo listing. Every render
   // site goes through this helper so a page can never emit a non-canonical link
-  // (www host / /1 image) or a half-built button.
-  const buy = liveJvzooProduct(sale.slug);
+  // (www host / /1 image) or a half-built button. The bundle is the one product
+  // whose buy block is a named export (bundleBuy, JVZoo 453431) instead of a
+  // slug-keyed entry in src/jvzoo.ts.
+  const buy = sale.kind === "bundle" ? bundleBuy : liveJvzooProduct(sale.slug);
 
   return (
     <main className="bg-white">
