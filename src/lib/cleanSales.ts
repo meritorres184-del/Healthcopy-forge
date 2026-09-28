@@ -14,22 +14,23 @@
 // link to the home page, a "Back to Library" link and a footer of site links
 // plus a mailto address. That is what the reviewer saw.
 //
-// Three flag rounds so far, twenty-three listings in total:
+// Four flag rounds so far, twenty-four listings in total:
 //   * round 1 (2026-09-27): five article packs (Packs 9–13) + five ebooks;
 //   * round 2 (2026-09-28): the four remaining ebook listings whose JVZoo sales
 //     URL still pointed at the /ebooks/<slug> page;
 //   * round 3 (2026-09-28): the eight original article packs (Packs 1–8) and the
-//     fixed Packs 1–4 bundle listing (JVZoo 453431).
+//     fixed Packs 1–4 bundle listing (JVZoo 453431);
+//   * round 4 (2026-09-28): the Healthy Feet ebook (JVZoo 454739), requested by
+//     the owner after round 3 shipped (it had not been flagged, but she wants the
+//     link-free page for that listing too).
 //
 // Slug -> JVZoo product ID stay in src/jvzoo.ts (one map, never duplicated);
 // this list only says which slugs get a clean page and which product shape to
 // render. Keep it in sync with CLEAN_SALES_SLUGS in vite.config.ts (prerender)
 // and scripts/verify-prerender.mjs (build gate).
 //
-// The flags are per listing, so the products that are NOT here are exactly the
-// ones that were never flagged: protein-aging (ebook 454751 — the owner is
-// deactivating that listing as a duplicate, so it gets no clean page either) and
-// healthy-feet (ebook 454739).
+// Only one product is deliberately NOT here: protein-aging (ebook 454751), the
+// duplicate listing the owner is deactivating — no clean page for it.
 
 /** Which sales-page shape to render for a clean page. */
 export type CleanSaleKind = "pack" | "ebook" | "bundle";
@@ -48,7 +49,8 @@ export interface CleanSaleEntry {
  */
 export const CLEAN_SALES_BUNDLE_SLUG = "packs-1-4-bundle";
 
-/** The twenty-three flagged products that get a /sales/<slug> page. */
+/** The twenty-four flagged (or, for round 4, owner-requested) products that get
+ * a /sales/<slug> page. */
 export const CLEAN_SALES: CleanSaleEntry[] = [
   // --- Eight article packs (Packs 1-8) ---
   { slug: "nutrition-everyday-wellness", kind: "pack" },
@@ -79,6 +81,10 @@ export const CLEAN_SALES: CleanSaleEntry[] = [
   { slug: "brain-habits", kind: "ebook" },
   { slug: "heart-habits", kind: "ebook" },
   { slug: "posture", kind: "ebook" },
+  // --- Fourth flag round: the Healthy Feet ebook (JVZoo 454739), added at the
+  // owner's request (2026-09-28). Same link-free page; the ID already exists in
+  // src/jvzoo.ts, so no new product ID is introduced. ---
+  { slug: "healthy-feet", kind: "ebook" },
 ];
 
 export const CLEAN_SALES_SLUGS: string[] = CLEAN_SALES.map((e) => e.slug);

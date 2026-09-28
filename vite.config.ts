@@ -76,6 +76,9 @@ const CLEAN_SALES_SLUGS = [
   "brain-habits",
   "heart-habits",
   "posture",
+  // Fourth flag round — the Healthy Feet ebook (JVZoo 454739), added at the
+  // owner's request (2026-09-28).
+  "healthy-feet",
 ];
 const TIER_SLUGS = ["essentials", "pro"];
 
