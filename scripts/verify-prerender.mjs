@@ -62,12 +62,12 @@ const EBOOK_SLUGS = [
 ];
 
 // JVZoo COMPLIANCE "CLEAN" SALES PAGES — /sales/<slug>, one per FLAGGED listing
-// (the thirteen article packs + the fixed Packs 1-4 bundle + ten ebooks: nine a
-// JVZoo reviewer rejected with "remove ALL links that direct away from the sales
-// page", plus Healthy Feet, which the owner asked for). Canonical list:
+// (the thirteen article packs + the fixed Packs 1-4 bundle + eleven ebooks = 25,
+// the whole catalog: nine ebooks a JVZoo reviewer rejected with "remove ALL links
+// that direct away from the sales page", plus Healthy Feet and Protein for
+// Healthy Aging, which the owner asked for). Canonical list:
 // src/lib/cleanSales.ts; kept in sync with CLEAN_SALES_SLUGS in vite.config.ts,
-// which is what actually bakes them. protein-aging (ebook 454751) is NOT here:
-// the owner is deactivating that listing as a duplicate.
+// which is what actually bakes them. Nothing is excluded.
 //
 // These pages map to products whose JVZoo IDs are ALREADY counted below (packs
 // 9-13 are in PACK_SLUGS; ebooks are read from src/jvzoo.ts), so this list must
@@ -117,6 +117,15 @@ const CLEAN_SALES_ROUND_3_SLUGS = [
 // because it is an ebook with a full owner description like those pages, not one
 // of the shorter third-round pages.
 const CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND = ["healthy-feet"];
+// Fifth round (2026-09-28, after round 4 shipped): the Protein for Healthy Aging
+// ebook (JVZoo 454751), also requested by the owner — she had previously been
+// leaving it out of the clean pages while considering deactivating it as a
+// duplicate, then asked for its page, so it completes the catalog (25 pages).
+// Same page family, same checks, its own const for the same reason as the other
+// rounds. Its ID already exists in src/jvzoo.ts, so it adds no new product ID:
+// `allIds` stays at 14. Held to the standard 15 KB SALES floor (it is an ebook
+// with a full owner description), like round 4.
+const CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND = ["protein-aging"];
 // Rounds 1-2: the five Packs 9-13 and the nine ebooks flagged before them.
 const CLEAN_SALES_SLUGS_ROUNDS_1_2 = [
   "protein-shakes-protein-nutrition",
@@ -136,6 +145,7 @@ const CLEAN_SALES_SLUGS = [
   ...CLEAN_SALES_ROUND_3_SLUGS,
   ...CLEAN_SALES_SLUGS_ROUNDS_1_2,
   ...CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND,
+  ...CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND,
 ];
 
 // Sales URLs that must be FULL pages. 15 KB is the floor the team holds the live
@@ -158,6 +168,9 @@ const SALES = [
   ...CLEAN_SALES_SLUGS_ROUNDS_1_2.map((s) => "/sales/" + s),
   // The fourth-round clean page (Healthy Feet) joins them at the same 15 KB floor.
   ...CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND.map((s) => "/sales/" + s),
+  // The fifth-round clean page (Protein for Healthy Aging) too: full owner
+  // description, same 15 KB floor.
+  ...CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND.map((s) => "/sales/" + s),
 ];
 const SALES_MIN_BYTES = 15000;
 
@@ -347,9 +360,10 @@ const buyPages = [
     "/ebooks/" + s,
     idBySlug.has(s) ? [idBySlug.get(s)] : [],
   ]),
-  // The clean pages for the twenty-four listings (flag rounds 1-4): each must carry the
-  // canonical
-  // buy block for its OWN product ID (the same IDs counted above — no new ones).
+  // The clean pages for the twenty-five listings (flag rounds 1-4 plus the
+  // owner-requested Protein for Healthy Aging page): each must carry the
+  // canonical buy block for its OWN product ID (the same IDs counted above — no
+  // new ones).
   ...CLEAN_SALES_SLUGS.map((s) => [
     "/sales/" + s,
     idForSlug(s) ? [idForSlug(s)] : [],

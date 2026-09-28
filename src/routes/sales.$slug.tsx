@@ -15,7 +15,7 @@ import {
 
 // JVZoo COMPLIANCE "CLEAN" SALES PAGE — /sales/<slug>
 //
-// One page per flagged JVZoo listing (the twenty-four in src/lib/cleanSales.ts):
+// One page per flagged JVZoo listing (the twenty-five in src/lib/cleanSales.ts):
 // thirteen article packs, the fixed Packs 1-4 bundle and nine ebooks. JVZoo's
 // reviewer requirement is verbatim
 //
@@ -160,7 +160,7 @@ export const Route = createFileRoute("/sales/$slug")({
   loader: async ({ params }) => {
     const entry = cleanSaleBySlug(params.slug);
     if (!entry) {
-      // Not one of the twenty-four clean-page products: a link-free "not available"
+      // Not one of the twenty-five clean-page products: a link-free "not available"
       // page. (Only those slugs are pre-rendered; anything else is an SSR request.)
       const meta = saleMeta(null);
       return { sale: null, title: meta.title, description: meta.description };

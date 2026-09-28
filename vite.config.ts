@@ -40,14 +40,15 @@ const PACK_SLUGS = [
   "womens-longevity-biology-specific-care",
 ];
 // JVZoo compliance "clean" sales pages — /sales/<slug>, one per FLAGGED listing
-// (thirteen article packs + the fixed Packs 1–4 bundle + nine ebooks). Each
-// renders the product's own copy, cover, canonical JVZoo buy block and retailer
-// disclaimer with NO link away from the
+// (thirteen article packs + the fixed Packs 1–4 bundle + eleven ebooks = 25 — the
+// whole catalog). Each renders the product's own copy, cover, canonical JVZoo buy
+// block and retailer disclaimer with NO link away from the
 // offer, so the owner can paste the clean URL into the listing's Sales Page field
 // and resubmit for re-review. Canonical list: src/lib/cleanSales.ts — keep this
 // copy, the one in scripts/verify-prerender.mjs and that module in sync.
-// protein-aging (ebook 454751) is deliberately absent: the owner is deactivating
-// that listing as a duplicate. So is healthy-feet (454739), which was never flagged.
+// Two of them were never flagged, and one (protein-aging, 454751) had been left
+// out while the owner considered deactivating it — she asked for those pages
+// anyway (9/28), so nothing is excluded now.
 const CLEAN_SALES_SLUGS = [
   // Third flag round — the eight original article packs (Packs 1-8) and the fixed
   // Packs 1-4 bundle listing (JVZoo 453431).
@@ -79,6 +80,9 @@ const CLEAN_SALES_SLUGS = [
   // Fourth flag round — the Healthy Feet ebook (JVZoo 454739), added at the
   // owner's request (2026-09-28).
   "healthy-feet",
+  // Fifth round — the Protein for Healthy Aging ebook (JVZoo 454751), also at the
+  // owner's request (2026-09-28); this is the 25th and completes the catalog.
+  "protein-aging",
 ];
 const TIER_SLUGS = ["essentials", "pro"];
 
