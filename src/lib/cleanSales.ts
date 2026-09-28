@@ -8,6 +8,10 @@
 //    the terms, privacy, disclaimers, support, etc. All other links must be
 //    removed."
 //
+// Four more ebook listings were flagged the same way afterwards (the remaining
+// ebooks whose JVZoo sales URL still pointed at the normal /ebooks/<slug> page),
+// so the list below covers fourteen flagged listings in total.
+//
 // The normal sales pages (/library/<slug>, /ebooks/<slug>) are full site pages:
 // header navigation (Home / Packs / Library / Ebooks / Affiliates), a logo link
 // to "/", a "Back to Library" link and a footer of site links + a mailto. Those
@@ -16,9 +20,9 @@
 // the JVZoo buy link, the JVZoo button image, the four legal/support pages and
 // the product cover.
 //
-// The ten are exactly the flagged products. protein-aging (ebook 454751) is
-// deliberately NOT here: the owner is deactivating that listing as a duplicate,
-// so it gets no clean page.
+// The flagged products are exactly the ones here. protein-aging (ebook 454751)
+// is deliberately NOT here: the owner is deactivating that listing as a
+// duplicate, so it gets no clean page.
 //
 // Slug -> JVZoo product ID stay in src/jvzoo.ts (one map, never duplicated);
 // this list only says which slugs get a clean page and which product shape to
@@ -34,7 +38,7 @@ export interface CleanSaleEntry {
   kind: CleanSaleKind;
 }
 
-/** The ten flagged products that get a /sales/<slug> page. */
+/** The fourteen flagged products that get a /sales/<slug> page. */
 export const CLEAN_SALES: CleanSaleEntry[] = [
   // --- Five article packs (Pack 9-13) ---
   { slug: "protein-shakes-protein-nutrition", kind: "pack" },
@@ -42,12 +46,18 @@ export const CLEAN_SALES: CleanSaleEntry[] = [
   { slug: "health-coaching-functional-nutrition-glp-1-support", kind: "pack" },
   { slug: "functional-nutrition-glp-1-adaptation", kind: "pack" },
   { slug: "womens-longevity-biology-specific-care", kind: "pack" },
-  // --- Five PLR ebooks ---
+  // --- Five PLR ebooks (first flag round) ---
   { slug: "healthy-bones", kind: "ebook" },
   { slug: "gut-health", kind: "ebook" },
   { slug: "hair-scalp", kind: "ebook" },
   { slug: "joint-fitness", kind: "ebook" },
   { slug: "hydration", kind: "ebook" },
+  // --- Four more PLR ebooks (second flag round): the remaining ebook listings
+  // whose JVZoo sales URL still pointed at the full-chrome /ebooks/<slug> page ---
+  { slug: "balanced-nutrition", kind: "ebook" },
+  { slug: "brain-habits", kind: "ebook" },
+  { slug: "heart-habits", kind: "ebook" },
+  { slug: "posture", kind: "ebook" },
 ];
 
 export const CLEAN_SALES_SLUGS: string[] = CLEAN_SALES.map((e) => e.slug);
@@ -56,8 +66,8 @@ const BY_SLUG = new Map<string, CleanSaleEntry>(CLEAN_SALES.map((e) => [e.slug, 
 
 /**
  * The clean-page entry for a slug, or undefined for any slug that is not one of
- * the ten flagged products. The route renders a link-free "not available" page
- * for an unknown slug rather than borrowing content from the normal pages.
+ * the flagged products. The route renders a link-free "not available" page for
+ * an unknown slug rather than borrowing content from the normal pages.
  */
 export function cleanSaleBySlug(slug: string): CleanSaleEntry | undefined {
   return BY_SLUG.get(slug);

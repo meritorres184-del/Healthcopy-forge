@@ -40,7 +40,7 @@ const PACK_SLUGS = [
   "womens-longevity-biology-specific-care",
 ];
 // JVZoo compliance "clean" sales pages — /sales/<slug>, one per FLAGGED listing
-// (five article packs + five ebooks). Each renders the product's own copy, cover,
+// (five article packs + nine ebooks). Each renders the product's own copy, cover,
 // canonical JVZoo buy block and retailer disclaimer with NO link away from the
 // offer, so the owner can paste the clean URL into the listing's Sales Page field
 // and resubmit for re-review. Canonical list: src/lib/cleanSales.ts — keep this
@@ -58,6 +58,12 @@ const CLEAN_SALES_SLUGS = [
   "hair-scalp",
   "joint-fitness",
   "hydration",
+  // Second flag round — the remaining ebook listings whose JVZoo sales URL still
+  // pointed at the full-chrome /ebooks/<slug> page.
+  "balanced-nutrition",
+  "brain-habits",
+  "heart-habits",
+  "posture",
 ];
 const TIER_SLUGS = ["essentials", "pro"];
 
