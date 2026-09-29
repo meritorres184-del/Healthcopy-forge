@@ -27,9 +27,9 @@ const ROUTE_SEO: Record<string, { title: string; description: string }> = {
       "SEO-written health & wellness PLR packs for coaches: articles, emails, social posts & lead magnets. Original in-house content. $47/pack.",
   },
   "/packs": {
-    title: "Health & Wellness PLR Packs: 7 Topics | HealthCopy Forge",
+    title: "Health & Wellness PLR Packs: 8 Topics | HealthCopy Forge",
     description:
-      "Browse 7 SEO-written health PLR packs: nutrition, supplements, fitness, sleep, stress, aging & holistic wellness. $47 each or any 4 for $97.",
+      "Browse 8 SEO-written health PLR packs: nutrition, supplements, fitness, sleep, stress, aging, holistic wellness & product reviews. $47 each or any 4 for $97.",
   },
   "/library": {
     title: "Member Content Library | HealthCopy Forge",

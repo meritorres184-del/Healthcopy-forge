@@ -52,6 +52,7 @@ function LibraryPage() {
     "Stress & Mind-Body": "Stress Management & Mind-Body Wellness",
     "Healthy Aging": "Healthy Aging & Lifestyle",
     "Natural & Holistic": "Natural & Holistic Wellness",
+    "Product Reviews": "Product Reviews & Buying Guides",
   };
   const groups: { name: string; packs: typeof packs }[] = [];
   for (const pack of packs) {

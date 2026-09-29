@@ -169,7 +169,9 @@ function AffiliatesPage() {
               about 75,000 words of article content
             </strong>{" "}
             (Pack 6 contains 14 articles at about 70,000 words; Pack 7 contains
-            12 in-depth articles plus an FAQ bonus section). Every pack also
+            12 in-depth articles plus an FAQ bonus section; Pack 8 contains
+            original reviews, buying guides &amp; comparisons at about 26,800
+            words). Every pack also
             includes:
           </p>
           <ul className="mt-6 space-y-3">
@@ -188,7 +190,7 @@ function AffiliatesPage() {
                 "Health & wellness disclaimers",
                 " — appropriate, customizable disclaimer content",
               ],
-              ["A bookcover and images", " for the pack"],
+              ["A bookcover", " for the pack"],
             ].map(([title, body]) => (
               <li
                 key={title}
@@ -540,7 +542,7 @@ const easyToPromote = [
   },
   {
     title: "A full toolkit, not just articles.",
-    body: " Each pack includes email swipes, social media posts, a lead magnet, a PLR license, disclaimers, a bookcover, and images.",
+    body: " Each pack includes email swipes, social media posts, a lead magnet, a PLR license, disclaimers, and a bookcover.",
   },
   {
     title: "A product your own peers need.",
@@ -632,7 +634,7 @@ const faqs = [
   {
     question: "What topics are covered?",
     answer:
-      "Seven packs today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, and natural & holistic wellness — with new topics added regularly.",
+      "Eight packs today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, natural & holistic wellness, and product reviews & buying guides — with new topics added regularly.",
   },
   {
     question: "Do I need my own website?",

@@ -44,11 +44,11 @@ const getPacks = createServerFn({ method: "GET" }).handler(async () => {
 export const Route = createFileRoute("/packs")({
   head: () => ({
     meta: [
-      { title: "Health & Wellness PLR Packs: 7 Topics | HealthCopy Forge" },
+      { title: "Health & Wellness PLR Packs: 8 Topics | HealthCopy Forge" },
       {
         name: "description",
         content:
-          "Browse 7 SEO-written health PLR packs: nutrition, supplements, fitness, sleep, stress, aging & holistic wellness. $47 each or any 4 for $97.",
+          "Browse 8 SEO-written health PLR packs: nutrition, supplements, fitness, sleep, stress, aging, holistic wellness & product reviews. $47 each or any 4 for $97.",
       },
     ],
   }),
@@ -162,7 +162,7 @@ function PacksPage() {
             Which Packs Fit Your Business?
           </h2>
           <p className="mt-3 text-gray-600">
-            Seven article packs. Seven wellness categories. One powerful content
+            Eight article packs. Eight wellness categories. One powerful content
             library. Instead of sitting down every week and asking, “What am I
             going to write about now?” — you can ask, “What can I create from the
             content I already have?”
