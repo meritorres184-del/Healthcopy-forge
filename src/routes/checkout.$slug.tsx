@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readWithRetry } from "../db";
+import { liveJvzooProduct } from "../jvzoo";
+import { JvzooBuyButton } from "../components/JvzooBuyButton";
 import { ContentUnavailable } from "../components/ContentUnavailable";
 import { packCover } from "../lib/packCovers";
 
@@ -48,6 +50,7 @@ export const Route = createFileRoute("/checkout/$slug")({
 
 function CheckoutPage() {
   const { pack, unavailable } = Route.useLoaderData();
+  const buy = pack ? liveJvzooProduct(pack.slug) : undefined;
 
   if (unavailable) {
     return (
@@ -138,16 +141,21 @@ function CheckoutPage() {
                 Instant download after purchase
               </span>
             </div>
-            <button
-              type="button"
-              className="mt-6 w-full rounded-xl bg-emerald-600 px-6 py-4 text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
-            >
-              Proceed to Payment
-            </button>
-            <p className="mt-4 text-center text-sm text-gray-500">
-              Secure checkout is being finalized — payments will process here
-              shortly.
-            </p>
+            {buy ? (
+              <div className="mt-6 flex flex-col items-center gap-3">
+                <JvzooBuyButton
+                  product={buy}
+                  imgClassName="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
+                />
+                <p className="text-center text-sm text-gray-500">
+                  Buy securely through JVZoo — instant download after checkout.
+                </p>
+              </div>
+            ) : (
+              <p className="mt-6 text-center text-sm text-gray-500">
+                This pack isn&apos;t available for purchase yet — check back soon.
+              </p>
+            )}
           </div>
         </div>
       </div>
