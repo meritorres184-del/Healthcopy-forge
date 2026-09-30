@@ -21,7 +21,7 @@ const AFFILIATE_PRODUCTS = [
 // Target for the Section 9 free-sample button. The free sample article link is
 // NOT known yet. TODO: replace "#" with the free sample article URL once the
 // owner provides/enables it.
-const FREE_SAMPLE_URL = "#";
+const FREE_SAMPLE_URL = "/#free-sample";
 
 export const Route = createFileRoute("/affiliates")({
   head: () => ({

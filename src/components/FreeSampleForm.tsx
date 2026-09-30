@@ -107,7 +107,7 @@ export function FreeSampleBand({
   packsDegraded?: boolean;
 }) {
   return (
-    <section className="border-y border-emerald-100 bg-emerald-50 px-4 py-16 sm:px-6 sm:py-20">
+    <section id="free-sample" className="border-y border-emerald-100 bg-emerald-50 px-4 py-16 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-3xl text-center">
         <span className="inline-block rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-700">
           Free Sample
