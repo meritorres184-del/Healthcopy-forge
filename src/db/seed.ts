@@ -1,10 +1,13 @@
 import { sql } from "../db";
+import { PACK_DESCRIPTIONS } from "../lib/packDescriptions";
 import { migrate } from "./migrate";
 
 /**
- * Seed script. Runs migrations first, then inserts the real 7 article packs
- * (owner-defined). Idempotent: packs are keyed on their unique `slug` with
- * `on conflict (slug) do nothing`, so re-running never duplicates rows.
+ * Seed script. Runs migrations first, then upserts the article packs
+ * (owner-defined; Packs 1-8 descriptions come verbatim from
+ * src/lib/packDescriptions.ts). Idempotent: packs are keyed on their unique
+ * `slug` with `on conflict (slug) do update`, so re-running never duplicates a
+ * row and always brings an edited title/description/includes block up to date.
  *
  * Run standalone with:  bun run db:seed
  */
@@ -23,8 +26,7 @@ const packs: SeedPack[] = [
   {
     slug: "nutrition-everyday-wellness",
     title: "Article Pack 1: Nutrition & Everyday Wellness",
-    description:
-      "Want to build your nutrition content without starting from zero? This pack gives you a ready-to-customize foundation of SEO-written PLR content covering important nutrition and everyday wellness topics.",
+    description: PACK_DESCRIPTIONS["nutrition-everyday-wellness"],
     priceCents: 4700,
     category: "Nutrition",
     comingSoon: false,
@@ -41,8 +43,7 @@ const packs: SeedPack[] = [
   {
     slug: "supplements-nutritional-support",
     title: "Article Pack 2: Supplements & Nutritional Support",
-    description:
-      "Want to create supplement content without doing all the research yourself? This pack gives you a ready-made foundation for building educational supplement and nutritional-support content.",
+    description: PACK_DESCRIPTIONS["supplements-nutritional-support"],
     priceCents: 4700,
     category: "Supplements",
     comingSoon: false,
@@ -53,14 +54,13 @@ const packs: SeedPack[] = [
       "Lead magnet content",
       "PLR license",
       "Health & wellness disclaimers",
-      "Bookcover & images",
+      "Bookcover",
     ],
   },
   {
     slug: "fitness-exercise",
     title: "Article Pack 3: Fitness & Exercise",
-    description:
-      "Ready to build more than a few random fitness posts? This pack gives you a head start — content covering multiple areas of everyday fitness so you can customize it for your wellness audience.",
+    description: PACK_DESCRIPTIONS["fitness-exercise"],
     priceCents: 4700,
     category: "Fitness",
     comingSoon: false,
@@ -71,14 +71,13 @@ const packs: SeedPack[] = [
       "Lead magnet content",
       "PLR license",
       "Health & wellness disclaimers",
-      "Bookcover & images",
+      "Bookcover",
     ],
   },
   {
     slug: "sleep-recovery",
     title: "Article Pack 4: Sleep & Recovery",
-    description:
-      "Want to expand your wellness content into sleep and recovery? This pack gives you a ready-to-customize content foundation that helps you expand into the sleep and recovery niche.",
+    description: PACK_DESCRIPTIONS["sleep-recovery"],
     priceCents: 4700,
     category: "Sleep & Recovery",
     comingSoon: false,
@@ -89,14 +88,13 @@ const packs: SeedPack[] = [
       "Lead magnet content",
       "PLR license",
       "Health & wellness disclaimers",
-      "Bookcover & images",
+      "Bookcover",
     ],
   },
   {
     slug: "stress-management-mind-body-wellness",
     title: "Article Pack 5: Stress Management & Mind-Body Wellness",
-    description:
-      "Give your audience more than another “just relax” article. This pack gives you a starting point — customizable content covering multiple areas of stress management and mind-body wellness.",
+    description: PACK_DESCRIPTIONS["stress-management-mind-body-wellness"],
     priceCents: 4700,
     category: "Stress & Mind-Body",
     comingSoon: false,
@@ -107,14 +105,13 @@ const packs: SeedPack[] = [
       "Lead magnet content",
       "PLR license",
       "Health & wellness disclaimers",
-      "Bookcover & images",
+      "Bookcover",
     ],
   },
   {
     slug: "healthy-aging-lifestyle",
     title: "Article Pack 6: Healthy Aging & Lifestyle",
-    description:
-      "Want to reach the growing healthy-aging audience? This pack gives you comprehensive content covering multiple aspects of wellness and healthy aging so you don’t have to build this entire content category yourself.",
+    description: PACK_DESCRIPTIONS["healthy-aging-lifestyle"],
     priceCents: 4700,
     category: "Healthy Aging",
     comingSoon: false,
@@ -131,8 +128,7 @@ const packs: SeedPack[] = [
   {
     slug: "natural-holistic-wellness",
     title: "Article Pack 7: Natural & Holistic Wellness",
-    description:
-      "Want to expand into natural and holistic wellness? This pack gives you a customizable content foundation covering a variety of natural and holistic wellness topics so you can start building this part of your business faster.",
+    description: PACK_DESCRIPTIONS["natural-holistic-wellness"],
     priceCents: 4700,
     category: "Natural & Holistic",
     comingSoon: false,
@@ -149,8 +145,7 @@ const packs: SeedPack[] = [
   {
     slug: "product-reviews-buying-guides",
     title: "Article Pack 8: Product Reviews & Buying Guides",
-    description:
-      "Create stronger product-focused content without starting from scratch. Article Pack 8: Product Reviews & Buying Guides is a complete PLR package (about 26,800 words) for bloggers, affiliate marketers, influencers, wellness website owners, and content creators who want to publish helpful health and wellness product content. Inside: original SEO-written product review content, buying guide content, product comparison content, and consumer education content — plus a ready-to-customize lead magnet, social media posts, email swipes, a PLR license, and health and product-related disclaimers.",
+    description: PACK_DESCRIPTIONS["product-reviews-buying-guides"],
     priceCents: 4700,
     category: "Product Reviews",
     comingSoon: false,
@@ -299,7 +294,18 @@ export async function seed() {
         (slug, title, description, price_cents, category, coming_soon, includes)
       values
         (${p.slug}, ${p.title}, ${p.description}, ${p.priceCents}, ${p.category}, ${p.comingSoon}, ${p.includes})
-      on conflict (slug) do nothing
+      -- Re-running the seed refreshes existing rows instead of skipping them,
+      -- so an edit to a title/description/includes block above (or to
+      -- src/lib/packDescriptions.ts, which feeds the packs 1-8 descriptions)
+      -- reaches the live pages on the next build. Insert-only ("do nothing")
+      -- silently kept the old storefront blurbs alive.
+      on conflict (slug) do update set
+        title = excluded.title,
+        description = excluded.description,
+        price_cents = excluded.price_cents,
+        category = excluded.category,
+        coming_soon = excluded.coming_soon,
+        includes = excluded.includes
     `;
   }
 

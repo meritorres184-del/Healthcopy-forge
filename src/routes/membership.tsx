@@ -40,13 +40,13 @@ function MembershipPage() {
             Membership
           </span>
           <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-            Full Library Access,{" "}
+            Pro Unlocks the Full Library,{" "}
             <span className="text-emerald-600">New Packs Every Month</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
             Done-for-you content you can rebrand and publish immediately —
             articles, email sequences, social posts, and lead magnets — all
-            professionally researched and edited, grammar-free and ready for
+            professionally researched and edited, ready for
             your audience.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -71,12 +71,12 @@ function MembershipPage() {
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Everything in the Library,{" "}
+              The Whole Library on Pro,{" "}
               <span className="text-emerald-600">Plus Monthly Drops</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-              One membership unlocks every pack we've ever written — and every
-              pack we'll write next.
+              Pro unlocks every pack we've ever written — and every pack we'll
+              write next. Essentials keeps 5 new SEO articles coming every month.
             </p>
           </div>
           <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -117,11 +117,11 @@ function MembershipPage() {
             </span>
             <div>
               <h3 className="text-base font-semibold text-gray-900">
-                Professionally Edited, Grammar-Free &amp; Compliant-Friendly
+                Professionally Edited &amp; Compliant-Friendly
               </h3>
               <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                Unlike most PLR, every pack is professionally edited and
-                grammar-free — so the content reads clean when you publish it.
+                Unlike most PLR, every pack is professionally edited — so the
+                content reads clean when you publish it.
                 It's also built around accurate, defensible claims with
                 compliant-friendly framing, so you keep your audience's trust.
               </p>
@@ -209,9 +209,9 @@ function MembershipPage() {
 
 const benefits = [
   {
-    title: "Full Library Access",
+    title: "Full Library Access on Pro",
     description:
-      "Every content pack we've published — and everything we publish while you're a member. No paywalls, no extra fees.",
+      "Pro unlocks every content pack we've published — and everything we publish while you're a member. No paywalls, no extra fees. Essentials gives you 5 new SEO articles every month plus a rotating mini ebook, wellness journal, tracker, checklist, or cheat sheet.",
     icon: (
       <svg
         className="h-6 w-6"
@@ -251,7 +251,7 @@ const benefits = [
   {
     title: "Ready-to-Rebrand Articles",
     description:
-      "SEO-friendly, professionally edited and grammar-free articles you can edit, brand, and publish as your own in minutes.",
+      "SEO-friendly, professionally edited articles you can edit, brand, and publish as your own in minutes.",
     icon: (
       <svg
         className="h-6 w-6"

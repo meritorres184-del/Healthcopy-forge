@@ -18,9 +18,10 @@ function JoinPage() {
             Choose Your <span className="text-emerald-600">Membership Plan</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
-            Pick the tier that fits your publishing volume. Both plans unlock the
-            full library — the difference is how much fresh content lands each
-            month.
+            Pick the tier that fits your publishing volume. Essentials is
+            content to publish consistently; Pro adds the full library — the
+            PLR ebooks, courses, premium journals and workbooks — on top of the
+            expanded monthly drop.
           </p>
         </div>
       </section>
@@ -75,9 +76,9 @@ function JoinPage() {
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Both plans include full library access, exclusive monthly drops, and
-            you can cancel anytime. Secure checkout is being finalized — you'll
-            confirm your plan on the next step.
+            Both plans include exclusive monthly drops, and you can cancel
+            anytime; full library access is on Pro. Secure checkout is being
+            finalized — you'll confirm your plan on the next step.
           </p>
         </div>
       </section>

@@ -79,7 +79,7 @@ function PricingPage() {
                 ))}
               </ul>
               <a href="/packs" className="mt-8 block w-full rounded-xl border-2 border-emerald-600 bg-white px-6 py-3 text-center text-sm font-semibold text-emerald-600 transition-all hover:bg-emerald-50">
-                Browse the 7 Packs
+                Browse the 8 Packs
               </a>
             </div>
 
@@ -158,8 +158,8 @@ function PricingPage() {
           </h2>
           <p className="mt-4 text-lg text-emerald-100">
             Start with a single pack to try the quality, or jump straight into{" "}
-            {businessName} Membership for the whole library. You can't go wrong
-            with either.
+            {businessName} Membership — Essentials for 5 new SEO articles every
+            month, Pro for the whole library. You can't go wrong with either.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a href="/packs" className="inline-flex items-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all hover:bg-emerald-50">
@@ -201,7 +201,8 @@ const packsIncluded = [
   "Social media posts included",
   "Lead magnet in every pack",
   "PLR license & health disclaimers included",
-  "Bookcover & images in every pack",
+  "Bookcover in every pack",
+  "100% Original, In-House Written Content",
   "One-time purchase — yours forever",
 ];
 
