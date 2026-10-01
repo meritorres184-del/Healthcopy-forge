@@ -161,8 +161,8 @@ const packs: SeedPack[] = [
   },
   // ---------------------------------------------------------------------
   // Packs 9-13 (delivered 2026-09-22). `comingSoon: false` on purpose:
-  // their /library and /checkout pages are pre-rendered and the owner is
-  // listing them on JVZoo, so /checkout/<slug> must resolve to a real pack.
+  // their /library pages are pre-rendered and the owner is listing them on
+  // JVZoo, so each pack slug must resolve to a real pack.
   // Descriptions are the owner's own text from
   // _incoming/packN/packN-description.txt, verbatim; where that file's first
   // line is the pack's title heading it is used as `title` and the

@@ -4,7 +4,7 @@
 // that is how the owner's cover JPEGs are named on disk. Packs 1–6 use the
 // `-1` suffix their originals shipped with; packs 7–13 are plain `pack-<n>.jpg`.
 //
-// Before this map existed, `/packs` and `/checkout/<slug>` derived the file name
+// Before this map existed, `/packs` and each pack detail page derived the file name
 // from a 1–8 table that defaulted to `pack-1-1.jpg` for anything it did not
 // know — so a new pack silently showed pack 1's cover. Adding a pack now means
 // adding one line here, and a slug with no cover renders no image instead of the

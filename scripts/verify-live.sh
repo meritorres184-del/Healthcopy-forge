@@ -57,7 +57,6 @@ OTHER_URLS=(
   /support
   /purchase/success
   /purchase/cancel
-  /checkout/nutrition-everyday-wellness
 )
 if [ "${ALL_ROUTES:-0}" = "1" ]; then URLS=("${SALES_URLS[@]}" "${OTHER_URLS[@]}"); else URLS=("${SALES_URLS[@]}"); fi
 
