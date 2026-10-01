@@ -118,8 +118,8 @@ function PricingPage() {
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Checkout goes live soon — both one-time packs and memberships will be
-            available then.
+            One-time packs and ebooks are available now — membership checkout
+            opens soon.
           </p>
         </div>
       </section>

@@ -104,14 +104,14 @@ function TierConfirmPage() {
             </ul>
 
             <div className="mt-8">
-              <button
-                type="button"
-                className="w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
+              <a
+                href="/library"
+                className="block w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-center text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
               >
-                Proceed to Payment
-              </button>
+                Browse Available Packs &amp; Ebooks
+              </a>
               <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-center text-sm text-gray-600">
-                Secure checkout is being finalized.
+                Membership checkout opens soon. One-time packs and ebooks are available now.
               </p>
             </div>
 

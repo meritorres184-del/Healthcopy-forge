@@ -77,8 +77,8 @@ function JoinPage() {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Both plans include exclusive monthly drops, and you can cancel
-            anytime; full library access is on Pro. Secure checkout is being
-            finalized — you'll confirm your plan on the next step.
+            anytime; full library access is on Pro. Membership checkout opens
+            soon — article packs and ebooks are available today.
           </p>
         </div>
       </section>
