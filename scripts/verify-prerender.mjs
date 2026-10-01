@@ -251,7 +251,6 @@ const OTHER = [
   "/terms",
   "/purchase/success",
   "/purchase/cancel",
-  ...PACK_SLUGS.map((s) => "/checkout/" + s),
 ];
 const OTHER_MIN_BYTES = 5000;
 
@@ -433,7 +432,10 @@ const FORBIDDEN_HREF = [
   [/^\/membership/, "link to /membership"],
   [/^\/pricing/, "link to /pricing"],
   [/^\/join/, "link to /join"],
-  [/^\/checkout/, "link to /checkout"],
+  // The /checkout/<slug> placeholder routes were DELETED (owner rule, 2026-09-30:
+  // no sales-style page outside /sales/<slug>). The guard STAYS: any link to a
+  // /checkout URL is now a broken link, and a clean page may never carry one.
+  [/^\/checkout/, "link to the deleted /checkout route (sales pages live at /sales/<slug>)"],
   [/^\/downloads/, "link to /downloads"],
   [/^\/zips\//, "link to a /zips download"],
   [/^mailto:/, "mailto link"],

@@ -130,7 +130,6 @@ const PRERENDER_PAGES = [
   ...PACK_SLUGS.map((slug) => ({ path: "/library/" + slug })),
   ...EBOOK_SLUGS.map((slug) => ({ path: "/ebooks/" + slug })),
   ...CLEAN_SALES_SLUGS.map((slug) => ({ path: "/sales/" + slug })),
-  ...PACK_SLUGS.map((slug) => ({ path: "/checkout/" + slug })),
   ...TIER_SLUGS.map((tier) => ({ path: "/join/" + tier })),
 ];
 
