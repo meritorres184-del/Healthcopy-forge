@@ -3,10 +3,16 @@ import { createFileRoute } from "@tanstack/react-router";
 // ─── Swap-ready CTA URLs ──────────────────────────────────────────────────────
 // JVZoo affiliate offer pages — the "apply to promote" destination for each
 // live product. Format: https://www.jvzoo.com/affiliates/info/{productID}
-// (canonical redirect: /affiliate/affiliateinfonew/index/{id}). All 9 live.
+// (canonical redirect: /affiliate/affiliateinfonew/index/{id}). All 25 live.
+//
+// One entry per live JVZoo listing: 13 article packs + the fixed 4-pack bundle
+// + the 11 PLR ebooks. The names below are the listing names buyers/affiliates
+// see, taken verbatim from the `alt` text in src/jvzoo.ts — that file stays the
+// single source of truth for the product IDs.
 const AFFILIATE_APPLY_URL =
   "https://www.jvzoo.com/affiliates/info/453431"; // 4-pack bundle (flagship $97)
 const AFFILIATE_PRODUCTS = [
+  // Article packs 1–8 ($47 each)
   { name: "Nutrition & Everyday Wellness", href: "https://www.jvzoo.com/affiliates/info/452429" },
   { name: "Supplements & Nutritional Support", href: "https://www.jvzoo.com/affiliates/info/452431" },
   { name: "Fitness & Exercise", href: "https://www.jvzoo.com/affiliates/info/452433" },
@@ -15,7 +21,26 @@ const AFFILIATE_PRODUCTS = [
   { name: "Healthy Aging & Lifestyle", href: "https://www.jvzoo.com/affiliates/info/452447" },
   { name: "Natural & Holistic Wellness", href: "https://www.jvzoo.com/affiliates/info/452449" },
   { name: "Product Reviews & Buying Guides", href: "https://www.jvzoo.com/affiliates/info/452451" },
+  // Fixed 4-pack bundle — Packs 1–4 ($97)
   { name: "4-Pack Bundle (Packs 1-4, $97)", href: "https://www.jvzoo.com/affiliates/info/453431" },
+  // Article packs 9–13 ($47 each)
+  { name: "Article Pack 9 Protein Shakes & Protein Nutrition", href: "https://www.jvzoo.com/affiliates/info/454667" },
+  { name: "Article Pack 10 Intermittent Fasting & Time-Restricted Eating", href: "https://www.jvzoo.com/affiliates/info/454669" },
+  { name: "Article Pack 11 Health Coaching, Functional Nutrition & GLP-1 Support in 2026", href: "https://www.jvzoo.com/affiliates/info/454673" },
+  { name: "Article Pack 12 Functional Nutrition, GLP-1 & Adaptation in 2026", href: "https://www.jvzoo.com/affiliates/info/454675" },
+  { name: "Article Pack 13 Women's Longevity & Biology-Specific Care", href: "https://www.jvzoo.com/affiliates/info/454679" },
+  // PLR ebooks E1–E11 ($27 each)
+  { name: "Balanced Nutrition Made Simple — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454681" },
+  { name: "Brain Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454687" },
+  { name: "Gut Health for Beginners — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454695" },
+  { name: "Healthy Bones and Everyday Lifestyle — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454731" },
+  { name: "Healthy Feet and Foot Care — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454739" },
+  { name: "Healthy Hair and Scalp Wellness — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454741" },
+  { name: "Heart Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454743" },
+  { name: "Hydration and Wellness — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454745" },
+  { name: "Joint Friendly Fitness — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454747" },
+  { name: "Posture and Everyday Movement — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454749" },
+  { name: "Protein for Healthy Aging — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454751" },
 ];
 
 // Target for the Section 9 free-sample button. The free sample article link is
@@ -354,8 +379,8 @@ function AffiliatesPage() {
             10. Current PLR Product Categories
           </h2>
           <p className="mt-6 text-base leading-relaxed text-gray-600 sm:text-lg">
-            Nine products are live and ready to promote: 8 packs at $47 each
-            plus the 4-pack bundle at $97.
+            Twenty-five products are live and ready to promote: 13 article packs
+            at $47 each, the 4-pack bundle at $97, and 11 PLR ebooks at $27 each.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-gray-600 sm:text-base">
             {AFFILIATE_PRODUCTS.map((item) => (
@@ -634,7 +659,7 @@ const faqs = [
   {
     question: "What topics are covered?",
     answer:
-      "Eight packs today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, natural & holistic wellness, and product reviews & buying guides — with new topics added regularly.",
+      "Thirteen article packs and eleven PLR ebooks today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, natural & holistic wellness, product reviews & buying guides, protein nutrition, intermittent fasting, health coaching & GLP-1 support, functional nutrition, and women's longevity — with new topics added regularly.",
   },
   {
     question: "Do I need my own website?",
