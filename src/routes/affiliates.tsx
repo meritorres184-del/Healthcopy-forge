@@ -6,12 +6,9 @@ import { createFileRoute } from "@tanstack/react-router";
 // (canonical redirect: /affiliate/affiliateinfonew/index/{id}). All 25 live.
 //
 // One entry per live JVZoo listing: 13 article packs + the fixed 4-pack bundle
-// + the 11 Master Rights ebooks. The names below are the site's own labels, kept
-// byte-identical to the `alt` text in src/jvzoo.ts — that file stays the single
-// source of truth for the product IDs. NOTE: the ebook LISTING NAMES in the
-// owner's JVZoo vendor area still read "PLR Ebook, Ready to Rebrand" (frozen
-// titles → her call, via the listing-copy kit). These labels deliberately do not
-// repeat that claim: ebooks are Master Rights — resell or use as-is only.
+// + the 11 PLR ebooks. The names below are the listing names buyers/affiliates
+// see, taken verbatim from the `alt` text in src/jvzoo.ts — that file stays the
+// single source of truth for the product IDs.
 const AFFILIATE_APPLY_URL =
   "https://www.jvzoo.com/affiliates/info/453431"; // 4-pack bundle (flagship $97)
 const AFFILIATE_PRODUCTS = [
@@ -32,18 +29,18 @@ const AFFILIATE_PRODUCTS = [
   { name: "Article Pack 11 Health Coaching, Functional Nutrition & GLP-1 Support in 2026", href: "https://www.jvzoo.com/affiliates/info/454673" },
   { name: "Article Pack 12 Functional Nutrition, GLP-1 & Adaptation in 2026", href: "https://www.jvzoo.com/affiliates/info/454675" },
   { name: "Article Pack 13 Women's Longevity & Biology-Specific Care", href: "https://www.jvzoo.com/affiliates/info/454679" },
-  // Master Rights ebooks E1–E11 ($27 each)
-  { name: "Balanced Nutrition Made Simple — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454681" },
-  { name: "Brain Healthy Lifestyle Habits — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454687" },
-  { name: "Gut Health for Beginners — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454695" },
-  { name: "Healthy Bones and Everyday Lifestyle — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454731" },
-  { name: "Healthy Feet and Foot Care — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454739" },
-  { name: "Healthy Hair and Scalp Wellness — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454741" },
-  { name: "Heart Healthy Lifestyle Habits — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454743" },
-  { name: "Hydration and Wellness — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454745" },
-  { name: "Joint Friendly Fitness — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454747" },
-  { name: "Posture and Everyday Movement — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454749" },
-  { name: "Protein for Healthy Aging — Master Rights Ebook", href: "https://www.jvzoo.com/affiliates/info/454751" },
+  // PLR ebooks E1–E11 ($27 each)
+  { name: "Balanced Nutrition Made Simple — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454681" },
+  { name: "Brain Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454687" },
+  { name: "Gut Health for Beginners — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454695" },
+  { name: "Healthy Bones and Everyday Lifestyle — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454731" },
+  { name: "Healthy Feet and Foot Care — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454739" },
+  { name: "Healthy Hair and Scalp Wellness — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454741" },
+  { name: "Heart Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454743" },
+  { name: "Hydration and Wellness — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454745" },
+  { name: "Joint Friendly Fitness — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454747" },
+  { name: "Posture and Everyday Movement — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454749" },
+  { name: "Protein for Healthy Aging — PLR Ebook, Ready to Rebrand", href: "https://www.jvzoo.com/affiliates/info/454751" },
 ];
 
 // Target for the Section 9 free-sample button. The free sample article link is
@@ -154,7 +151,7 @@ function AffiliatesPage() {
             These are people who are constantly producing content — and fresh,
             responsibly written health content is hard to find. When you
             recommend HealthCopy Forge, your audience gets it immediately:
-            content they can publish or brand the same day.
+            ready-to-brand content they can publish the same day.
           </p>
         </div>
       </section>
@@ -383,7 +380,7 @@ function AffiliatesPage() {
           </h2>
           <p className="mt-6 text-base leading-relaxed text-gray-600 sm:text-lg">
             Twenty-five products are live and ready to promote: 13 article packs
-            at $47 each, the 4-pack bundle at $97, and 11 Master Rights ebooks at $27 each.
+            at $47 each, the 4-pack bundle at $97, and 11 PLR ebooks at $27 each.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-gray-600 sm:text-base">
             {AFFILIATE_PRODUCTS.map((item) => (
@@ -662,7 +659,7 @@ const faqs = [
   {
     question: "What topics are covered?",
     answer:
-      "Thirteen article packs and eleven Master Rights ebooks today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, natural & holistic wellness, product reviews & buying guides, protein nutrition, intermittent fasting, health coaching & GLP-1 support, functional nutrition, and women's longevity — with new topics added regularly.",
+      "Thirteen article packs and eleven PLR ebooks today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, natural & holistic wellness, product reviews & buying guides, protein nutrition, intermittent fasting, health coaching & GLP-1 support, functional nutrition, and women's longevity — with new topics added regularly.",
   },
   {
     question: "Do I need my own website?",

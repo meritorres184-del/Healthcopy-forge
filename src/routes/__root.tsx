@@ -47,9 +47,9 @@ const ROUTE_SEO: Record<string, { title: string; description: string }> = {
       "Get new SEO-written health & wellness PLR monthly: articles, ebooks, courses, journals & trackers. Essentials $47, Pro $97.",
   },
   "/ebooks": {
-    title: "Master Rights Health & Wellness Ebooks",
+    title: "Ready-to-Rebrand PLR Ebooks: Health & Wellness",
     description:
-      "11 health & wellness Master Rights ebooks: each ships exactly as written, with the Master Rights License, a medical disclaimer and a cover image. Resell as-is or use as-is, $27 each, instant download.",
+      "11 ready-to-rebrand health & wellness PLR ebooks: editable Word files with a PLR license, a medical disclaimer and a cover image. $27 each, instant download.",
   },
   "/affiliates": {
     title: "Affiliates: Earn 50% Promoting Health & Wellness PLR",

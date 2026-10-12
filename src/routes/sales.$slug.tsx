@@ -102,16 +102,14 @@ function degradedSale(slug: string, kind: CleanSaleKind): CleanSale {
     title: kind === "bundle" ? BUNDLE_TITLE : slugToHeading(slug),
     category:
       kind === "ebook"
-        ? "Master Rights Ebook"
+        ? "PLR Ebook"
         : kind === "bundle"
           ? BUNDLE_CATEGORY
           : "Article Pack (PLR)",
     price:
       kind === "ebook" ? EBOOK_PRICE : kind === "bundle" ? BUNDLE_PRICE : 47,
     description:
-      kind === "ebook"
-        ? "Health & wellness Master Rights ebook from HealthCopy Forge — resell it exactly as-is or use it exactly as-is; it ships exactly as written."
-        : "SEO-written health & wellness PLR content from HealthCopy Forge — ready to customize, brand & promote.",
+      "SEO-written health & wellness PLR content from HealthCopy Forge — ready to customize, brand & promote.",
     includes: [],
     stats: [],
     unavailable: true,
@@ -132,7 +130,7 @@ function saleMeta(sale: CleanSale | null): { title: string; description: string 
   }
   const shape =
     sale.kind === "ebook"
-      ? "a Master Rights ebook (resell or use it as-is; not editable or rebrandable)"
+      ? "a ready-to-rebrand PLR ebook"
       : sale.kind === "bundle"
         ? "a ready-to-rebrand PLR article-pack bundle"
         : "a ready-to-rebrand PLR article pack";
@@ -142,9 +140,7 @@ function saleMeta(sale: CleanSale | null): { title: string; description: string 
       sale.title +
       " — " +
       shape +
-      (sale.kind === "ebook"
-        ? " you can resell or use exactly as-is and keep 100% of the revenue. Instant download, $"
-        : " you can edit, brand and publish as your own. Instant download, $") +
+      " you can edit, brand and publish as your own. Instant download, $" +
       String(sale.price) +
       " one-time, through JVZoo.",
   };
@@ -202,7 +198,7 @@ export const Route = createFileRoute("/sales/$slug")({
         slug: ebook.slug,
         kind: "ebook",
         title: ebook.title,
-        category: "Master Rights Ebook",
+        category: "PLR Ebook",
         price: EBOOK_PRICE,
         description: ebook.description,
         includes: ebook.includes,
@@ -210,7 +206,7 @@ export const Route = createFileRoute("/sales/$slug")({
           { label: "Chapters", value: String(ebook.chapters) },
           { label: "Word count", value: ebook.wordCount },
           { label: "Delivery", value: "Instant ZIP download" },
-          { label: "License", value: "Master Rights License" },
+          { label: "License", value: "PLR / Master Rights" },
         ],
       };
       const meta = saleMeta(sale);
@@ -386,9 +382,9 @@ function CleanSalePage() {
                 </div>
               ) : null}
               <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm leading-relaxed text-gray-600">
-                {sale.kind === "ebook"
-                  ? "Delivered as a single ZIP — the ebook exactly as written, with the Master Rights License, the medical disclaimer and the cover image inside. Resell it as-is or use it as-is and keep 100% of the revenue; it is not editable or rebrandable."
-                  : "Delivered as a single ZIP — fully editable, ready to brand and publish as your own, with the PLR license, the medical disclaimer and the cover image inside."}
+                Delivered as a single ZIP — fully editable, ready to brand and
+                publish as your own, with the PLR license, the medical disclaimer
+                and the cover image inside.
               </p>
             </div>
           </div>

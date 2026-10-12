@@ -107,16 +107,11 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
   ),
 
   // ---------------------------------------------------------------------------
-  // Ebooks E1-E11 — the standalone Master Rights ebook line, $27 each. Resell or
-  // use exactly as-is; never editable, never rebrandable (src/lib/ebooks.ts). The
-  // alt text below is the site's own label, mirrored by AFFILIATE_PRODUCTS on
-  // /affiliates. The ebook LISTING NAMES in the owner's JVZoo vendor area still
-  // read "PLR Ebook, Ready to Rebrand" (frozen titles → her call, via the
-  // listing-copy kit) — that wording belongs to the listing, not to this site.
+  // Ebooks E1-E11 — the standalone PLR ebook line, $27 each (src/lib/ebooks.ts).
   //
   // Same rule as the packs above: this is the ONE place to wire them up. Replace
   // NOT_LISTED_YET with the JVZoo product ID once the owner sends it, e.g.
-  //   "balanced-nutrition": jvzooProduct("452470", "Balanced Nutrition Made Simple — Master Rights Ebook"),
+  //   "balanced-nutrition": jvzooProduct("452470", "Balanced Nutrition Made Simple — PLR Ebook, Ready to Rebrand"),
   // then republish. While an ID is missing, that ebook's page (/ebooks/<slug>)
   // renders its price and the "instant download" state instead of a buy block —
   // never a dead link — and scripts/verify-prerender.mjs requires the canonical
@@ -124,47 +119,47 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
   // markup on an ebook page whose ID is still empty).
   "balanced-nutrition": jvzooProduct(
     "454681",
-    "Balanced Nutrition Made Simple — Master Rights Ebook",
+    "Balanced Nutrition Made Simple — PLR Ebook, Ready to Rebrand",
   ),
   "brain-habits": jvzooProduct(
     "454687",
-    "Brain Healthy Lifestyle Habits — Master Rights Ebook",
+    "Brain Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand",
   ),
   "gut-health": jvzooProduct(
     "454695",
-    "Gut Health for Beginners — Master Rights Ebook",
+    "Gut Health for Beginners — PLR Ebook, Ready to Rebrand",
   ),
   "healthy-bones": jvzooProduct(
     "454731",
-    "Healthy Bones and Everyday Lifestyle — Master Rights Ebook",
+    "Healthy Bones and Everyday Lifestyle — PLR Ebook, Ready to Rebrand",
   ),
   "healthy-feet": jvzooProduct(
     "454739",
-    "Healthy Feet and Foot Care — Master Rights Ebook",
+    "Healthy Feet and Foot Care — PLR Ebook, Ready to Rebrand",
   ),
   "hair-scalp": jvzooProduct(
     "454741",
-    "Healthy Hair and Scalp Wellness — Master Rights Ebook",
+    "Healthy Hair and Scalp Wellness — PLR Ebook, Ready to Rebrand",
   ),
   "heart-habits": jvzooProduct(
     "454743",
-    "Heart Healthy Lifestyle Habits — Master Rights Ebook",
+    "Heart Healthy Lifestyle Habits — PLR Ebook, Ready to Rebrand",
   ),
   "hydration": jvzooProduct(
     "454745",
-    "Hydration and Wellness — Master Rights Ebook",
+    "Hydration and Wellness — PLR Ebook, Ready to Rebrand",
   ),
   "joint-fitness": jvzooProduct(
     "454747",
-    "Joint Friendly Fitness — Master Rights Ebook",
+    "Joint Friendly Fitness — PLR Ebook, Ready to Rebrand",
   ),
   "posture": jvzooProduct(
     "454749",
-    "Posture and Everyday Movement — Master Rights Ebook",
+    "Posture and Everyday Movement — PLR Ebook, Ready to Rebrand",
   ),
   "protein-aging": jvzooProduct(
     "454751",
-    "Protein for Healthy Aging — Master Rights Ebook",
+    "Protein for Healthy Aging — PLR Ebook, Ready to Rebrand",
   ),
 };
 

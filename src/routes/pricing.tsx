@@ -208,7 +208,7 @@ const packsIncluded = [
 
 const membershipIncluded = [
   "Essentials — 5 new SEO articles monthly",
-  "Pro — 10–15 articles + ebook & course",
+  "Pro — 10–15 articles + PLR ebook & course",
   "Keyword, title, meta & CTA support",
   "Rotating mini ebooks, journals, trackers & checklists",
   "Lead-magnet & email-marketing vaults on Pro",
@@ -235,6 +235,6 @@ const faqs = [
   {
     question: "Can I really rebrand and publish the content as my own?",
     answer:
-      "For article packs and courses, yes — they're PLR (private label rights), so you customize, brand, and publish them as your own. Ebooks are the exception: they are sold under a Master Rights License, so you resell or use them exactly as delivered and keep 100% of the revenue — no editing, rebranding or renaming.",
+      "Yes. It's PLR (private label rights) — customize, brand, and publish it as your own. That's the whole point.",
   },
 ];
