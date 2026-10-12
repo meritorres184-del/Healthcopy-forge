@@ -258,7 +258,7 @@ function Home() {
               <ul className="mt-6 space-y-3">
                 {[
                   "Essentials — $47/mo: 5 new SEO articles monthly",
-                  "Pro — $97/mo: 10–15 articles + PLR ebook & course",
+                  "Pro — $97/mo: 10–15 articles + Master Resell ebook & course",
                   "Rotating mini ebooks, journals, trackers & checklists",
                   "Lead-magnet & email-marketing vaults on Pro",
                   "Cancel anytime",
