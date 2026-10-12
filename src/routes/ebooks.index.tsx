@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { EBOOKS } from "../lib/ebooks";
 import { ebookCover } from "../lib/ebookCovers";
 
-// Hub for the 11 standalone PLR ebooks. Kept deliberately plain: cover, title,
+// Hub for the 11 standalone Master Rights ebooks (owner-confirmed rights model,
+// 2026-10-12): a buyer may resell each ebook exactly as-is or use it exactly
+// as-is, and may never edit or rebrand it. Kept deliberately plain: cover, title,
 // what the buyer gets and the price, all from the same src/lib/ebooks.ts copy
 // the sales pages use, so this page can never contradict a listing.
 //
@@ -12,11 +14,11 @@ const EBOOK_PRICE = 27;
 export const Route = createFileRoute("/ebooks/")({
   head: () => ({
     meta: [
-      { title: "Ready-to-Rebrand PLR Ebooks: Health & Wellness | HealthCopy Forge" },
+      { title: "Master Rights Health & Wellness Ebooks | HealthCopy Forge" },
       {
         name: "description",
         content:
-          "11 ready-to-rebrand health & wellness PLR ebooks. Each is a fully editable Word file with a PLR license file, a medical disclaimer file and a cover image — $27 each, instant download.",
+          "11 health & wellness Master Rights ebooks. Each ships exactly as written, with the Master Rights License, a medical disclaimer file and the cover image — resell as-is or use as-is, $27 each, instant download.",
       },
     ],
   }),
@@ -30,15 +32,17 @@ function EbooksIndexPage() {
       <section className="bg-gradient-to-b from-emerald-50 to-white px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-block rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-700">
-            PLR Ebooks
+            Master Rights Ebooks
           </span>
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-            Ready-to-Rebrand Health &amp; Wellness PLR Ebooks
+            Health &amp; Wellness Master Rights Ebooks
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            Fully editable Word ebooks you can put your own name on and publish as
-            your own. Each one comes with a PLR license file, a medical disclaimer
-            file and the cover image — ${EBOOK_PRICE} each, instant download.
+            Resell each ebook exactly as-is or use it exactly as-is — as a bonus,
+            lead magnet, or in your coaching — and keep 100% of the revenue. Every
+            ebook ships exactly as written (not editable or rebrandable), with the
+            Master Rights License, a medical disclaimer file and the cover image —
+            ${EBOOK_PRICE} each, instant download.
           </p>
         </div>
       </section>

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/terms")({
       {
         name: "description",
         content:
-          "Terms of Service for HealthCopy Forge — PLR licensing, payments, refunds, disclaimers, and contact details.",
+          "Terms of Service for HealthCopy Forge — PLR & Master Rights licensing, payments, refunds, disclaimers, and contact details.",
       },
     ],
   }),
@@ -48,8 +48,8 @@ function TermsPage() {
             </h2>
             <p className="mt-2">
               HealthCopy Forge sells digital content products, including SEO-written
-              health and wellness PLR article packs, ebooks, courses, and
-              membership subscriptions. All products are delivered digitally via
+              health and wellness article packs, ebooks (sold under PLR and Master
+              Rights licenses respectively), courses, and membership subscriptions. All products are delivered digitally via
               download. A separate license and medical disclaimer accompany each
               product and are part of what you receive.
             </p>
@@ -78,16 +78,22 @@ function TermsPage() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900">
-              5. PLR License
+              5. Licenses — PLR &amp; Master Rights
             </h2>
             <p className="mt-2">
-              Each product is licensed under the PLR license included with it.
-              In general, you may edit, customize, rebrand, and publish the
-              content for your own use or your clients' use. You may not resell
-              or redistribute the original unedited content as competing PLR,
-              nor share the editable source files publicly. Your specific
-              rights and restrictions are spelled out in the license that ships
-              with each product — please read it.
+              Each product is licensed under the license included with it, and
+              the licenses grant different rights. Article packs and courses are
+              licensed under the included PLR license: in general, you may edit,
+              customize, rebrand, and publish that content for your own use or
+              your clients' use, and you may not resell or redistribute the
+              original unedited content as competing PLR, nor share the editable
+              source files publicly. Ebooks are licensed under the included
+              Master Rights License: you may resell an ebook exactly as it is or
+              use it exactly as it is — as a bonus, lead magnet, or in your
+              coaching — and keep 100% of the revenue, but you may not edit,
+              rebrand, rename, or combine it. Your specific rights and
+              restrictions are spelled out in the license that ships with each
+              product — please read it.
             </p>
           </div>
           <div>

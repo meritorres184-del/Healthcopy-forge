@@ -34,11 +34,11 @@ export const TIERS: Tier[] = [
     price: 97,
     tagline: "Content + digital products to publish, grow, promote, sell",
     description:
-      "Everything in Essentials, expanded — 10–15 articles plus content briefs each month, a full-length PLR ebook, a complete PLR course, premium journals and workbooks, and a monthly Mystery Bonus.",
+      "Everything in Essentials, expanded — 10–15 articles plus content briefs each month, a full-length Master Rights ebook, a complete PLR course, premium journals and workbooks, and a monthly Mystery Bonus.",
     benefits: [
       "Everything in Essentials",
       "10–15 articles + content briefs per month",
-      "Full-length PLR ebook (40–60 pages)",
+      "Full-length Master Rights ebook (40–60 pages)",
       "Complete PLR course (modules, workbook, sales copy)",
       "Premium journal / workbook",
       "Tracker bundle & monthly PLR report",

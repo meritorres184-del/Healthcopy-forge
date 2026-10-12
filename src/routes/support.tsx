@@ -7,7 +7,7 @@ export const Route = createFileRoute("/support")({
       {
         name: "description",
         content:
-          "HealthCopy Forge support — help with downloads, PLR licensing, payments, and memberships. Find answers fast or contact us.",
+          "HealthCopy Forge support — help with downloads, licensing (PLR & Master Rights), payments, and memberships. Find answers fast or contact us.",
       },
     ],
   }),
@@ -21,12 +21,12 @@ function SupportPage() {
       a: "Purchases are delivered instantly as digital downloads. After checkout you'll be able to download your pack's ZIP file directly from the site, and a download link is also emailed to the address you used at checkout. If you don't see it, check your spam folder first.",
     },
     {
-      q: "What can I do with the PLR content?",
-      a: "Under the PLR license included with every purchase, you may edit, customize, rebrand, and publish the content for your own use or your clients' use — blog posts, emails, social media, lead magnets, and more. You may not resell or redistribute the original unedited content as competing PLR or share the editable source files. The license that ships with your pack spells out the details.",
+      q: "What can I do with the content I buy?",
+      a: "It depends on the product, and the license that ships with it spells out the details. Article packs and courses are PLR: you may edit, customize, rebrand, and publish that content for your own use or your clients' use — blog posts, emails, social media, lead magnets, and more; you may not resell or redistribute the original unedited pack as competing PLR or share the editable source files. Ebooks are Master Rights: you may resell an ebook exactly as it is or use it exactly as it is — as a bonus, lead magnet, or in your coaching — and keep 100% of the revenue, but you may not edit, rebrand, rename, or combine it.",
     },
     {
       q: "Can I use this on my own website and social media?",
-      a: "Yes — that's exactly what it's for. Rewrite or use as-is, add your own branding, and publish it under your name. For health content, please keep the medical disclaimer included with your pack attached or adapted, and don't present informational content as personal medical advice.",
+      a: "For article packs and courses, yes — that's exactly what they're for: rewrite or use as-is, add your own branding, and publish under your name. Ebooks ship under a Master Rights License, so they are used exactly as delivered (resold or used as-is, with no edits or rebranding). Either way, for health content please keep the medical disclaimer included with your product attached or adapted, and don't present informational content as personal medical advice.",
     },
     {
       q: "Do you offer refunds?",

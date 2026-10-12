@@ -15,9 +15,11 @@ import { ProductDescription } from "../components/ProductDescription";
 // listing's product ID has not been pasted in yet (see liveJvzooProduct — an
 // empty ID can never emit a dead link, and never a half-built buy block).
 //
-// The page copy is NOT written here: it comes from src/lib/ebooks.ts, which is
-// generated from the JVZoo posting kit (marketer-drafted, drawn from the on-disk
-// ebooks). Rendered verbatim — no rewording, no added claims.
+// The page copy is NOT written here: it comes from src/lib/ebooks.ts, which was
+// drafted from the JVZoo posting kit (marketer-drafted, drawn from the on-disk
+// ebooks) and is rendered verbatim. Its RIGHTS wording was revised 2026-10-12 to
+// the owner-confirmed Master Rights model for ebooks — resell or use as-is, never
+// editable, never rebrandable. The kit itself is stale on that point (marketer).
 //
 // $27 one-time — LOCKED by the owner (2026-09-13) for the standalone ebook line.
 const EBOOK_PRICE = 27;
@@ -30,17 +32,17 @@ const EBOOK_PRICE = 27;
 function ebookMeta(ebook: Ebook | null): { title: string; description: string } {
   if (!ebook) {
     return {
-      title: "PLR Ebooks — Ready to Rebrand",
+      title: "Master Rights Ebooks",
       description:
-        "Ready-to-rebrand health & wellness PLR ebooks from HealthCopy Forge — editable Word files with a PLR license, a medical disclaimer and the cover image.",
+        "Health & wellness Master Rights ebooks from HealthCopy Forge — each ships exactly as written, with the Master Rights License, a medical disclaimer and the cover image.",
     };
   }
   const price = "$" + String(EBOOK_PRICE);
   return {
-    title: `${ebook.title} — PLR Ebook, Ready to Rebrand`,
-    description: `${ebook.title}: a ready-to-rebrand PLR ebook — ${ebook.wordCount} in ${String(
+    title: `${ebook.title} — Master Rights Ebook`,
+    description: `${ebook.title}: a Master Rights ebook — ${ebook.wordCount} in ${String(
       ebook.chapters,
-    )} chapters, fully editable, with the PLR license, the medical disclaimer and the cover image. Instant download, ${price}.`,
+    )} chapters. Resell it exactly as-is or use it exactly as-is and keep 100% of the revenue; it ships exactly as written and is not editable or rebrandable. Instant download, ${price}.`,
   };
 }
 
@@ -113,7 +115,7 @@ function EbookDetailPage() {
           </a>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-              PLR Ebook
+              Master Rights Ebook
             </span>
             <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
               ${EBOOK_PRICE} value
@@ -173,7 +175,7 @@ function EbookDetailPage() {
                 { label: "Chapters", value: String(ebook.chapters) },
                 { label: "Word count", value: ebook.wordCount },
                 { label: "Delivery", value: "Instant ZIP download" },
-                { label: "License", value: "PLR / Master Rights" },
+                { label: "License", value: "Master Rights License" },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -189,9 +191,10 @@ function EbookDetailPage() {
               ))}
             </div>
             <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm leading-relaxed text-gray-600">
-              One editable Word file plus the license file, the medical
-              disclaimer file and the cover image — all inside a single ZIP, ready
-              to brand and publish as your own.
+              The ebook exactly as written plus the Master Rights License file,
+              the medical disclaimer file and the cover image — all inside a single
+              ZIP. Resell it as-is or use it as-is and keep 100% of the revenue; it
+              is not editable or rebrandable.
             </p>
           </div>
         </div>
@@ -232,9 +235,9 @@ function EbookDetailPage() {
               </span>
             </p>
             <p className="mt-4 text-sm leading-relaxed text-gray-600">
-              Instant download of one ZIP containing all files — the editable
-              ebook, the PLR license file, the medical disclaimer file and the
-              cover image.
+              Instant download of one ZIP containing all files — the ebook exactly
+              as written, the Master Rights License file, the medical disclaimer
+              file and the cover image.
             </p>
             <p className="mt-6 rounded-xl border border-emerald-100 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-800">
               Available for instant download
