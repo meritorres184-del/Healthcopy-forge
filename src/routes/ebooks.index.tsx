@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { EBOOKS } from "../lib/ebooks";
 import { ebookCover } from "../lib/ebookCovers";
 
-// Hub for the 11 standalone PLR ebooks. Kept deliberately plain: cover, title,
+// Hub for the 11 standalone Master Resell ebooks. Kept deliberately plain: cover, title,
 // what the buyer gets and the price, all from the same src/lib/ebooks.ts copy
 // the sales pages use, so this page can never contradict a listing.
 //
@@ -12,11 +12,11 @@ const EBOOK_PRICE = 27;
 export const Route = createFileRoute("/ebooks/")({
   head: () => ({
     meta: [
-      { title: "Ready-to-Rebrand PLR Ebooks: Health & Wellness | HealthCopy Forge" },
+      { title: "Master Resell Ebooks: Health & Wellness | HealthCopy Forge" },
       {
         name: "description",
         content:
-          "11 ready-to-rebrand health & wellness PLR ebooks. Each is a fully editable Word file with a PLR license file, a medical disclaimer file and a cover image — $27 each, instant download.",
+          "11 done-for-you health & wellness ebooks with Master Resell Rights. Sell each as-is and keep 100% of the revenue — Master Resell license, medical disclaimer and cover image included. $27 each, instant download.",
       },
     ],
   }),
@@ -30,15 +30,17 @@ function EbooksIndexPage() {
       <section className="bg-gradient-to-b from-emerald-50 to-white px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-block rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-700">
-            PLR Ebooks
+            Master Resell Ebooks
           </span>
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-            Ready-to-Rebrand Health &amp; Wellness PLR Ebooks
+            Master Resell Health &amp; Wellness Ebooks
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            Fully editable Word ebooks you can put your own name on and publish as
-            your own. Each one comes with a PLR license file, a medical disclaimer
-            file and the cover image — ${EBOOK_PRICE} each, instant download.
+            Done-for-you health &amp; wellness ebooks with Master Resell Rights —
+            sell each as-is and keep 100% of the revenue, set your own price, and pass
+            the resale rights to your customers. Every ebook ships with its Master
+            Resell license, the medical disclaimer and the cover image — ${EBOOK_PRICE}
+            each, instant download.
           </p>
         </div>
       </section>

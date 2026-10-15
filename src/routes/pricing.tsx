@@ -208,7 +208,7 @@ const packsIncluded = [
 
 const membershipIncluded = [
   "Essentials — 5 new SEO articles monthly",
-  "Pro — 10–15 articles + PLR ebook & course",
+  "Pro — 10–15 articles + Master Resell ebook & course",
   "Keyword, title, meta & CTA support",
   "Rotating mini ebooks, journals, trackers & checklists",
   "Lead-magnet & email-marketing vaults on Pro",

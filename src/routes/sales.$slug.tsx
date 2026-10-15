@@ -102,7 +102,7 @@ function degradedSale(slug: string, kind: CleanSaleKind): CleanSale {
     title: kind === "bundle" ? BUNDLE_TITLE : slugToHeading(slug),
     category:
       kind === "ebook"
-        ? "PLR Ebook"
+        ? "Master Resell Ebook"
         : kind === "bundle"
           ? BUNDLE_CATEGORY
           : "Article Pack (PLR)",
@@ -130,17 +130,17 @@ function saleMeta(sale: CleanSale | null): { title: string; description: string 
   }
   const shape =
     sale.kind === "ebook"
-      ? "a ready-to-rebrand PLR ebook"
+      ? "a complete done-for-you health ebook with Master Resell Rights — sell it as-is and keep 100% of the revenue"
       : sale.kind === "bundle"
-        ? "a ready-to-rebrand PLR article-pack bundle"
-        : "a ready-to-rebrand PLR article pack";
+        ? "a ready-to-rebrand PLR article-pack bundle you can edit, brand and publish as your own"
+        : "a ready-to-rebrand PLR article pack you can edit, brand and publish as your own";
   return {
     title: sale.title + " | HealthCopy Forge",
     description:
       sale.title +
       " — " +
       shape +
-      " you can edit, brand and publish as your own. Instant download, $" +
+      ". Instant download, $" +
       String(sale.price) +
       " one-time, through JVZoo.",
   };
@@ -198,7 +198,7 @@ export const Route = createFileRoute("/sales/$slug")({
         slug: ebook.slug,
         kind: "ebook",
         title: ebook.title,
-        category: "PLR Ebook",
+        category: "Master Resell Ebook",
         price: EBOOK_PRICE,
         description: ebook.description,
         includes: ebook.includes,
@@ -206,7 +206,7 @@ export const Route = createFileRoute("/sales/$slug")({
           { label: "Chapters", value: String(ebook.chapters) },
           { label: "Word count", value: ebook.wordCount },
           { label: "Delivery", value: "Instant ZIP download" },
-          { label: "License", value: "PLR / Master Rights" },
+          { label: "License", value: "Master Resell" },
         ],
       };
       const meta = saleMeta(sale);
@@ -382,9 +382,9 @@ function CleanSalePage() {
                 </div>
               ) : null}
               <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm leading-relaxed text-gray-600">
-                Delivered as a single ZIP — fully editable, ready to brand and
-                publish as your own, with the PLR license, the medical disclaimer
-                and the cover image inside.
+                {sale.kind === "ebook"
+                  ? "Delivered as a single ZIP — the complete ebook, the Master Resell license, the medical disclaimer and the cover image are inside. Sell it as-is and keep 100% of the revenue."
+                  : "Delivered as a single ZIP — fully editable, ready to brand and publish as your own, with the PLR license, the medical disclaimer and the cover image inside."}
               </p>
             </div>
           </div>

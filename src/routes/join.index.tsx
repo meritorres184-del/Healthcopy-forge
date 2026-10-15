@@ -20,7 +20,7 @@ function JoinPage() {
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
             Pick the tier that fits your publishing volume. Essentials is
             content to publish consistently; Pro adds the full library — the
-            PLR ebooks, courses, premium journals and workbooks — on top of the
+            Master Resell ebooks, courses, premium journals and workbooks — on top of the
             expanded monthly drop.
           </p>
         </div>

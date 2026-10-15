@@ -181,7 +181,7 @@ function MembershipPage() {
             </div>
             <p className="mt-3 text-sm text-gray-500">
               5 new SEO articles monthly on Essentials · 10–15 articles plus a
-              full PLR ebook &amp; course on Pro · Cancel anytime
+              full Master Resell ebook &amp; course on Pro · Cancel anytime
             </p>
             <a href="/join" className="mt-8 block w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700">
               Join the Membership
