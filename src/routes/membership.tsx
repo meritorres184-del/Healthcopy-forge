@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
+import { COURSE_OFFER } from "../lib/stripeLinks";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -51,7 +52,7 @@ function MembershipPage() {
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <a
-              href="#join"
+              href="/join"
               className="inline-flex items-center rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700"
             >
               Join the Membership
@@ -186,17 +187,31 @@ function MembershipPage() {
             <a href="/join" className="mt-8 block w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700">
               Join the Membership
             </a>
+            <p className="mt-3 text-sm text-gray-500">
+              Checkout is live — a secure Stripe subscription, billed monthly,
+              cancel anytime.
+            </p>
             <p className="mt-4 text-sm text-gray-500">
               Choose between{" "}
-              <a href="/join" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+              <a href="/join/essentials" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
                 Essentials
               </a>{" "}
               and{" "}
-              <a href="/join" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+              <a href="/join/pro" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
                 Pro
               </a>{" "}
               — content to publish consistently, or content and digital products
               to publish, grow, promote, and sell. Cancel anytime.
+            </p>
+            <p className="mt-4 border-t border-gray-100 pt-4 text-sm text-gray-500">
+              Prefer one product at a time? Get the{" "}
+              <a
+                href={COURSE_OFFER.href}
+                className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
+              >
+                {COURSE_OFFER.name} for ${COURSE_OFFER.price} one-time
+              </a>
+              .
             </p>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getTier } from "../lib/tiers";
+import { COURSE_OFFER, membershipCheckoutHref } from "../lib/stripeLinks";
 
 export const Route = createFileRoute("/join/$tier")({
   component: TierConfirmPage,
@@ -43,7 +44,7 @@ function TierConfirmPage() {
       <section className="bg-gradient-to-b from-emerald-50 to-white px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-block rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-semibold text-emerald-700">
-            Confirm Your Plan
+            Start Your Membership
           </span>
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
             {selected.name} Membership
@@ -105,14 +106,33 @@ function TierConfirmPage() {
 
             <div className="mt-8">
               <a
-                href="/library"
+                href={membershipCheckoutHref(selected.slug)}
                 className="block w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-center text-base font-semibold text-white shadow-md transition-all hover:bg-emerald-700"
+              >
+                Join {selected.name} — ${selected.price}/month
+              </a>
+              <a
+                href="/library"
+                className="mt-3 block w-full rounded-xl border-2 border-emerald-600 bg-white px-6 py-3 text-center text-base font-semibold text-emerald-600 transition-all hover:bg-emerald-50"
               >
                 Browse Available Packs &amp; Ebooks
               </a>
               <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-center text-sm text-gray-600">
-                Membership checkout opens soon. One-time packs and ebooks are available now.
+                Secure Stripe checkout — billed monthly, cancel anytime.
+                You'll be returned to the membership page when you're done.
               </p>
+              {selected.slug === "pro" && (
+                <p className="mt-4 text-center text-sm text-gray-500">
+                  Prefer one product at a time? Get the{" "}
+                  <a
+                    href={COURSE_OFFER.href}
+                    className="font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
+                  >
+                    {COURSE_OFFER.name} for ${COURSE_OFFER.price} one-time
+                  </a>
+                  .
+                </p>
+              )}
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-3 text-sm text-gray-500">

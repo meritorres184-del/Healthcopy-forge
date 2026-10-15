@@ -522,6 +522,70 @@ for (const slug of CLEAN_SALES_SLUGS) {
   cleanRows.push([path, problems]);
   if (problems.length) failures.push(["clean-sales " + path, problems]);
 }
+// --- Live Stripe checkout gate (added 2026-10-12) ---
+//
+// The membership tiers and the standalone course sell through the owner's LIVE
+// Stripe payment links (src/lib/stripeLinks.ts). Those CTAs are plain <a href>
+// to buy.stripe.com, so the only way they can go wrong is silently: a copy edit
+// that drops the link, a placeholder sentence that survives the change, or a
+// tier pointed at the wrong plan. All three fail the build here.
+//
+// Keep the URLs in sync with src/lib/stripeLinks.ts when a price or link changes.
+const STRIPE_LINKS = {
+  essentials: "https://buy.stripe.com/00wdRbdCza7AfUS5w53sI00",
+  pro: "https://buy.stripe.com/8x26oJfKHfrUaAy4s13sI01",
+  course: "https://buy.stripe.com/bJeaEZ41ZcfI0ZY0bL3sI02",
+};
+// page -> the payment links that MUST appear as a real href in its baked HTML.
+const CHECKOUT_REQUIRED = [
+  ["/join", [STRIPE_LINKS.essentials, STRIPE_LINKS.pro, STRIPE_LINKS.course]],
+  ["/join/essentials", [STRIPE_LINKS.essentials]],
+  ["/join/pro", [STRIPE_LINKS.pro, STRIPE_LINKS.course]],
+  ["/pricing", [STRIPE_LINKS.course]],
+  ["/membership", [STRIPE_LINKS.course]],
+];
+// Copy that became untrue once checkout went live: the site must never again
+// advertise a membership checkout that does not exist.
+const DEAD_CHECKOUT_TEXT = ["checkout opens soon"];
+const DEAD_CHECKOUT_ROUTE = 'href="/checkout';
+
+const checkoutRows = [];
+for (const [path, links] of CHECKOUT_REQUIRED) {
+  const f = file(path);
+  const problems = [];
+  if (!existsSync(f)) {
+    problems.push("no baked file (route missing from the prerender list?)");
+  } else {
+    const html = readFileSync(f, "utf8");
+    for (const link of links) {
+      if (!html.includes(`href="${link}"`)) {
+        problems.push(`missing Stripe CTA ${link}`);
+      }
+    }
+    for (const text of DEAD_CHECKOUT_TEXT) {
+      if (html.includes(text)) problems.push(`still advertises "${text}"`);
+    }
+    if (html.includes(DEAD_CHECKOUT_ROUTE)) {
+      problems.push('links to the deleted /checkout route');
+    }
+  }
+  checkoutRows.push([path, problems]);
+  if (problems.length) failures.push(["checkout " + path, problems]);
+}
+
+// Owner rule (2026-09-30): /checkout/* is deleted and must 404 — so no baked
+// page anywhere on the site may link to it. Checked across every pre-rendered
+// route above, which is the whole public site.
+for (const [path] of rows) {
+  const f = file(path);
+  if (existsSync(f) && readFileSync(f, "utf8").includes(DEAD_CHECKOUT_ROUTE)) {
+    failures.push([
+      "checkout href " + path,
+      ["links to the deleted /checkout route"],
+    ]);
+  }
+}
+
 console.log("pre-render gate — dist/client");
 for (const [path, size, problems] of rows) {
   const status = problems.length ? "FAIL" : "ok  ";
@@ -548,6 +612,13 @@ console.log(
 for (const [path, problems] of cleanRows) {
   const status = problems.length ? "FAIL" : "ok  ";
   console.log(`  ${status} ${pad(path, 56)}${problems.join("; ")}`);
+}
+console.log(
+  "\nlive Stripe checkout \u2014 membership + course CTAs (buy.stripe.com)",
+);
+for (const [path, problems] of checkoutRows) {
+  const status = problems.length ? "FAIL" : "ok  ";
+  console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
 }
 if (failures.length) {
   console.error(

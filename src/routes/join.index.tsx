@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { TIERS } from "../lib/tiers";
+import { COURSE_OFFER, membershipCheckoutHref } from "../lib/stripeLinks";
 
 export const Route = createFileRoute("/join/")({
   component: JoinPage,
@@ -22,6 +23,10 @@ function JoinPage() {
             content to publish consistently; Pro adds the full library — the
             Master Resell ebooks, courses, premium journals and workbooks — on top of the
             expanded monthly drop.
+          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-gray-500">
+            Checkout is open — every plan starts with a secure Stripe checkout,
+            billed monthly, cancel anytime.
           </p>
         </div>
       </section>
@@ -54,6 +59,9 @@ function JoinPage() {
                   </span>
                   <span className="ml-1 text-sm text-gray-400">/month</span>
                 </div>
+                <p className="mt-1 text-xs text-gray-400">
+                  Billed monthly · Cancel anytime
+                </p>
                 <p className="mt-3 text-sm leading-relaxed text-gray-500">
                   {tier.description}
                 </p>
@@ -68,17 +76,39 @@ function JoinPage() {
                     </li>
                   ))}
                 </ul>
-                <a href={`/join/${tier.slug}`} className={`mt-8 block w-full rounded-xl px-6 py-3.5 text-center text-base font-semibold text-white shadow-md transition-all ${ tier.highlighted ? "bg-emerald-600 hover:bg-emerald-700" : "bg-gray-900 hover:bg-gray-800" }`}>
-                  Choose {tier.name}
+                <a
+                  href={membershipCheckoutHref(tier.slug)}
+                  className={`mt-8 block w-full rounded-xl px-6 py-3.5 text-center text-base font-semibold text-white shadow-md transition-all ${
+                    tier.highlighted
+                      ? "bg-emerald-600 hover:bg-emerald-700"
+                      : "bg-gray-900 hover:bg-gray-800"
+                  }`}
+                >
+                  Join {tier.name} — ${tier.price}/month
+                </a>
+                <a
+                  href={`/join/${tier.slug}`}
+                  className="mt-3 block text-center text-sm font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
+                >
+                  See everything included in {tier.name} →
                 </a>
               </div>
             ))}
           </div>
-
           <p className="mt-10 text-center text-sm text-gray-500">
             Both plans include exclusive monthly drops, and you can cancel
-            anytime; full library access is on Pro. Membership checkout opens
-            soon — article packs and ebooks are available today.
+            anytime; full library access is on Pro. Checkout is handled securely
+            by Stripe — you'll be returned here after you join.
+          </p>
+          <p className="mt-3 text-center text-sm text-gray-500">
+            Not ready for a subscription? Get the{" "}
+            <a
+              href={COURSE_OFFER.href}
+              className="font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
+            >
+              {COURSE_OFFER.name} for ${COURSE_OFFER.price} one-time
+            </a>
+            .
           </p>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { readFile } from "node:fs/promises";
+import { COURSE_OFFER } from "../lib/stripeLinks";
 
 const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -16,11 +17,11 @@ const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Pricing: $47 PLR Packs or $47–$97/mo Membership" },
+      { title: "Pricing: $47 PLR Packs, $47 Course, $47–$97/mo Membership" },
       {
         name: "description",
         content:
-          "One pack $47, any 4 for $97, or monthly membership $47–$97 with new SEO health articles, ebooks & courses. Cancel anytime.",
+          "One pack $47, any 4 for $97, a complete PLR course $47, or monthly membership $47–$97 with new SEO health articles, ebooks & courses. Cancel anytime.",
       },
     ],
   }),
@@ -40,12 +41,13 @@ function PricingPage() {
             Simple Pricing
           </span>
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-            Two Ways to Get Your Content
+            Three Ways to Get Your Content
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-gray-600">
-            Buy a single pack when you need it, or join the membership for a
-            steady stream of fresh content. Either way, every piece of content
-            is SEO-written and ready to customize, brand, and promote.
+            Buy a single pack when you need it, join the membership for a steady
+            stream of fresh content, or take a complete PLR course. Every piece
+            of content is SEO-written and ready to customize, brand, and
+            promote.
           </p>
         </div>
       </section>
@@ -53,7 +55,7 @@ function PricingPage() {
       {/* Comparison */}
       <section className="px-4 pb-12 sm:px-6 sm:pb-20">
         <div className="mx-auto max-w-4xl">
-          <div className="grid gap-8 sm:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {/* Individual Packs */}
             <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900">Individual Packs</h2>
@@ -115,11 +117,45 @@ function PricingPage() {
                 Join the Membership
               </a>
             </div>
+
+            {/* Standalone course — $47 one-time, live Stripe checkout */}
+            <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+              <h2 className="text-xl font-bold text-gray-900">
+                {COURSE_OFFER.name}
+              </h2>
+              <p className="mt-2 text-sm text-gray-500">
+                {COURSE_OFFER.blurb}
+              </p>
+              <div className="mt-4">
+                <span className="text-4xl font-extrabold tracking-tight text-gray-900">
+                  ${COURSE_OFFER.price}
+                </span>
+                <span className="ml-1 text-sm text-gray-400">one-time</span>
+              </div>
+              <ul className="mt-6 flex-1 space-y-3">
+                {courseIncluded.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-3 text-sm text-gray-600"
+                  >
+                    <CheckIcon />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={COURSE_OFFER.href}
+                className="mt-8 block w-full rounded-xl border-2 border-emerald-600 bg-white px-6 py-3 text-center text-sm font-semibold text-emerald-600 transition-all hover:bg-emerald-50"
+              >
+                Get the Course — ${COURSE_OFFER.price}
+              </a>
+            </div>
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            One-time packs and ebooks are available now — membership checkout
-            opens soon.
+            Membership and course checkout is live — both are handled securely
+            by Stripe, and memberships are billed monthly with no contract.
+            Article packs and ebooks are purchased through our JVZoo listings.
           </p>
         </div>
       </section>
@@ -216,7 +252,19 @@ const membershipIncluded = [
   "Cancel anytime",
 ];
 
+const courseIncluded = [
+  "Complete PLR course — modules, workbook & sales copy",
+  "Edit, rebrand and publish it as your own",
+  "PLR Course License included",
+  "One-time purchase — yours forever",
+];
+
 const faqs = [
+  {
+    question: "How do I check out?",
+    answer:
+      "Memberships and the standalone course are billed through our secure Stripe checkout — pick a plan or the course and you'll be taken straight to Stripe. Article packs and ebooks are purchased through our JVZoo listings.",
+  },
   {
     question: "Can I buy a single pack without a membership?",
     answer:
