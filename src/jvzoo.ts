@@ -163,13 +163,47 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
   ),
 };
 
+// ---------------------------------------------------------------------------
+// Wired COURSE listings — the 35 standalone PLR courses (/sales/<slug>, $47).
+//
+// Same rule as the packs and ebooks above: wiring a course is ONE line here, and
+// this is the ONLY place it happens. The 35 course pages went live BEFORE their
+// JVZoo listings did (the owner pastes each page's URL into the listing she is
+// creating, so the URL has to answer 200 first, and a JVZoo product ID cannot
+// exist before its listing does). Each one therefore ships with an interim
+// Stripe buy button inside a marked injection point on /sales/<slug>. Adding the
+// course's product ID below is the whole swap:
+//   * liveJvzooProduct() starts returning the product, so the canonical
+//     <JvzooBuyButton> (anchor + button image + 1x1 tracking pixel) renders into
+//     that same container and the interim Stripe anchor disappears, and
+//   * scripts/verify-prerender.mjs holds the page to the canonical buy block and
+//     refuses the Stripe href on it (the gate half of this one-line step is
+//     WIRED_COURSES in that file — keep the two in sync, the gate fails the
+//     build if they disagree).
+//
+// Deliberately its OWN map rather than an entry in `jvzooProducts`: /packs'
+// fallback button list iterates jvzooProducts and parses each alt as an article
+// pack name, so a course in that map could present a course as an article pack.
+// Only the slug-keyed lookup (liveJvzooProduct, below) serves both lines.
+export const courseJvzooProducts: Record<string, JvzooProduct> = {
+  // Active Living for Busy People — course page /sales/active-living. Listing
+  // created by the owner 2026-10-18; that page's button was swapped from the
+  // interim Stripe link to this canonical JVZoo block for product 458158.
+  "active-living": jvzooProduct(
+    "458158",
+    "Active Living for Busy People \u2014 PLR Course",
+  ),
+};
+
 /**
- * The buy block for a slug, or `undefined` when that pack has no live JVZoo
- * listing yet. Render every buy button through this: it is what keeps a pack
- * with an empty ID from emitting a broken href / a blank button image.
+ * The buy block for a slug, or `undefined` when that product has no live JVZoo
+ * listing yet. Render every buy button through this: it is what keeps a product
+ * with an empty ID from emitting a broken href / a blank button image. Serves
+ * both maps: the pack/ebook line (jvzooProducts) and the wired courses
+ * (courseJvzooProducts).
  */
 export function liveJvzooProduct(slug: string): JvzooProduct | undefined {
-  const product = jvzooProducts[slug];
+  const product = jvzooProducts[slug] ?? courseJvzooProducts[slug];
   return product && product.id ? product : undefined;
 }
 
