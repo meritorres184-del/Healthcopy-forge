@@ -17,11 +17,18 @@
 // Runs offline: it only reads dist/client. Keep REQUIRED in sync with
 // PRERENDER_PAGES in vite.config.ts.
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const CLIENT = join(ROOT, "dist/client");
+// The build output this gate inspects. Defaults to the real dist/client, i.e. the
+// behaviour `bun run build` has always had. PRERENDER_CLIENT_DIR points it at a
+// MUTATED COPY of that tree instead — that is how the negative tests prove the
+// gate still bites (inject a forbidden href, delete the injection point, inject a
+// JVZoo pixel into a pending page) without touching the real build output.
+const CLIENT = process.env.PRERENDER_CLIENT_DIR
+  ? resolve(process.env.PRERENDER_CLIENT_DIR)
+  : join(ROOT, "dist/client");
 
 // Emitted by components/ContentUnavailable.tsx when a DB read failed.
 const DEGRADED_MARKER = "Content temporarily unavailable";
@@ -552,11 +559,30 @@ const COURSE_REQUIRED_TEXT = [
   "This is a done-for-you PLR (private label rights) course",
   "Get Instant Access",
   "$47",
+  // The interim buy button's label — the price on the button itself, so a page
+  // can never bake with a buy href but no readable call to action.
+  "Buy Now",
 ];
 // The empty container the canonical JVZoo buy button + 1x1 pixel render into once
 // the course's product ID exists. Required on a course page whose listing is still
 // pending, so the injection point cannot be deleted by accident.
 const COURSE_BUY_INJECTION_POINT = 'data-jvzoo-buy-injection-point="pending-product-id"';
+// INTERIM BUY BUTTON on the 35 course pages (2026-10-18). Those pages are live
+// before their JVZoo listings exist, and a JVZoo reviewer must find a REAL,
+// working Buy button on each one — so while a course has no product ID its
+// injection point carries the site's own LIVE Stripe checkout link for the
+// standalone course ($47 one-time, the same product /pricing and /membership
+// sell). This is the exact URL src/routes/sales.<slug>.tsx renders there
+// (COURSE_INTERIM_BUY_HREF = STRIPE_PAYMENT_LINKS.course, src/lib/stripeLinks.ts)
+// and the exact URL the /pricing and /membership CTAs use.
+//
+// It is PERMITTED on a clean page ONLY when that page is a course page whose
+// JVZoo ID is still pending (see the clean-page loop below): on the 25 existing
+// listings, on the bundle, and on a course page that already has its ID it is a
+// forbidden href — "external link off the sales page" — and fails the build. The
+// check at the bottom beside STRIPE_LINKS holds this literal and
+// STRIPE_LINKS.course together so the two copies can never drift.
+const COURSE_INTERIM_BUY_HREF = "https://buy.stripe.com/bJeaEZ41ZcfI0ZY0bL3sI02";
 const CLEAN_FORBIDDEN_TEXT = [
   "Available for instant download",
   "Content temporarily unavailable",
@@ -575,11 +601,29 @@ for (const slug of CLEAN_SALES_SLUGS) {
     problems.push("no baked file (route missing from the prerender list?)");
   } else {
     const html = readFileSync(f, "utf8");
+    const id = idForSlug(slug);
+    // True only while this course's JVZoo listing does not exist yet: its page
+    // carries the interim Stripe buy button (COURSE_INTERIM_BUY_HREF) instead of a
+    // JVZoo buy block. Both halves matter — a course slug whose ID has arrived is
+    // held to the canonical JVZoo block and must NOT still ship the Stripe link.
+    const pendingCourseBuy = !id && PENDING_COURSE_BUY_SLUGS.has(slug);
     const hrefs = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]);
     const checked = new Set();
     for (const href of hrefs) {
       if (checked.has(href)) continue;
       checked.add(href);
+      // The interim Stripe buy button: checked BEFORE the allowlist/forbidden
+      // rules because on a pending course page it is the one permitted non-JVZoo
+      // outbound link (the buy path the page exists to provide), and everywhere
+      // else on a clean page it is exactly what this gate must stop.
+      if (href === COURSE_INTERIM_BUY_HREF) {
+        if (!pendingCourseBuy) {
+          problems.push(
+            `forbidden href "${href}" — the interim Stripe course buy button is allowed only on a course page whose JVZoo product ID is still pending`,
+          );
+        }
+        continue;
+      }
       const forbidden = FORBIDDEN_HREF.find(([re]) => re.test(href));
       if (forbidden) {
         problems.push(`forbidden href "${href}" — ${forbidden[1]}`);
@@ -592,7 +636,6 @@ for (const slug of CLEAN_SALES_SLUGS) {
         problems.push(`missing required text "${text}"`);
       }
     }
-    const id = idForSlug(slug);
     if (id) {
       for (const text of CLEAN_REQUIRED_BUY_TEXT) {
         if (!html.includes(text)) {
@@ -627,14 +670,28 @@ for (const slug of CLEAN_SALES_SLUGS) {
       }
     }
     if (!id) {
-      if (PENDING_COURSE_BUY_SLUGS.has(slug)) {
-        // A course whose listing the owner has not created yet: the buy block CANNOT
-        // be on the page (no product ID exists), so require the empty injection point
-        // instead and prove the page ships no JVZoo marker at all — a half-built or
-        // borrowed buy block would ship a wrong product and must fail the build.
+      if (pendingCourseBuy) {
+        // A course whose listing the owner has not created yet: the JVZoo buy block
+        // CANNOT be on the page (no product ID exists), so require the marked
+        // injection point AND the interim Stripe buy button that lives inside it —
+        // exactly once, as a real href, with no second copy of the URL anywhere else
+        // on the page. The page must also ship no JVZoo marker at all: a half-built
+        // or borrowed buy block would ship a wrong product and must fail the build.
         if (!html.includes(COURSE_BUY_INJECTION_POINT)) {
           problems.push(
             "course page with no listing yet must carry the marked buy-button injection point",
+          );
+        }
+        const buyAnchors = html.split(`href="${COURSE_INTERIM_BUY_HREF}"`).length - 1;
+        if (buyAnchors !== 1) {
+          problems.push(
+            `pending course page must carry the interim Stripe buy anchor exactly once (href="${COURSE_INTERIM_BUY_HREF}" found ${buyAnchors} time(s))`,
+          );
+        }
+        const buyMentions = html.split(COURSE_INTERIM_BUY_HREF).length - 1;
+        if (buyMentions !== buyAnchors) {
+          problems.push(
+            `the interim Stripe course URL appears ${buyMentions} time(s) but only ${buyAnchors} as a buy anchor`,
           );
         }
         for (const marker of BUY_MARKERS) {
@@ -678,6 +735,20 @@ const CHECKOUT_REQUIRED = [
   ["/pricing", [STRIPE_LINKS.course]],
   ["/membership", [STRIPE_LINKS.course]],
 ];
+// The interim course buy button above must be the SAME link the rest of the site
+// sells the course through (src/lib/stripeLinks.ts -> STRIPE_PAYMENT_LINKS.course,
+// src/routes/sales.<slug>.tsx -> COURSE_INTERIM_BUY_HREF). Two copies of a URL in
+// two files is how a buy button starts pointing at a dead or wrong payment link,
+// so the clean-page loop above used the literal and this asserts the literal is
+// still the course link.
+if (COURSE_INTERIM_BUY_HREF !== STRIPE_LINKS.course) {
+  failures.push([
+    "scripts/verify-prerender.mjs",
+    [
+      `COURSE_INTERIM_BUY_HREF (${COURSE_INTERIM_BUY_HREF}) is not STRIPE_LINKS.course (${STRIPE_LINKS.course})`,
+    ],
+  ]);
+}
 // Copy that became untrue once checkout went live: the site must never again
 // advertise a membership checkout that does not exist.
 const DEAD_CHECKOUT_TEXT = ["checkout opens soon"];

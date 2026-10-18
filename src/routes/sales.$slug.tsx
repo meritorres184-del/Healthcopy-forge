@@ -7,6 +7,7 @@ import { ebookCover } from "../lib/ebookCovers";
 import { courseBySlug } from "../lib/courses";
 import { courseCover } from "../lib/courseCovers";
 import { cleanSaleBySlug, type CleanSaleKind } from "../lib/cleanSales";
+import { STRIPE_PAYMENT_LINKS } from "../lib/stripeLinks";
 import { ProductDescription } from "../components/ProductDescription";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 import { JvzooBuyButton } from "../components/JvzooBuyButton";
@@ -41,6 +42,12 @@ import {
 // every href out of the baked HTML and FAILS the build on any href that is not
 // on that allowlist, so a stray link here cannot reach a reviewer.
 //
+// The ONE exception is the interim Stripe buy button on the 35 course pages
+// whose JVZoo listing does not exist yet (COURSE_INTERIM_BUY_HREF and the marked
+// injection point below). That link IS the page's buy path until the JVZoo
+// product ID arrives, and the gate allows that exact URL on those pending pages
+// only — on any other clean page its presence fails the build.
+//
 // The root layout also renders no header and no footer for /sales/* (see
 // src/routes/__root.tsx), and the minimal footer at the bottom of this file
 // carries the four allowed links.
@@ -67,6 +74,21 @@ const COURSE_PRICE = 47;
 // these products) rather than a JVZoo category path, which is what the other
 // families do too ("Article Pack (PLR)", "Master Resell Ebook").
 const COURSE_CATEGORY = "PLR Course";
+// INTERIM BUY PATH for the 35 course pages (2026-10-18). These pages go live
+// BEFORE their JVZoo listings exist (the owner pastes each page's URL into the
+// listing she is creating), and a JVZoo reviewer must find a REAL, working Buy
+// button on the page — an empty slot is the compliance failure, and a JVZoo
+// product ID cannot exist before its listing does. So while a course has no ID,
+// its injection point carries the site's own LIVE Stripe checkout link for the
+// standalone course: the same $47 one-time product, sold from the same live
+// payment link, that /pricing, /membership and /join already sell (see
+// src/lib/stripeLinks.ts — the ONE place these URLs live; the build gate asserts
+// this link and STRIPE_PAYMENT_LINKS.course can never drift apart).
+// WHEN THAT COURSE'S JVZOO PRODUCT ID ARRIVES this anchor is REPLACED, not kept:
+// adding the slug to src/jvzoo.ts makes the canonical JVZoo buy button + 1x1
+// tracking pixel render into this same container, and the gate then refuses this
+// Stripe href on that page.
+const COURSE_INTERIM_BUY_HREF = STRIPE_PAYMENT_LINKS.course;
 
 // The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
 // four packs" mechanic: the listing sells one fixed product, Packs 1-4, so this
@@ -504,15 +526,44 @@ function CleanSalePage() {
               </span>
             </p>
             <p className="mt-4 text-sm leading-relaxed text-gray-600">
-              Delivered as one ZIP, instantly after checkout through JVZoo.
+              {/* No "through JVZoo" here on purpose: while the listing is pending
+                  this page's buy path is the Stripe checkout below, and the
+                  canonical JVZoo block (rendered by the `buy` branch above) has
+                  its own JVZoo wording for when the ID arrives. */}
+              Delivered as one ZIP, instantly after checkout.
             </p>
-            {/* JVZoo buy button + 1x1 tracking pixel — INJECTION POINT (empty by
-                design while the listing is being created). */}
+            {/* JVZoo buy button + 1x1 tracking pixel — INJECTION POINT.
+                INTERIM BUY BUTTON (2026-10-18): this course has no JVZoo product
+                ID yet, so the slot carries a real, working buy button — the
+                site's own LIVE Stripe checkout for the standalone course, the
+                same $47 one-time product /pricing and /membership sell. The
+                buyer (and the JVZoo reviewer) always gets a working Buy button.
+                WHEN A JVZOO PRODUCT ID ARRIVES: REPLACE this Stripe anchor with
+                the canonical JVZoo buy button + 1x1 tracking pixel for that ID —
+                that is the single wiring step described above (add the slug to
+                src/jvzoo.ts); the `buy` lookup then returns the product, the
+                canonical block renders into this same container instead, and
+                this interim anchor disappears. No other edit to this file is
+                needed for that swap, and the build gate both REQUIRES this
+                anchor while the ID is pending and REFUSES it once the ID exists. */}
             <div
               id={"jvzoo-buy-" + sale.slug}
               data-jvzoo-buy-injection-point="pending-product-id"
               className="mt-6 flex flex-col items-center gap-3"
-            />
+            >
+              {/* Interim buy button — Stripe Payment Link (see above). Href comes
+                  from src/lib/stripeLinks.ts, the same link the rest of the site
+                  sells the course through, so it can never drift. */}
+              <a
+                href={COURSE_INTERIM_BUY_HREF}
+                className="inline-block rounded-xl bg-emerald-600 px-8 py-4 text-lg font-bold text-white shadow-md transition-colors hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+              >
+                Buy Now — $47
+              </a>
+              <p className="text-xs leading-relaxed text-gray-500">
+                Secure checkout by Stripe.
+              </p>
+            </div>
           </div>
         </section>
       ) : (
