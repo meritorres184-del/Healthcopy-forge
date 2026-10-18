@@ -4,6 +4,8 @@ import { bundleBuy, liveJvzooProduct } from "../jvzoo";
 import { packCover } from "../lib/packCovers";
 import { ebookBySlug } from "../lib/ebooks";
 import { ebookCover } from "../lib/ebookCovers";
+import { courseBySlug } from "../lib/courses";
+import { courseCover } from "../lib/courseCovers";
 import { cleanSaleBySlug, type CleanSaleKind } from "../lib/cleanSales";
 import { ProductDescription } from "../components/ProductDescription";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
@@ -56,6 +58,16 @@ import {
 // $27 one-time — LOCKED by the owner (2026-09-13) for the standalone ebook line.
 const EBOOK_PRICE = 27;
 
+// $47 one-time — LOCKED by the owner (2026-09-13) for the standalone course line
+// (same price as an article pack), and the price every one of the 35 course JVZoo
+// listings is created at.
+const COURSE_PRICE = 47;
+// The shelf label shown on a course page. It names the product family the buyer is
+// looking at ("PLR Course" — the same words the owner's own vendor kit uses for
+// these products) rather than a JVZoo category path, which is what the other
+// families do too ("Article Pack (PLR)", "Master Resell Ebook").
+const COURSE_CATEGORY = "PLR Course";
+
 // The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
 // four packs" mechanic: the listing sells one fixed product, Packs 1-4, so this
 // page must sell that same fixed product — a "choose any four" promise on a page
@@ -103,11 +115,19 @@ function degradedSale(slug: string, kind: CleanSaleKind): CleanSale {
     category:
       kind === "ebook"
         ? "Master Resell Ebook"
-        : kind === "bundle"
-          ? BUNDLE_CATEGORY
-          : "Article Pack (PLR)",
+        : kind === "course"
+          ? COURSE_CATEGORY
+          : kind === "bundle"
+            ? BUNDLE_CATEGORY
+            : "Article Pack (PLR)",
     price:
-      kind === "ebook" ? EBOOK_PRICE : kind === "bundle" ? BUNDLE_PRICE : 47,
+      kind === "ebook"
+        ? EBOOK_PRICE
+        : kind === "course"
+          ? COURSE_PRICE
+          : kind === "bundle"
+            ? BUNDLE_PRICE
+            : 47,
     description:
       "SEO-written health & wellness PLR content from HealthCopy Forge — ready to customize, brand & promote.",
     includes: [],
@@ -131,9 +151,11 @@ function saleMeta(sale: CleanSale | null): { title: string; description: string 
   const shape =
     sale.kind === "ebook"
       ? "a complete done-for-you health ebook with Master Resell Rights — sell it as-is and keep 100% of the revenue"
-      : sale.kind === "bundle"
-        ? "a ready-to-rebrand PLR article-pack bundle you can edit, brand and publish as your own"
-        : "a ready-to-rebrand PLR article pack you can edit, brand and publish as your own";
+      : sale.kind === "course"
+        ? "a done-for-you PLR course you can edit, rebrand, rename and sell under your own brand"
+        : sale.kind === "bundle"
+          ? "a ready-to-rebrand PLR article-pack bundle you can edit, brand and publish as your own"
+          : "a ready-to-rebrand PLR article pack you can edit, brand and publish as your own";
   return {
     title: sale.title + " | HealthCopy Forge",
     description:
@@ -213,6 +235,38 @@ export const Route = createFileRoute("/sales/$slug")({
       return { sale, title: meta.title, description: meta.description };
     }
 
+
+    if (entry.kind === "course") {
+      // Static catalogue (src/lib/courses.ts, generated from the owner's JVZoo
+      // vendor posting kit) — no database read, so a course page can never bake
+      // into a degraded state. The copy is the kit's §7 "Sales-page copy" block,
+      // rendered verbatim.
+      //
+      // There is NO buy block yet: the owner creates the 35 course listings herself
+      // and will paste THIS page's URL on first creation, so the pages have to exist
+      // before the listings do — and a JVZoo product ID only exists once a listing
+      // does. Until then the page shows the price and the marked injection point
+      // below; the buy button + 1x1 pixel appear the moment the ID is added to
+      // src/jvzoo.ts (one line per course, no edit to this file).
+      const course = courseBySlug(params.slug);
+      if (!course) {
+        const meta = saleMeta(null);
+        return { sale: null, title: meta.title, description: meta.description };
+      }
+      const sale: CleanSale = {
+        slug: course.slug,
+        kind: "course",
+        title: course.title,
+        category: COURSE_CATEGORY,
+        price: COURSE_PRICE,
+        description: course.description,
+        includes: [],
+        stats: [],
+      };
+      const meta = saleMeta(sale);
+      return { sale, title: meta.title, description: meta.description };
+    }
+
     // Article pack: the same row and the same read path as /library/<slug>.
     try {
       const rows = await readWithRetry(
@@ -278,14 +332,19 @@ function CleanSalePage() {
   const cover =
     sale.kind === "ebook"
       ? ebookCover(sale.slug)
-      : sale.kind === "bundle"
-        ? packCover(BUNDLE_COVER_SLUG)
-        : packCover(sale.slug);
+      : sale.kind === "course"
+        ? courseCover(sale.slug)
+        : sale.kind === "bundle"
+          ? packCover(BUNDLE_COVER_SLUG)
+          : packCover(sale.slug);
   // The canonical buy block for THIS product's own JVZoo listing. Every render
   // site goes through this helper so a page can never emit a non-canonical link
   // (www host / /1 image) or a half-built button. The bundle is the one product
   // whose buy block is a named export (bundleBuy, JVZoo 453431) instead of a
   // slug-keyed entry in src/jvzoo.ts.
+  // A course has no entry here yet, so `buy` is undefined for all 35 course pages
+  // and they render the price + injection point instead of the button. Adding the
+  // course's listing to src/jvzoo.ts is the whole wiring step.
   const buy = sale.kind === "bundle" ? bundleBuy : liveJvzooProduct(sale.slug);
 
   return (
@@ -409,6 +468,51 @@ function CleanSalePage() {
                 imgClassName="h-16 w-auto rounded-xl shadow-md transition-transform hover:scale-105"
               />
             </div>
+          </div>
+        </section>
+      ) : sale.kind === "course" ? (
+        /* ---- COURSE: price now, canonical JVZoo buy block once the ID exists ----
+           These 35 pages exist BEFORE their JVZoo listings do (the owner pastes this
+           page's URL when she creates each listing, so the URL has to answer 200
+           first). A JVZoo product ID cannot exist before its listing, so this page
+           ships without a buy button and carries an empty, clearly marked injection
+           point instead.
+
+           WHEN A COURSE'S PRODUCT ID ARRIVES:
+             1. add one line for the course slug to src/jvzoo.ts
+                (`"<slug>": jvzooProduct("<ID>", "<listing name>")`),
+             2. the `buy` lookup above then returns that product, so this branch
+                stops rendering and the canonical buy block renders instead, and
+             3. remove the slug from PENDING_COURSE_BUY_SLUGS in
+                scripts/verify-prerender.mjs, which turns the buy-block check back on
+                for that page.
+           The container below is the exact spot the canonical
+           <JvzooBuyButton product={buy} ... /> (anchor + button image + 1x1 tracking
+           pixel) renders into; until then it is empty and carries no href, so the
+           page stays link-free for the JVZoo reviewer. Do not put a link here by
+           hand: the button is rendered from src/jvzoo.ts so it can never be
+           non-canonical. */
+        <section className="bg-white px-4 py-14 sm:px-6">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+              Get Instant Access
+            </h2>
+            <p className="mt-4 text-4xl font-extrabold tracking-tight text-gray-900">
+              ${sale.price}
+              <span className="ml-2 align-middle text-base font-medium text-gray-500">
+                one-time payment
+              </span>
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-gray-600">
+              Delivered as one ZIP, instantly after checkout through JVZoo.
+            </p>
+            {/* JVZoo buy button + 1x1 tracking pixel — INJECTION POINT (empty by
+                design while the listing is being created). */}
+            <div
+              id={"jvzoo-buy-" + sale.slug}
+              data-jvzoo-buy-injection-point="pending-product-id"
+              className="mt-6 flex flex-col items-center gap-3"
+            />
           </div>
         </section>
       ) : (

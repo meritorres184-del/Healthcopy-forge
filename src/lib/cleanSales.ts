@@ -36,7 +36,7 @@
 // owner's request).
 
 /** Which sales-page shape to render for a clean page. */
-export type CleanSaleKind = "pack" | "ebook" | "bundle";
+export type CleanSaleKind = "pack" | "ebook" | "bundle" | "course";
 
 export interface CleanSaleEntry {
   /** Site slug — shared by the clean page, the normal page and src/jvzoo.ts. */
@@ -94,6 +94,52 @@ export const CLEAN_SALES: CleanSaleEntry[] = [
   // deactivating it as a duplicate; she asked for its clean page instead, so it is
   // included. Its ID already exists in src/jvzoo.ts. ---
   { slug: "protein-aging", kind: "ebook" },
+  // --- The 35 standalone PLR courses (2026-10-15). ---
+  // Not a JVZoo flag round. The owner creates the 35 course listings herself and
+  // asked for each course's own link-free URL BEFORE the listing exists - she will
+  // not point a listing at a placeholder URL and will not go back and edit one -
+  // so every course page ships TODAY without a buy button (no JVZoo product ID
+  // exists yet) and carries a clearly marked injection point for the canonical
+  // button + 1x1 pixel (see src/routes/sales.$slug.tsx; the build gate is
+  // scripts/verify-prerender.mjs, PENDING_COURSE_BUY_SLUGS). The moment the owner
+  // sends a course's product ID it becomes one line in src/jvzoo.ts, that page
+  // starts rendering the canonical buy block, and the slug comes out of
+  // PENDING_COURSE_BUY_SLUGS in the gate: one line each, no page edits.
+  { slug: "active-living", kind: "course" },
+  { slug: "balance-stability", kind: "course" },
+  { slug: "balanced-eating", kind: "course" },
+  { slug: "bodyweight-exercise", kind: "course" },
+  { slug: "busy-lifestyle", kind: "course" },
+  { slug: "cardiovascular-fitness", kind: "course" },
+  { slug: "eating-budget", kind: "course" },
+  { slug: "exercise-motivation", kind: "course" },
+  { slug: "exercise-recovery", kind: "course" },
+  { slug: "fitness-after-50", kind: "course" },
+  { slug: "food-labels", kind: "course" },
+  { slug: "fruits-vegetables", kind: "course" },
+  { slug: "functional-fitness", kind: "course" },
+  { slug: "healthy-grocery", kind: "course" },
+  { slug: "healthy-pantry", kind: "course" },
+  { slug: "healthy-snacking", kind: "course" },
+  { slug: "home-fitness-beginners", kind: "course" },
+  { slug: "home-workout-space", kind: "course" },
+  { slug: "low-impact-fitness", kind: "course" },
+  { slug: "meal-planning-budget", kind: "course" },
+  { slug: "meal-prep", kind: "course" },
+  { slug: "mindful-eating", kind: "course" },
+  { slug: "mobility-flexibility", kind: "course" },
+  { slug: "nutrition-basics", kind: "course" },
+  { slug: "nutrition-wellness", kind: "course" },
+  { slug: "plant-forward", kind: "course" },
+  { slug: "portion-awareness", kind: "course" },
+  { slug: "resistance-band", kind: "course" },
+  { slug: "starting-exercise", kind: "course" },
+  { slug: "strength-training", kind: "course" },
+  { slug: "stretching-fundamentals", kind: "course" },
+  { slug: "sustainable-eating", kind: "course" },
+  { slug: "tracking-fitness", kind: "course" },
+  { slug: "walking-fitness", kind: "course" },
+  { slug: "weekly-fitness", kind: "course" },
 ];
 
 export const CLEAN_SALES_SLUGS: string[] = CLEAN_SALES.map((e) => e.slug);
