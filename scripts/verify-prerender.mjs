@@ -126,6 +126,68 @@ const CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND = ["healthy-feet"];
 // `allIds` stays at 14. Held to the standard 15 KB SALES floor (it is an ebook
 // with a full owner description), like round 4.
 const CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND = ["protein-aging"];
+const CLEAN_SALES_COURSE_SLUGS = [
+// Sixth family (2026-10-15): the 35 standalone PLR courses. NOT a flag round and
+// not a "page the owner asked for after a flag": the owner creates the 35 course
+// JVZoo listings herself and wants each course's own link-free URL in hand BEFORE
+// the listing exists (she will not point a listing at a placeholder URL, and she
+// will not go back and edit a listing). A JVZoo product ID cannot exist before its
+// listing does, so these 35 pages ship WITHOUT a buy button and are exempt from the
+// canonical-buy-block check through PENDING_COURSE_BUY_SLUGS below — instead each
+// one must carry the marked, empty injection point the canonical button renders
+// into (src/routes/sales.<slug>.tsx). Every OTHER clean-page rule still applies to
+// them: the href allowlist, the forbidden-href list (incl. /checkout), no external
+// resources, no webfont, closed document, size floor, no degraded bake, and the
+// negative check that they ship no JVZoo marker at all.
+//
+// Wiring one course later is ONE line: add its ID to src/jvzoo.ts. That slug then
+// fails out of PENDING_COURSE_BUY_SLUGS on its own and the page is held to the full
+// canonical buy block (link + button image + 1x1 pixel) like every other clean page.
+// No edit to this file and no edit to the page is needed for that transition.
+  "active-living",
+  "balance-stability",
+  "balanced-eating",
+  "bodyweight-exercise",
+  "busy-lifestyle",
+  "cardiovascular-fitness",
+  "eating-budget",
+  "exercise-motivation",
+  "exercise-recovery",
+  "fitness-after-50",
+  "food-labels",
+  "fruits-vegetables",
+  "functional-fitness",
+  "healthy-grocery",
+  "healthy-pantry",
+  "healthy-snacking",
+  "home-fitness-beginners",
+  "home-workout-space",
+  "low-impact-fitness",
+  "meal-planning-budget",
+  "meal-prep",
+  "mindful-eating",
+  "mobility-flexibility",
+  "nutrition-basics",
+  "nutrition-wellness",
+  "plant-forward",
+  "portion-awareness",
+  "resistance-band",
+  "starting-exercise",
+  "strength-training",
+  "stretching-fundamentals",
+  "sustainable-eating",
+  "tracking-fitness",
+  "walking-fitness",
+  "weekly-fitness",
+];
+// The course slugs whose JVZoo listing may not exist yet, so the buy block CANNOT
+// be on their page. This is a plain set of all 35: the clean-page loop below only
+// treats a page as buy-pending while it ALSO has no ID (idForSlug(slug) is empty),
+// so pasting a course's ID into src/jvzoo.ts puts that page back under the full
+// canonical-buy-block check on its own. (A literal set rather than one filtered by
+// idBySlug here on purpose: idBySlug is declared further down beside the buy-block
+// section, and reading it above its declaration is a temporal-dead-zone error.)
+const PENDING_COURSE_BUY_SLUGS = new Set(CLEAN_SALES_COURSE_SLUGS);
 // Rounds 1-2: the five Packs 9-13 and the nine ebooks flagged before them.
 const CLEAN_SALES_SLUGS_ROUNDS_1_2 = [
   "protein-shakes-protein-nutrition",
@@ -146,6 +208,7 @@ const CLEAN_SALES_SLUGS = [
   ...CLEAN_SALES_SLUGS_ROUNDS_1_2,
   ...CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND,
   ...CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND,
+  ...CLEAN_SALES_COURSE_SLUGS,
 ];
 
 // Sales URLs that must be FULL pages. 15 KB is the floor the team holds the live
@@ -159,6 +222,13 @@ const CLEAN_SALES_SLUGS = [
 // the top of vite.config.ts), and the closed-document check, the required text
 // and the href allowlist below carry the rest.
 const SALES_MIN_BYTES_3RD_ROUND = 8000;
+// The 35 course pages get their own floor: like a third-round page they render no
+// site chrome, but their copy is the kit's full long-form sales page (roughly 4,000
+// characters of description plus the cover), so they land around 12-14 KB. 8 KB
+// still catches the truncated bake this floor exists for (the live edge cuts
+// streamed responses at ~5-7 KB) and the closed-document, injection-point,
+// required-text and href-allowlist checks below carry the rest.
+const SALES_MIN_BYTES_COURSE = 8000;
 const SALES = [
   "/packs",
   "/library",
@@ -272,6 +342,15 @@ for (const [path, min, wantBuy] of [
     SALES_MIN_BYTES_3RD_ROUND,
     true,
   ]),
+  // The 35 course pages, at their own floor. Their buy-path expectation is whatever
+  // their listing state says: nothing today (no product ID exists yet, and the loop
+  // below then proves the page ships no JVZoo marker at all), the full canonical buy
+  // block the moment the owner's ID is in src/jvzoo.ts.
+  ...CLEAN_SALES_COURSE_SLUGS.map((s) => [
+    "/sales/" + s,
+    SALES_MIN_BYTES_COURSE,
+    wantsBuy("/sales/" + s),
+  ]),
   ...OTHER.map((p) => [p, OTHER_MIN_BYTES, false]),
 ]) {
   const f = file(path);
@@ -362,7 +441,10 @@ const buyPages = [
   // The clean pages for the twenty-five listings (flag rounds 1-4 plus the
   // owner-requested Protein for Healthy Aging page): each must carry the
   // canonical buy block for its OWN product ID (the same IDs counted above — no
-  // new ones).
+  // new ones). The 35 course pages contribute an EMPTY id list until the owner
+  // wires each course into src/jvzoo.ts — then that page is checked here in full
+  // (their IDs are not part of the 14 counted above: the count is the 13 packs +
+  // the fixed bundle, and it must stay 14).
   ...CLEAN_SALES_SLUGS.map((s) => [
     "/sales/" + s,
     idForSlug(s) ? [idForSlug(s)] : [],
@@ -450,12 +532,31 @@ const FORBIDDEN_HREF = [
   [/^https?:\/\/(?!jvzoo\.com|i\.jvzoo\.com|www\.healthcopyforge\.com\/sales\/)/, "external link off the sales page"],
 ];
 // Text that must / must not appear in a clean page's baked HTML.
+//
+// Split in two on purpose (2026-10-15): the retailer disclosure and the EU waiver
+// belong on EVERY clean page, while the buy markers can only exist where a listing
+// does — the 35 course pages have no product ID yet, and requiring a JVZoo URL on
+// them would force a non-canonical or invented buy link, which is exactly what this
+// gate exists to prevent.
 const CLEAN_REQUIRED_TEXT = [
-  "jvzoo.com/b/",
-  "i.jvzoo.com",
   "I understand and agree that this purchase is non-refundable",
   "JVZoo serves as the retailer",
 ];
+// Required only where the product HAS a JVZoo listing (i.e. idForSlug(slug) is set).
+const CLEAN_REQUIRED_BUY_TEXT = ["jvzoo.com/b/", "i.jvzoo.com"];
+// The course pages' own required text: the owner's verbatim "Course Description for
+// Listings" sentence (quoted in every course's kit § 7 sales-page copy), the price
+// she locked, and the offer block. If a course page ever bakes without its real copy
+// — the failure mode a size floor alone cannot name — this fails the build.
+const COURSE_REQUIRED_TEXT = [
+  "This is a done-for-you PLR (private label rights) course",
+  "Get Instant Access",
+  "$47",
+];
+// The empty container the canonical JVZoo buy button + 1x1 pixel render into once
+// the course's product ID exists. Required on a course page whose listing is still
+// pending, so the injection point cannot be deleted by accident.
+const COURSE_BUY_INJECTION_POINT = 'data-jvzoo-buy-injection-point="pending-product-id"';
 const CLEAN_FORBIDDEN_TEXT = [
   "Available for instant download",
   "Content temporarily unavailable",
@@ -491,6 +592,21 @@ for (const slug of CLEAN_SALES_SLUGS) {
         problems.push(`missing required text "${text}"`);
       }
     }
+    const id = idForSlug(slug);
+    if (id) {
+      for (const text of CLEAN_REQUIRED_BUY_TEXT) {
+        if (!html.includes(text)) {
+          problems.push(`missing required buy text "${text}"`);
+        }
+      }
+    }
+    if (CLEAN_SALES_COURSE_SLUGS.includes(slug)) {
+      for (const text of COURSE_REQUIRED_TEXT) {
+        if (!html.includes(text)) {
+          problems.push(`missing course sales-page text "${text}"`);
+        }
+      }
+    }
     for (const text of CLEAN_FORBIDDEN_TEXT) {
       if (html.includes(text)) problems.push(`must not contain "${text}"`);
     }
@@ -510,11 +626,29 @@ for (const slug of CLEAN_SALES_SLUGS) {
         );
       }
     }
-    const id = idForSlug(slug);
     if (!id) {
-      problems.push(
-        "no JVZoo product ID for this clean sales slug (src/jvzoo.ts / bundleBuy)",
-      );
+      if (PENDING_COURSE_BUY_SLUGS.has(slug)) {
+        // A course whose listing the owner has not created yet: the buy block CANNOT
+        // be on the page (no product ID exists), so require the empty injection point
+        // instead and prove the page ships no JVZoo marker at all — a half-built or
+        // borrowed buy block would ship a wrong product and must fail the build.
+        if (!html.includes(COURSE_BUY_INJECTION_POINT)) {
+          problems.push(
+            "course page with no listing yet must carry the marked buy-button injection point",
+          );
+        }
+        for (const marker of BUY_MARKERS) {
+          if (html.includes(marker)) {
+            problems.push(
+              `no JVZoo listing for this course yet but the page ships ${marker}`,
+            );
+          }
+        }
+      } else {
+        problems.push(
+          "no JVZoo product ID for this clean sales slug (src/jvzoo.ts / bundleBuy)",
+        );
+      }
     } else {
       problems.push(...canonicalBuyProblems(html, id));
     }

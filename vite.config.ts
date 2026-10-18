@@ -83,6 +83,44 @@ const CLEAN_SALES_SLUGS = [
   // Fifth round — the Protein for Healthy Aging ebook (JVZoo 454751), also at the
   // owner's request (2026-09-28); this is the 25th and completes the catalog.
   "protein-aging",
+  // The 35 standalone PLR courses (2026-10-15). Same page family, same compliance
+  // rules; they ship without a buy button until the owner creates each JVZoo listing
+  // and sends the product ID (see src/lib/cleanSales.ts).
+  "active-living",
+  "balance-stability",
+  "balanced-eating",
+  "bodyweight-exercise",
+  "busy-lifestyle",
+  "cardiovascular-fitness",
+  "eating-budget",
+  "exercise-motivation",
+  "exercise-recovery",
+  "fitness-after-50",
+  "food-labels",
+  "fruits-vegetables",
+  "functional-fitness",
+  "healthy-grocery",
+  "healthy-pantry",
+  "healthy-snacking",
+  "home-fitness-beginners",
+  "home-workout-space",
+  "low-impact-fitness",
+  "meal-planning-budget",
+  "meal-prep",
+  "mindful-eating",
+  "mobility-flexibility",
+  "nutrition-basics",
+  "nutrition-wellness",
+  "plant-forward",
+  "portion-awareness",
+  "resistance-band",
+  "starting-exercise",
+  "strength-training",
+  "stretching-fundamentals",
+  "sustainable-eating",
+  "tracking-fitness",
+  "walking-fitness",
+  "weekly-fitness",
 ];
 const TIER_SLUGS = ["essentials", "pro"];
 
