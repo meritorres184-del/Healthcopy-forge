@@ -101,10 +101,12 @@ export const CLEAN_SALES: CleanSaleEntry[] = [
   // so every course page ships TODAY without a buy button (no JVZoo product ID
   // exists yet) and carries a clearly marked injection point for the canonical
   // button + 1x1 pixel (see src/routes/sales.$slug.tsx; the build gate is
-  // scripts/verify-prerender.mjs, PENDING_COURSE_BUY_SLUGS). The moment the owner
-  // sends a course's product ID it becomes one line in src/jvzoo.ts, that page
-  // starts rendering the canonical buy block, and the slug comes out of
-  // PENDING_COURSE_BUY_SLUGS in the gate: one line each, no page edits.
+  // scripts/verify-prerender.mjs, PENDING_COURSE_BUY_SLUGS, derived from
+  // WIRED_COURSES). The moment the owner sends a course's product ID, wiring it is
+  // two lines and no page edit: the ID in src/jvzoo.ts (courseJvzooProducts) plus
+  // the course in the gate's WIRED_COURSES — that page then renders the canonical
+  // buy block, drops its interim Stripe button, and leaves
+  // PENDING_COURSE_BUY_SLUGS. active-living (JVZoo 458158) is the first one wired.
   { slug: "active-living", kind: "course" },
   { slug: "balance-stability", kind: "course" },
   { slug: "balanced-eating", kind: "course" },

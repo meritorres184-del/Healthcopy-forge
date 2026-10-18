@@ -147,10 +147,13 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // resources, no webfont, closed document, size floor, no degraded bake, and the
 // negative check that they ship no JVZoo marker at all.
 //
-// Wiring one course later is ONE line: add its ID to src/jvzoo.ts. That slug then
-// fails out of PENDING_COURSE_BUY_SLUGS on its own and the page is held to the full
-// canonical buy block (link + button image + 1x1 pixel) like every other clean page.
-// No edit to this file and no edit to the page is needed for that transition.
+// Wiring one course later is TWO lines, one per half, and never a page edit: the
+// course's ID in src/jvzoo.ts (which is what renders the canonical buy block) and
+// the course in WIRED_COURSES below (which is what holds the page to it). The gate
+// cross-checks the two and fails the build if they disagree, so a course can never
+// go live with a buy block the gate is not checking — and the page itself is never
+// touched (src/routes/sales.<slug>.tsx already renders the canonical block into the
+// same container the interim Stripe button sits in).
   "active-living",
   "balance-stability",
   "balanced-eating",
@@ -187,14 +190,36 @@ const CLEAN_SALES_COURSE_SLUGS = [
   "walking-fitness",
   "weekly-fitness",
 ];
+// The courses whose JVZoo listing the owner has now CREATED, with the product ID
+// the page's canonical buy block must carry — the gate half of the wiring step
+// (the page half is the single entry in src/jvzoo.ts -> courseJvzooProducts, which
+// is what actually renders the button). Listed by hand on purpose: the gate must
+// not silently accept a new buy block appearing on a course page, and the
+// cross-check beside idBySlug below fails the build if this list and src/jvzoo.ts
+// disagree (a course wired in code but not here, one listed here with no ID in the
+// code, or a wrong ID on either side). The count of product IDs the gate checks
+// grows by one per entry here: 14 -> 15 with active-living.
+//
+// active-living — "Active Living for Busy People", JVZoo product 458158, the first
+// course listing the owner created (2026-10-18). That page therefore carries the
+// full canonical buy block (link + button image + 1x1 tracking pixel) and NO
+// interim Stripe href.
+const WIRED_COURSES = [["active-living", "458158"]];
+const WIRED_COURSE_SLUGS = new Set(WIRED_COURSES.map(([slug]) => slug));
 // The course slugs whose JVZoo listing may not exist yet, so the buy block CANNOT
-// be on their page. This is a plain set of all 35: the clean-page loop below only
-// treats a page as buy-pending while it ALSO has no ID (idForSlug(slug) is empty),
-// so pasting a course's ID into src/jvzoo.ts puts that page back under the full
-// canonical-buy-block check on its own. (A literal set rather than one filtered by
-// idBySlug here on purpose: idBySlug is declared further down beside the buy-block
-// section, and reading it above its declaration is a temporal-dead-zone error.)
-const PENDING_COURSE_BUY_SLUGS = new Set(CLEAN_SALES_COURSE_SLUGS);
+// be on their page: every course that is NOT wired above (34 today). Derived from
+// CLEAN_SALES_COURSE_SLUGS rather than listed by hand so that (a) a newly added
+// course page is buy-pending by default — it must never claim a buy path it does
+// not have — and (b) this set can never contradict WIRED_COURSES. The clean-page
+// loop below additionally requires that such a page has no product ID
+// (idForSlug(slug) is empty), so a wired course is held to the canonical buy block
+// on both halves: it left this set, and it has an ID. (Derived without reading
+// idBySlug here on purpose: that map is declared further down beside the
+// buy-block section, and reading it above its declaration is a
+// temporal-dead-zone error.)
+const PENDING_COURSE_BUY_SLUGS = new Set(
+  CLEAN_SALES_COURSE_SLUGS.filter((s) => !WIRED_COURSE_SLUGS.has(s)),
+);
 // Rounds 1-2: the five Packs 9-13 and the nine ebooks flagged before them.
 const CLEAN_SALES_SLUGS_ROUNDS_1_2 = [
   "protein-shakes-protein-nutrition",
@@ -409,7 +434,43 @@ for (const [path, min, wantBuy] of [
 // than "every ID in the file" so that wiring up the 11 ebook listings later (one
 // line each in src/jvzoo.ts) can never make this count check fire.
 const packIds = [...new Set(PACK_SLUGS.map((s) => idBySlug.get(s)).filter(Boolean))];
-const allIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])];
+// The 13 packs + the fixed bundle: the IDs the /packs and /library pages sell, and
+// the set the "14 product IDs" count below is about.
+const packBundleIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])];
+// The courses the owner has wired, read back out of src/jvzoo.ts — the same file
+// the buy blocks are rendered from, so this can never drift from the code.
+const wiredCourseSlugs = CLEAN_SALES_COURSE_SLUGS.filter((s) => idBySlug.has(s));
+const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))];
+// EVERY product ID the gate expects a canonical buy block for: the 14 packs +
+// bundle above, plus one per wired course. 15 today (14 + active-living, 458158);
+// it grows by one each time the owner sends another course's listing ID.
+const allIds = [...new Set([...packBundleIds, ...wiredCourseIds])];
+// The gate half and the code half of the course wiring step must agree EXACTLY.
+// This is what stops a course page from going live with a buy block nothing here
+// was told about (that page would otherwise pass every other check: it has an ID,
+// so it is no longer treated as pending).
+if (wiredCourseSlugs.length !== WIRED_COURSES.length) {
+  failures.push([
+    "src/jvzoo.ts",
+    [
+      `expected ${WIRED_COURSES.length} wired course listing(s) in src/jvzoo.ts ` +
+        `(${WIRED_COURSES.map(([s, id]) => `${s} ${id}`).join(", ")}), read ` +
+        `${wiredCourseSlugs.length} course ID(s) from the file`,
+    ],
+  ]);
+} else {
+  for (const [slug, id] of WIRED_COURSES) {
+    const found = idBySlug.get(slug);
+    if (found !== id) {
+      failures.push([
+        "src/jvzoo.ts",
+        [
+          `course "${slug}" is wired to ${found ?? "(no ID)"} but WIRED_COURSES expects ${id}`,
+        ],
+      ]);
+    }
+  }
+}
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const pad = (s, n) => String(s).padEnd(n);
 function canonicalBuyProblems(html, id) {
@@ -426,15 +487,19 @@ function canonicalBuyProblems(html, id) {
   if (html.includes(`/0/${id}/1`)) problems.push(`non-canonical /1 image for product ${id}`);
   return problems;
 }
-if (allIds.length !== 14) {
+if (packBundleIds.length !== 14) {
   failures.push([
     "src/jvzoo.ts",
-    [`expected 14 product IDs (13 packs + 1 bundle), read ${allIds.length}`],
+    [
+      `expected 14 product IDs (13 packs + 1 bundle), read ${packBundleIds.length}`,
+    ],
   ]);
 }
 const buyPages = [
-  // /packs shows all thirteen live packs plus the Packs 1-4 bundle.
-  ["/packs", allIds],
+  // /packs shows all thirteen live packs plus the Packs 1-4 bundle. NOT allIds:
+  // a wired course's buy block belongs on that course's own sales page, never on
+  // the packs page.
+  ["/packs", packBundleIds],
   // /library shows the thirteen live pack buy buttons; the bundle is only sold on /packs.
   ["/library", packIds],
   ...PACK_SLUGS.map((s) => [
@@ -559,10 +624,13 @@ const COURSE_REQUIRED_TEXT = [
   "This is a done-for-you PLR (private label rights) course",
   "Get Instant Access",
   "$47",
-  // The interim buy button's label — the price on the button itself, so a page
-  // can never bake with a buy href but no readable call to action.
-  "Buy Now",
 ];
+// Required only on a course page whose listing is still PENDING: the interim
+// Stripe button's own label, so such a page can never bake with a buy href but no
+// readable call to action. A wired course page renders the canonical JVZoo block
+// instead ("Buy securely through JVZoo — instant download after checkout"), so
+// requiring "Buy Now" there would be requiring the wrong button.
+const COURSE_PENDING_REQUIRED_TEXT = ["Buy Now"];
 // The empty container the canonical JVZoo buy button + 1x1 pixel render into once
 // the course's product ID exists. Required on a course page whose listing is still
 // pending, so the injection point cannot be deleted by accident.
@@ -687,6 +755,13 @@ for (const slug of CLEAN_SALES_SLUGS) {
           problems.push(
             `pending course page must carry the interim Stripe buy anchor exactly once (href="${COURSE_INTERIM_BUY_HREF}" found ${buyAnchors} time(s))`,
           );
+        }
+        for (const text of COURSE_PENDING_REQUIRED_TEXT) {
+          if (!html.includes(text)) {
+            problems.push(
+              `pending course page must carry its interim buy button's text "${text}"`,
+            );
+          }
         }
         const buyMentions = html.split(COURSE_INTERIM_BUY_HREF).length - 1;
         if (buyMentions !== buyAnchors) {
@@ -825,6 +900,25 @@ for (const [path, problems] of checkoutRows) {
   const status = problems.length ? "FAIL" : "ok  ";
   console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
 }
+// Every route-level failure was printed by the row loops above. The rest are
+// FILE-level failures — src/jvzoo.ts (the product-ID count and the course-wiring
+// cross-check) and this gate's own literals. Print them too: a wiring mistake
+// must never fail the build with a bare failure count and no message saying what
+// is wrong.
+const printedPaths = new Set([
+  ...rows.map(([p]) => p),
+  ...buyRows.map(([p]) => "buy-block " + p),
+  ...cleanRows.map(([p]) => "clean-sales " + p),
+  ...checkoutRows.map(([p]) => "checkout " + p),
+  ...rows.map(([p]) => "checkout href " + p),
+]);
+const fileFailures = failures.filter(([p]) => !printedPaths.has(p));
+if (fileFailures.length) {
+  console.error("\nfile-level gate failures — src/jvzoo.ts / this gate");
+  for (const [p, problems] of fileFailures) {
+    console.error("  FAIL " + p + ": " + problems.join("; "));
+  }
+}
 if (failures.length) {
   console.error(
     `\npre-render gate FAILED for ${failures.length} route(s). ` +
@@ -837,5 +931,9 @@ if (failures.length) {
 }
 console.log(
   `\npre-render gate passed: ${rows.length} routes baked and complete; ` +
-    `${buyRows.length} sales pages carry canonical JVZoo buy blocks.`,
+    `${buyRows.length} sales pages carry canonical JVZoo buy blocks; ` +
+    `${allIds.length} product IDs wired ` +
+    `(${packBundleIds.length} packs/bundle + ${wiredCourseIds.length} course${
+      wiredCourseIds.length === 1 ? "" : "s"
+    }).`,
 );
