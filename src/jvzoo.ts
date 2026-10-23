@@ -193,6 +193,15 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "458158",
     "Active Living for Busy People \u2014 PLR Course",
   ),
+  // Balance and Stability Training — course page /sales/balance-stability.
+  // Listing created by the owner 2026-10-23; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 458450. The
+  // listing name is the catalog title ("Balance and Stability Training"), NOT the
+  // alt text in the owner's pasted snippet, which carries a typo.
+  "balance-stability": jvzooProduct(
+    "458450",
+    "Balance and Stability Training \u2014 PLR Course",
+  ),
 };
 
 /**
