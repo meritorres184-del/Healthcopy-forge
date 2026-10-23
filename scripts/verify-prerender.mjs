@@ -199,21 +199,25 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // disagree (a course wired in code but not here, one listed here with no ID in the
 // code, or a wrong ID on either side). The count of product IDs the gate checks
 // grows by one per entry here: 14 -> 15 with active-living, 15 -> 16 with
-// balance-stability.
+// balance-stability, 16 -> 17 with balanced-eating.
 //
 // active-living — "Active Living for Busy People", JVZoo product 458158, the first
 // course listing the owner created (2026-10-18).
 //
 // balance-stability — "Balance and Stability Training", JVZoo product 458450, the
-// second (2026-10-23). Each such page therefore carries the full canonical buy
+// second (2026-10-23).
+//
+// balanced-eating — "Building a Balanced Eating Routine", JVZoo product 458983, the
+// third (2026-10-23). Each such page therefore carries the full canonical buy
 // block (link + button image + 1x1 tracking pixel) and NO interim Stripe href.
 const WIRED_COURSES = [
   ["active-living", "458158"],
   ["balance-stability", "458450"],
+  ["balanced-eating", "458983"],
 ];
 const WIRED_COURSE_SLUGS = new Set(WIRED_COURSES.map(([slug]) => slug));
 // The course slugs whose JVZoo listing may not exist yet, so the buy block CANNOT
-// be on their page: every course that is NOT wired above (33 today). Derived from
+// be on their page: every course that is NOT wired above (32 today). Derived from
 // CLEAN_SALES_COURSE_SLUGS rather than listed by hand so that (a) a newly added
 // course page is buy-pending by default — it must never claim a buy path it does
 // not have — and (b) this set can never contradict WIRED_COURSES. The clean-page
@@ -448,8 +452,8 @@ const packBundleIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])
 const wiredCourseSlugs = CLEAN_SALES_COURSE_SLUGS.filter((s) => idBySlug.has(s));
 const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))];
 // EVERY product ID the gate expects a canonical buy block for: the 14 packs +
-// bundle above, plus one per wired course. 16 today (14 + active-living 458158 +
-// balance-stability 458450);
+// bundle above, plus one per wired course. 17 today (14 + active-living 458158 +
+// balance-stability 458450 + balanced-eating 458983);
 // it grows by one each time the owner sends another course's listing ID.
 const allIds = [...new Set([...packBundleIds, ...wiredCourseIds])];
 // The gate half and the code half of the course wiring step must agree EXACTLY.
@@ -942,5 +946,6 @@ console.log(
     `${allIds.length} product IDs wired ` +
     `(${packBundleIds.length} packs/bundle + ${wiredCourseIds.length} course${
       wiredCourseIds.length === 1 ? "" : "s"
-    }).`,
+    }); ${PENDING_COURSE_BUY_SLUGS.size} of ${CLEAN_SALES_COURSE_SLUGS.length} ` +
+    `course pages still pending a JVZoo listing.`,
 );

@@ -81,7 +81,7 @@ for k, (start, head) in enumerate(heads):
         m = re.search(r"\*\*Upload this file \(delivery\):\*\* `(course-[a-z0-9-]+\.zip)`", l)
         if m:
             zipname = m.group(1)
-        m = re.search(r"\*\*Image \(listing thumbnail\):\*\* `(course-[a-z0-9-]+-cover\.jpg)`", l)
+        m = re.search(r"\*\*Cover image \(no upload needed\):\*\* `(course-[a-z0-9-]+-cover\.jpg)`", l)
         if m:
             cover = m.group(1)
     while desc and not desc[0].strip():
