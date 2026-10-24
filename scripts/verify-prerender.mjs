@@ -201,7 +201,7 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // grows by one per entry here: 14 -> 15 with active-living, 15 -> 16 with
 // balance-stability, 16 -> 17 with balanced-eating, 17 -> 18 with
 // bodyweight-exercise, 18 -> 19 with busy-lifestyle, 19 -> 20 with
-// cardiovascular-fitness.
+// cardiovascular-fitness, 20 -> 21 with eating-budget.
 //
 // active-living — "Active Living for Busy People", JVZoo product 458158, the first
 // course listing the owner created (2026-10-18).
@@ -219,7 +219,10 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // (2026-10-23).
 //
 // cardiovascular-fitness — "Cardiovascular Fitness Basics", JVZoo product 459049, the
-// sixth (2026-10-24). Each such page therefore carries the full canonical buy
+// sixth (2026-10-24).
+//
+// eating-budget — "Eating Well on a Budget", JVZoo product 459101, the seventh
+// (2026-10-24). Each such page therefore carries the full canonical buy
 // block (link + button image + 1x1 tracking pixel) and NO interim Stripe href.
 const WIRED_COURSES = [
   ["active-living", "458158"],
@@ -228,10 +231,11 @@ const WIRED_COURSES = [
   ["bodyweight-exercise", "459045"],
   ["busy-lifestyle", "459047"],
   ["cardiovascular-fitness", "459049"],
+  ["eating-budget", "459101"],
 ];
 const WIRED_COURSE_SLUGS = new Set(WIRED_COURSES.map(([slug]) => slug));
 // The course slugs whose JVZoo listing may not exist yet, so the buy block CANNOT
-// be on their page: every course that is NOT wired above (29 today). Derived from
+// be on their page: every course that is NOT wired above (28 today). Derived from
 // CLEAN_SALES_COURSE_SLUGS rather than listed by hand so that (a) a newly added
 // course page is buy-pending by default — it must never claim a buy path it does
 // not have — and (b) this set can never contradict WIRED_COURSES. The clean-page
@@ -466,10 +470,10 @@ const packBundleIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])
 const wiredCourseSlugs = CLEAN_SALES_COURSE_SLUGS.filter((s) => idBySlug.has(s));
 const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))];
 // EVERY product ID the gate expects a canonical buy block for: the 14 packs +
-// bundle above, plus one per wired course. 20 today (14 + active-living 458158 +
+// bundle above, plus one per wired course. 21 today (14 + active-living 458158 +
 // balance-stability 458450 + balanced-eating 458983 + bodyweight-exercise 459045 +
-// busy-lifestyle 459047 + cardiovascular-fitness 459049); it grows by one each time
-// the owner sends another course's listing ID.
+// busy-lifestyle 459047 + cardiovascular-fitness 459049 + eating-budget 459101); it
+// grows by one each time the owner sends another course's listing ID.
 const allIds = [...new Set([...packBundleIds, ...wiredCourseIds])];
 // The gate half and the code half of the course wiring step must agree EXACTLY.
 // This is what stops a course page from going live with a buy block nothing here
