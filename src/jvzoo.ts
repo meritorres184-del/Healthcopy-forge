@@ -232,6 +232,16 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459047",
     "Nutrition for Busy Lifestyles \u2014 PLR Course",
   ),
+  // Cardiovascular Fitness Basics — course page /sales/cardiovascular-fitness.
+  // Listing created by the owner 2026-10-24; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 459049. The
+  // alt text in the owner's pasted snippet ("Cardiovascular Fitness Basics") is the
+  // catalog title with no typo, so the line below is that title plus our "\u2014 PLR
+  // Course" suffix, exactly like the five entries above.
+  "cardiovascular-fitness": jvzooProduct(
+    "459049",
+    "Cardiovascular Fitness Basics \u2014 PLR Course",
+  ),
 };
 
 /**
