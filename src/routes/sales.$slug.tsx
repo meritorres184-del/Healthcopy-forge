@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { readWithRetry } from "../db";
 import { bundleBuy, liveJvzooProduct } from "../jvzoo";
 import { packCover } from "../lib/packCovers";
@@ -89,6 +89,26 @@ const COURSE_CATEGORY = "PLR Course";
 // tracking pixel render into this same container, and the gate then refuses this
 // Stripe href on that page.
 const COURSE_INTERIM_BUY_HREF = STRIPE_PAYMENT_LINKS.course;
+
+// 301 URL ALIASES for this route (2026-10-24). Each entry maps a MISSPELLED URL
+// segment (what someone typed or what a listing review followed) to the
+// canonical cleanSales slug whose page actually exists. The loader below
+// redirects the misspelled form to the canonical page with a real HTTP 301
+// before it does any lookup, so the alias answers "301 -> canonical page"
+// instead of rendering the link-free "This page isn't available" stub (which
+// JVZoo compliance read as a broken listing link on
+// /sales/bodyweight-exercises).
+//
+// Extend this map only — one line per future typo/old-URL:
+//   "bodyweight-exercises": "bodyweight-exercise",  // plural -> singular
+//
+// These aliases deliberately live ONLY here: NOT in src/lib/cleanSales.ts, NOT
+// in the vite.config.ts PRERENDER list and NOT in the build gate. A redirect has
+// to be an on-demand request-time response; if the misspelled slug were a
+// cleanSales entry it would be baked to static HTML and answer 200 instead.
+const SALES_SLUG_ALIASES: Record<string, string> = {
+  "bodyweight-exercises": "bodyweight-exercise",
+};
 
 // The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
 // four packs" mechanic: the listing sells one fixed product, Packs 1-4, so this
@@ -202,7 +222,17 @@ export const Route = createFileRoute("/sales/$slug")({
     };
   },
   loader: async ({ params }) => {
-    const entry = cleanSaleBySlug(params.slug);
+    // Alias first, before ANY lookup: a misspelled segment (see
+    // SALES_SLUG_ALIASES) is answered with a real 301 to its canonical page, so
+    // the URL a reviewer follows lands on the product page instead of the
+    // "not available" stub. Every unknown slug that is NOT aliased falls
+    // through unchanged and keeps rendering the same 200 not-available page.
+    const slug = SALES_SLUG_ALIASES[params.slug] ?? params.slug;
+    if (slug !== params.slug) {
+      throw redirect({ href: "/sales/" + slug, statusCode: 301 });
+    }
+
+    const entry = cleanSaleBySlug(slug);
     if (!entry) {
       // Not one of the twenty-five clean-page products: a link-free "not available"
       // page. (Only those slugs are pre-rendered; anything else is an SSR request.)
@@ -233,7 +263,7 @@ export const Route = createFileRoute("/sales/$slug")({
     if (entry.kind === "ebook") {
       // Static catalogue (src/lib/ebooks.ts) — no database read, so an ebook page
       // can never bake into a degraded state.
-      const ebook = ebookBySlug(params.slug);
+      const ebook = ebookBySlug(slug);
       if (!ebook) {
         const meta = saleMeta(null);
         return { sale: null, title: meta.title, description: meta.description };
@@ -270,7 +300,7 @@ export const Route = createFileRoute("/sales/$slug")({
       // does. Until then the page shows the price and the marked injection point
       // below; the buy button + 1x1 pixel appear the moment the ID is added to
       // src/jvzoo.ts (one line per course, no edit to this file).
-      const course = courseBySlug(params.slug);
+      const course = courseBySlug(slug);
       if (!course) {
         const meta = saleMeta(null);
         return { sale: null, title: meta.title, description: meta.description };
@@ -296,7 +326,7 @@ export const Route = createFileRoute("/sales/$slug")({
         (db) => db`
       select slug, title, description, price_cents, category, coming_soon, includes
       from content_packs
-      where slug = ${params.slug}`,
+      where slug = ${slug}`,
       );
       if (rows.length === 0) {
         const meta = saleMeta(null);
@@ -321,10 +351,10 @@ export const Route = createFileRoute("/sales/$slug")({
       // TanStack's bare error widget, which would leave the page with no content
       // and no buy button — the exact JVZoo compliance failure this page fixes.
       console.error(
-        `[sales/$slug] could not read pack "${params.slug}"; rendering the link-free fallback`,
+        `[sales/$slug] could not read pack "${slug}"; rendering the link-free fallback`,
         err,
       );
-      const sale = degradedSale(params.slug, "pack");
+      const sale = degradedSale(slug, "pack");
       const meta = saleMeta(sale);
       return { sale, title: meta.title, description: meta.description };
     }
