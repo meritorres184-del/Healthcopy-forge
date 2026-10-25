@@ -343,6 +343,18 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459139",
     "Healthy Snacking \u2014 PLR Course",
   ),
+  // Home Fitness for Beginners — course page /sales/home-fitness-beginners.
+  // Listing created by the owner 2026-10-25; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 459143. The
+  // alt text in the owner's pasted snippet ("Home Fitness for Beginners") is the
+  // catalog title with no typo, so the line below is that title plus our
+  // "\u2014 PLR Course" suffix, exactly like the sixteen entries above. (Note the
+  // neighbouring catalog course "Creating Your Own Home Workout Space" is a
+  // DIFFERENT course at /sales/home-workout-space and stays unwired.)
+  "home-fitness-beginners": jvzooProduct(
+    "459143",
+    "Home Fitness for Beginners \u2014 PLR Course",
+  ),
 };
 
 /**
