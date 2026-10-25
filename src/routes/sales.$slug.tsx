@@ -108,6 +108,7 @@ const COURSE_INTERIM_BUY_HREF = STRIPE_PAYMENT_LINKS.course;
 // cleanSales entry it would be baked to static HTML and answer 200 instead.
 const SALES_SLUG_ALIASES: Record<string, string> = {
   "bodyweight-exercises": "bodyweight-exercise",
+  "fiteness-after-50": "fitness-after-50",  // missing "s" -> canonical (JVZoo 459123)
 };
 
 // The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
