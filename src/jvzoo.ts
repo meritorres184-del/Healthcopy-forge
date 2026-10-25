@@ -365,6 +365,16 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459169",
     "Creating Your Own Home Workout Space \u2014 PLR Course",
   ),
+  // Low Impact Fitness — course page /sales/low-impact-fitness.
+  // Listing created by the owner 2026-10-25; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 459171. The
+  // alt text in the owner's pasted snippet ("Low Impact Fitness") is the catalog
+  // title with no typo, so the line below is that title plus our "\u2014 PLR Course"
+  // suffix, exactly like the eighteen entries above.
+  "low-impact-fitness": jvzooProduct(
+    "459171",
+    "Low Impact Fitness \u2014 PLR Course",
+  ),
 };
 
 /**
