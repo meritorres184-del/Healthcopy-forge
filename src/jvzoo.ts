@@ -292,6 +292,17 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459125",
     "Understanding Food Labels \u2014 PLR Course",
   ),
+  // Adding More Fruits and Vegetables to Your Diet — course page
+  // /sales/fruits-vegetables. Listing created by the owner 2026-10-25; that page's
+  // button was swapped from the interim Stripe link to this canonical JVZoo block
+  // for product 459127. The alt text in the owner's pasted snippet ("Adding More
+  // Fruits and Vegetables to Your Diet") is the catalog title with no typo, so the
+  // line below is that title plus our "\u2014 PLR Course" suffix, exactly like the
+  // eleven entries above.
+  "fruits-vegetables": jvzooProduct(
+    "459127",
+    "Adding More Fruits and Vegetables to Your Diet \u2014 PLR Course",
+  ),
 };
 
 /**
