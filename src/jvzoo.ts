@@ -282,6 +282,16 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459123",
     "Fitness After 50 \u2014 PLR Course",
   ),
+  // Understanding Food Labels — course page /sales/food-labels. Listing created by
+  // the owner 2026-10-25; that page's button was swapped from the interim Stripe
+  // link to this canonical JVZoo block for product 459125. The alt text in the
+  // owner's pasted snippet ("Understanding Food Labels") is the catalog title with
+  // no typo, so the line below is that title plus our "\u2014 PLR Course" suffix,
+  // exactly like the ten entries above.
+  "food-labels": jvzooProduct(
+    "459125",
+    "Understanding Food Labels \u2014 PLR Course",
+  ),
 };
 
 /**

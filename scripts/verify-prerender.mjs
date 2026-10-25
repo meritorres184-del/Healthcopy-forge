@@ -203,7 +203,7 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // bodyweight-exercise, 18 -> 19 with busy-lifestyle, 19 -> 20 with
 // cardiovascular-fitness, 20 -> 21 with eating-budget, 21 -> 22 with
 // exercise-motivation, 22 -> 23 with exercise-recovery, 23 -> 24 with
-// fitness-after-50.
+// fitness-after-50, 24 -> 25 with food-labels.
 //
 // active-living — "Active Living for Busy People", JVZoo product 458158, the first
 // course listing the owner created (2026-10-18).
@@ -233,6 +233,9 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // ninth (2026-10-25).
 //
 // fitness-after-50 — "Fitness After 50", JVZoo product 459123, the tenth
+// (2026-10-25).
+//
+// food-labels — "Understanding Food Labels", JVZoo product 459125, the eleventh
 // (2026-10-25). Each such page therefore carries the full canonical buy
 // block (link + button image + 1x1 tracking pixel) and NO interim Stripe href.
 const WIRED_COURSES = [
@@ -246,10 +249,11 @@ const WIRED_COURSES = [
   ["exercise-motivation", "459117"],
   ["exercise-recovery", "459119"],
   ["fitness-after-50", "459123"],
+  ["food-labels", "459125"],
 ];
 const WIRED_COURSE_SLUGS = new Set(WIRED_COURSES.map(([slug]) => slug));
 // The course slugs whose JVZoo listing may not exist yet, so the buy block CANNOT
-// be on their page: every course that is NOT wired above (25 today). Derived from
+// be on their page: every course that is NOT wired above (24 today). Derived from
 // CLEAN_SALES_COURSE_SLUGS rather than listed by hand so that (a) a newly added
 // course page is buy-pending by default — it must never claim a buy path it does
 // not have — and (b) this set can never contradict WIRED_COURSES. The clean-page
@@ -484,10 +488,11 @@ const packBundleIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])
 const wiredCourseSlugs = CLEAN_SALES_COURSE_SLUGS.filter((s) => idBySlug.has(s));
 const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))];
 // EVERY product ID the gate expects a canonical buy block for: the 14 packs +
-// bundle above, plus one per wired course. 24 today (14 + active-living 458158 +
+// bundle above, plus one per wired course. 25 today (14 + active-living 458158 +
 // balance-stability 458450 + balanced-eating 458983 + bodyweight-exercise 459045 +
 // busy-lifestyle 459047 + cardiovascular-fitness 459049 + eating-budget 459101 +
-// exercise-motivation 459117 + exercise-recovery 459119 + fitness-after-50 459123);
+// exercise-motivation 459117 + exercise-recovery 459119 + fitness-after-50 459123 +
+// food-labels 459125);
 // it grows by one each time the owner sends another course's listing ID.
 const allIds = [...new Set([...packBundleIds, ...wiredCourseIds])];
 // The gate half and the code half of the course wiring step must agree EXACTLY.
