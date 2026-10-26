@@ -375,6 +375,19 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459171",
     "Low Impact Fitness \u2014 PLR Course",
   ),
+  // Meal Planning for Beginners — course page /sales/meal-planning-budget.
+  // Listing created by the owner 2026-10-25; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 459173. The
+  // alt text in the owner's pasted snippet ("Meal Planning for Beginners") is the
+  // catalog title with no typo, so the line below is that title plus our
+  // "\u2014 PLR Course" suffix, exactly like the nineteen entries above. NOTE the
+  // catalog title says "Beginners" but the page slug (and the listing's Sales Page
+  // URL) is /sales/meal-planning-budget — the same title/slug mismatch as
+  // food-labels, so the Sales Page URL field must carry the SLUG, not the title.
+  "meal-planning-budget": jvzooProduct(
+    "459173",
+    "Meal Planning for Beginners \u2014 PLR Course",
+  ),
 };
 
 /**
