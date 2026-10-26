@@ -110,6 +110,7 @@ const SALES_SLUG_ALIASES: Record<string, string> = {
   "bodyweight-exercises": "bodyweight-exercise",
   "fiteness-after-50": "fitness-after-50",  // missing "s" -> canonical (JVZoo 459123)
   "execise-recovery": "exercise-recovery",  // missing "r" -> canonical (JVZoo 459119)
+  "understanding-food-labels": "food-labels",  // listing title worded it differently; real kit slug is food-labels (JVZoo 459125)
 };
 
 // The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
