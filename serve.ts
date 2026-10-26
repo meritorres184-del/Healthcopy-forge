@@ -25,6 +25,14 @@ import handler from "./dist/server/server.js";
 const PORT = 3000;
 const HOST = "0.0.0.0";
 const CLIENT_DIR = `${import.meta.dir}/dist/client`;
+// Public assets (pack ZIPs, covers, pin images, kit downloads) are NOT copied into
+// dist/client any more: `build.copyPublicDir` is false in vite.config.ts, because
+// the publish artifact carried every one of those ~95 MiB twice — once in public/,
+// once in dist/client — which is what blew the publish size cap. They are served
+// from public/ here as a SECOND static root, tried only AFTER dist/client: dist
+// holds the pre-rendered SSG routes and the hashed client chunks, so a file in
+// public/ must never shadow a baked page.
+const PUBLIC_DIR = `${import.meta.dir}/public`;
 /**
  * Every file in dist/client that could answer this request path, in priority
  * order. TanStack's prerender writes a page as `<path>/index.html`
@@ -72,6 +80,11 @@ for (let attempt = 1; ; attempt++) {
         const { pathname } = new URL(req.url);
         for (const candidate of staticCandidates(pathname)) {
           const file = Bun.file(CLIENT_DIR + candidate);
+          if (await file.exists()) return new Response(file);
+        }
+        // dist/client wins; public/ answers only what dist does not have.
+        for (const candidate of staticCandidates(pathname)) {
+          const file = Bun.file(PUBLIC_DIR + candidate);
           if (await file.exists()) return new Response(file);
         }
         return (

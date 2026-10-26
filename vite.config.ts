@@ -175,6 +175,16 @@ const PRERENDER_PAGES = [
 const DEGRADED_MARKER = "Content temporarily unavailable";
 
 export default defineConfig({
+  build: {
+    // DO NOT COPY public/ INTO dist/client. Vite's default (true) duplicates every
+    // public asset inside the build output, and the publish artifact ships both
+    // public/ and dist/client, so each pack ZIP, cover, pin image and kit download
+    // was counted twice (~95 MiB of pure duplication — that is what pushed the
+    // publish past its 200 MiB cap). serve.ts now serves public/ as a second static
+    // root behind dist/client (dist always wins), so every public URL keeps
+    // working byte-for-byte while the artifact drops by the duplicated half.
+    copyPublicDir: false,
+  },
   server: {
     port: 3000,
     host: true,
