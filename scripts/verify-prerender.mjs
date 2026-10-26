@@ -430,6 +430,10 @@ function listingSlugOf(path) {
 const OTHER = [
   "/",
   "/affiliates",
+  // Unlisted affiliate promo hub (owner, 2026-10-26): not in any nav, reached by
+  // direct link only, but it IS baked — the links she sends must be served from
+  // disk complete, same guarantee as every other page.
+  "/affiliate-kit",
   "/disclaimer",
   "/downloads",
   "/join",
