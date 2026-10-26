@@ -111,6 +111,22 @@ const SALES_SLUG_ALIASES: Record<string, string> = {
   "fiteness-after-50": "fitness-after-50",  // missing "s" -> canonical (JVZoo 459123)
   "execise-recovery": "exercise-recovery",  // missing "r" -> canonical (JVZoo 459119)
   "understanding-food-labels": "food-labels",  // listing title worded it differently; real kit slug is food-labels (JVZoo 459125)
+  "active-living-for-busy-people": "active-living",  // listing-title slug -> real kit slug active-living (JVZoo 458158)
+  "adding-more-fruits-and-vegetables-to-your-diet": "fruits-vegetables",  // listing-title slug -> real kit slug fruits-vegetables (JVZoo 459127)
+  "balance-and-stability-training": "balance-stability",  // listing-title slug -> real kit slug balance-stability (JVZoo 458450)
+  "bodyweight-exercise-basics": "bodyweight-exercise",  // listing-title slug -> real kit slug bodyweight-exercise (JVZoo 459045)
+  "building-a-balanced-eating-routine": "balanced-eating",  // listing-title slug -> real kit slug balanced-eating (JVZoo 458983)
+  "building-a-healthy-pantry": "healthy-pantry",  // listing-title slug -> real kit slug healthy-pantry (JVZoo 459135)
+  "cardiovascular-fitness-basics": "cardiovascular-fitness",  // listing-title slug -> real kit slug cardiovascular-fitness (JVZoo 459049)
+  "creating-your-own-home-workout-space": "home-workout-space",  // listing-title slug -> real kit slug home-workout-space (JVZoo 459169)
+  "eating-well-on-a-budget": "eating-budget",  // listing-title slug -> real kit slug eating-budget (JVZoo 459101)
+  "exercise-motivation-and-consistency": "exercise-motivation",  // listing-title slug -> real kit slug exercise-motivation (JVZoo 459117)
+  "exercise-recovery-fundamentals": "exercise-recovery",  // listing-title slug -> real kit slug exercise-recovery (JVZoo 459119)
+  "functional-fitness-for-everyday-life": "functional-fitness",  // listing-title slug -> real kit slug functional-fitness (JVZoo 459129)
+  "healthy-grocery-shopping": "healthy-grocery",  // listing-title slug -> real kit slug healthy-grocery (JVZoo 459131)
+  "home-fitness-for-beginners": "home-fitness-beginners",  // listing-title slug -> real kit slug home-fitness-beginners (JVZoo 459143)
+  "meal-planning-for-beginners": "meal-planning-budget",  // listing-title slug -> real kit slug meal-planning-budget (JVZoo 459173)
+  "nutrition-for-busy-lifestyles": "busy-lifestyle",  // listing-title slug -> real kit slug busy-lifestyle (JVZoo 459047)
 };
 
 // The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
