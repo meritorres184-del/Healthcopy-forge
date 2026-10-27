@@ -14,15 +14,16 @@
 // handler) ever sees the request. Nothing here is pre-rendered: a baked page
 // answers 200, and this must answer 301.
 //
-// THE MAP IS THE ENTIRE GUARD. Only the 40 strings below redirect. A miss returns
+// THE MAP IS THE ENTIRE GUARD. Only the 69 strings below redirect. A miss returns
 // null and the request continues untouched, so every real root route
 // (/, /packs, /pricing, /library, /affiliates, /ebooks, /join, /membership,
 // /sales, /affiliate-kit, /kit-delivery, ...) and every unknown path keep exactly
 // the behaviour they have today.
 //
 // Keep this map a mirror of SALES_SLUG_ALIASES in src/routes/sales.$slug.tsx: the
-// same 20 wired course slugs and the same 20 aliases, one line each, with the
-// JVZoo product id for the ones that have a live listing.
+// same 35 course slugs (20 wired + the 15 still waiting on a JVZoo listing) and the
+// same 34 aliases, one line each, with the JVZoo product id for the ones that have a
+// live listing.
 export const ROOT_SALES_REDIRECTS: Record<string, string> = {
   // ── The 20 wired course slugs: the bare-root form of a live page ────────────
   // Every one of these is a real /sales/<slug> page, so the bare-root form must
@@ -73,12 +74,54 @@ export const ROOT_SALES_REDIRECTS: Record<string, string> = {
   "bodyweight-exercises": "/sales/bodyweight-exercise", // plural
   "fiteness-after-50": "/sales/fitness-after-50", // missing "s"
   "execise-recovery": "/sales/exercise-recovery", // missing "r"
+
+  // ── The 15 course pages whose JVZoo listings do not exist yet (2026-10-27) ─
+  // Real /sales/<slug> pages with no listing and no buy block yet: nothing here is
+  // wired, and none may be submitted until its buy block is in place. They get the
+  // same two guarantees as the 20 above — the bare-root form of the canonical kit
+  // slug, and the bare-root form of the slug derived from the listing TITLE.
+  "meal-prep": "/sales/meal-prep", // JVZoo listing pending
+  "mindful-eating": "/sales/mindful-eating", // JVZoo listing pending
+  "mobility-flexibility": "/sales/mobility-flexibility", // JVZoo listing pending
+  "nutrition-basics": "/sales/nutrition-basics", // JVZoo listing pending
+  "nutrition-wellness": "/sales/nutrition-wellness", // JVZoo listing pending
+  "plant-forward": "/sales/plant-forward", // JVZoo listing pending
+  "portion-awareness": "/sales/portion-awareness", // JVZoo listing pending
+  "resistance-band": "/sales/resistance-band", // JVZoo listing pending
+  "starting-exercise": "/sales/starting-exercise", // JVZoo listing pending
+  "strength-training": "/sales/strength-training", // JVZoo listing pending
+  "stretching-fundamentals": "/sales/stretching-fundamentals", // JVZoo listing pending
+  "sustainable-eating": "/sales/sustainable-eating", // JVZoo listing pending
+  "tracking-fitness": "/sales/tracking-fitness", // JVZoo listing pending
+  "walking-fitness": "/sales/walking-fitness", // JVZoo listing pending
+  "weekly-fitness": "/sales/weekly-fitness", // JVZoo listing pending
+
+  // The same 15, title-derived. Trappy pairs to keep straight: meal-prep vs
+  // meal-prep-made-easy, nutrition-basics vs nutrition-basics-for-beginners,
+  // sustainable-eating vs creating-sustainable-healthy-eating-habits,
+  // tracking-fitness vs tracking-your-fitness-progress,
+  // weekly-fitness vs building-a-weekly-fitness-routine. Stretching Fundamentals
+  // needs no entry: its title IS its slug (already in the list above).
+  "building-a-weekly-fitness-routine": "/sales/weekly-fitness", // listing-title slug -> real kit slug weekly-fitness (JVZoo listing pending)
+  "creating-sustainable-healthy-eating-habits": "/sales/sustainable-eating", // listing-title slug -> real kit slug sustainable-eating (JVZoo listing pending)
+  "meal-prep-made-easy": "/sales/meal-prep", // listing-title slug -> real kit slug meal-prep (JVZoo listing pending)
+  "mindful-eating-basics": "/sales/mindful-eating", // listing-title slug -> real kit slug mindful-eating (JVZoo listing pending)
+  "mobility-and-flexibility": "/sales/mobility-flexibility", // listing-title slug -> real kit slug mobility-flexibility (JVZoo listing pending)
+  "nutrition-basics-for-beginners": "/sales/nutrition-basics", // listing-title slug -> real kit slug nutrition-basics (JVZoo listing pending)
+  "nutrition-wellness-after-50": "/sales/nutrition-wellness", // listing-title slug -> real kit slug nutrition-wellness (JVZoo listing pending)
+  "plant-forward-eating-for-beginners": "/sales/plant-forward", // listing-title slug -> real kit slug plant-forward (JVZoo listing pending)
+  "portion-awareness-and-balanced-meals": "/sales/portion-awareness", // listing-title slug -> real kit slug portion-awareness (JVZoo listing pending)
+  "resistance-band-training": "/sales/resistance-band", // listing-title slug -> real kit slug resistance-band (JVZoo listing pending)
+  "starting-an-exercise-routine": "/sales/starting-exercise", // listing-title slug -> real kit slug starting-exercise (JVZoo listing pending)
+  "strength-training-for-beginners": "/sales/strength-training", // listing-title slug -> real kit slug strength-training (JVZoo listing pending)
+  "tracking-your-fitness-progress": "/sales/tracking-fitness", // listing-title slug -> real kit slug tracking-fitness (JVZoo listing pending)
+  "walking-for-fitness": "/sales/walking-fitness", // listing-title slug -> real kit slug walking-fitness (JVZoo listing pending)
 };
 
 /**
  * The 301 target for a request pathname, or null to let the request continue.
  *
- * Only the 40 keys of ROOT_SALES_REDIRECTS can match: the pathname is reduced to a
+ * Only the 69 keys of ROOT_SALES_REDIRECTS can match: the pathname is reduced to a
  * single bare segment ("/healthy-grocery" -> "healthy-grocery") and looked up
  * verbatim, so a real route (/packs, /pricing, /library, /sales, ...) or an
  * unknown path can never be redirected by this guard.
