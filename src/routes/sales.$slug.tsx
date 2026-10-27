@@ -127,6 +127,26 @@ const SALES_SLUG_ALIASES: Record<string, string> = {
   "home-fitness-for-beginners": "home-fitness-beginners",  // listing-title slug -> real kit slug home-fitness-beginners (JVZoo 459143)
   "meal-planning-for-beginners": "meal-planning-budget",  // listing-title slug -> real kit slug meal-planning-budget (JVZoo 459173)
   "nutrition-for-busy-lifestyles": "busy-lifestyle",  // listing-title slug -> real kit slug busy-lifestyle (JVZoo 459047)
+
+  // ── The 15 courses still waiting on a JVZoo listing (2026-10-27) ──────
+  // Same protection ahead of their listings: if a Sales Page URL field comes out of
+  // the listing TITLE instead of the kit slug, the reviewer still lands on the real
+  // page. No JVZoo id yet — none of these pages is wired and none may be submitted
+  // until its buy block is in place.
+  "building-a-weekly-fitness-routine": "weekly-fitness",  // listing-title slug -> real kit slug weekly-fitness (JVZoo listing pending)
+  "creating-sustainable-healthy-eating-habits": "sustainable-eating",  // listing-title slug -> real kit slug sustainable-eating (JVZoo listing pending)
+  "meal-prep-made-easy": "meal-prep",  // listing-title slug -> real kit slug meal-prep (JVZoo listing pending)
+  "mindful-eating-basics": "mindful-eating",  // listing-title slug -> real kit slug mindful-eating (JVZoo listing pending)
+  "mobility-and-flexibility": "mobility-flexibility",  // listing-title slug -> real kit slug mobility-flexibility (JVZoo listing pending)
+  "nutrition-basics-for-beginners": "nutrition-basics",  // listing-title slug -> real kit slug nutrition-basics (JVZoo listing pending)
+  "nutrition-wellness-after-50": "nutrition-wellness",  // listing-title slug -> real kit slug nutrition-wellness (JVZoo listing pending)
+  "plant-forward-eating-for-beginners": "plant-forward",  // listing-title slug -> real kit slug plant-forward (JVZoo listing pending)
+  "portion-awareness-and-balanced-meals": "portion-awareness",  // listing-title slug -> real kit slug portion-awareness (JVZoo listing pending)
+  "resistance-band-training": "resistance-band",  // listing-title slug -> real kit slug resistance-band (JVZoo listing pending)
+  "starting-an-exercise-routine": "starting-exercise",  // listing-title slug -> real kit slug starting-exercise (JVZoo listing pending)
+  "strength-training-for-beginners": "strength-training",  // listing-title slug -> real kit slug strength-training (JVZoo listing pending)
+  "tracking-your-fitness-progress": "tracking-fitness",  // listing-title slug -> real kit slug tracking-fitness (JVZoo listing pending)
+  "walking-for-fitness": "walking-fitness",  // listing-title slug -> real kit slug walking-fitness (JVZoo listing pending)
 };
 
 // The fixed Packs 1-4 bundle (JVZoo 453431). It is NOT the site's flexible "any
