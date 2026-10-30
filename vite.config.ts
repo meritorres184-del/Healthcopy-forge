@@ -150,6 +150,11 @@ const STATIC_PATHS = [
   "/disclaimer",
   "/downloads",
   "/ebooks/",
+  // The free sample itself (owner decision 2026-10-30): the form's success state
+  // links here instead of promising an email. Unlisted — noindex, not in the
+  // sitemap, not in any nav — but it MUST be baked, because a visitor reaches it
+  // the instant they sign up and it has to be served complete from disk.
+  "/free-sample-article",
   "/join/",
   "/library/",
   "/membership",
