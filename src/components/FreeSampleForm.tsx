@@ -6,7 +6,50 @@ export interface PackOption {
   title: string;
 }
 
-const SUCCESS_MESSAGE = "Check your inbox — your sample article is on its way.";
+export const SUCCESS_MESSAGE =
+  "Check your inbox — your sample article is on its way.";
+
+/**
+ * Shown when the address could NOT be added to the list (MailerLite down, key
+ * rejected, API error, or not configured). It must stay honest: no promise of
+ * an email, because no subscriber was created.
+ */
+export const FAILURE_MESSAGE =
+  "We couldn't add you to our list just now. Please try again in a moment.";
+
+export type FreeSampleOutcome = {
+  status: "success" | "error";
+  message: string;
+};
+
+/**
+ * Map the server result to what the visitor sees. `subscribed` is the ONLY
+ * thing that decides it: the server returns `subscribed: false` whenever
+ * forwarding failed, so a failed lead can never be shown the success message.
+ */
+export function outcomeFor(result: { subscribed?: boolean }): FreeSampleOutcome {
+  return result.subscribed === true
+    ? { status: "success", message: SUCCESS_MESSAGE }
+    : { status: "error", message: FAILURE_MESSAGE };
+}
+
+export interface FreeSampleSubmitData {
+  name: string;
+  email: string;
+  packSlug: string;
+}
+
+/**
+ * Run the submit and decide what the visitor sees — the one place the form's
+ * outcome comes from. Exported so the failure path is testable without a DOM
+ * (the submit function is injectable: the real server fn, or a stub).
+ */
+export async function submitOutcome(
+  submit: (data: FreeSampleSubmitData) => Promise<{ subscribed?: boolean }>,
+  data: FreeSampleSubmitData,
+): Promise<FreeSampleOutcome> {
+  return outcomeFor(await submit(data));
+}
 
 export function FreeSampleForm({ packs }: { packs: PackOption[] }) {
   const [name, setName] = useState("");
@@ -23,8 +66,12 @@ export function FreeSampleForm({ packs }: { packs: PackOption[] }) {
     setStatus("loading");
     setError("");
     try {
-      await submitFreeSample({ data: { name, email, packSlug } });
-      setStatus("success");
+      const outcome = await submitOutcome(
+        (payload) => submitFreeSample({ data: payload }),
+        { name, email, packSlug },
+      );
+      setStatus(outcome.status);
+      setError(outcome.status === "error" ? outcome.message : "");
     } catch (err) {
       setStatus("error");
       setError(
