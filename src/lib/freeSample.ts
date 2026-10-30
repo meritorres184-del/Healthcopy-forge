@@ -120,7 +120,7 @@ async function resolveWelcomeGroupId(key: string): Promise<string | null> {
  * present, ACTIVE and (when the group could be resolved) in the "Welcome"
  * group. Never throws.
  */
-async function forwardToMailerLite(
+export async function forwardToMailerLite(
   key: string,
   email: string,
   name: string | null,
@@ -157,35 +157,96 @@ async function forwardToMailerLite(
   return false;
 }
 
+export interface FreeSampleResult {
+  /** The request was accepted (a lead row exists for this address). */
+  ok: true;
+  /**
+   * True ONLY when the address is now an active MailerLite subscriber. False
+   * means forwarding failed or was never possible — the caller MUST show the
+   * visitor a failure message, never the success one.
+   */
+  subscribed: boolean;
+}
+
+/**
+ * The two side effects of an opt-in, injectable so the failure path can be
+ * tested without the live database or the live MailerLite account.
+ */
+export interface FreeSampleDeps {
+  recordLead: (lead: {
+    name: string | null;
+    email: string;
+    packSlug: string | null;
+  }) => Promise<void>;
+  markSubscribed: (email: string) => Promise<void>;
+  resolveApiKey: () => string | null;
+  forward: (key: string, email: string, name: string | null) => Promise<boolean>;
+}
+
+/**
+ * The real side effects. Deliberately a function, and only ever called from the
+ * server-fn handler below: the browser bundle strips handler bodies, so the
+ * Neon client and `node:buffer` never end up in client code (they would break
+ * the build if they were reachable at module scope).
+ */
+function serverDeps(): FreeSampleDeps {
+  return {
+    // Written BEFORE the MailerLite call, and with subscribed=false: that row is
+    // the only record of a lead whose forwarding failed, so it must never depend
+    // on MailerLite succeeding.
+    recordLead: async ({ name, email, packSlug }) => {
+      await sql()`
+        insert into leads (name, email, pack_slug, subscribed)
+        values (${name}, ${email}, ${packSlug}, false)
+        on conflict (email) do nothing
+      `;
+    },
+    markSubscribed: async (email) => {
+      await sql()`update leads set subscribed = true where email = ${email}`;
+    },
+    resolveApiKey: resolveMailerLiteApiKey,
+    forward: forwardToMailerLite,
+  };
+}
+
+/**
+ * Store the lead, then forward it to MailerLite. Returns `subscribed: false`
+ * (never a throw) when forwarding fails, so the caller can tell the visitor the
+ * truth instead of claiming a sample is on its way.
+ */
+export async function handleFreeSample(
+  data: FreeSampleInput,
+  deps: FreeSampleDeps,
+): Promise<FreeSampleResult> {
+  const { recordLead, markSubscribed, resolveApiKey, forward } = deps;
+  const { name, email, packSlug } = data;
+  const cleanEmail = (email ?? "").trim().toLowerCase();
+  if (!EMAIL_RE.test(cleanEmail)) {
+    throw new Error("Please enter a valid email address.");
+  }
+  const cleanName = (name ?? "").trim() || null;
+  const cleanPack = (packSlug ?? "").trim() || null;
+
+  await recordLead({ name: cleanName, email: cleanEmail, packSlug: cleanPack });
+
+  let subscribed = false;
+  const apiKey = resolveApiKey();
+  if (apiKey) {
+    try {
+      if (await forward(apiKey, cleanEmail, cleanName)) {
+        subscribed = true;
+        await markSubscribed(cleanEmail);
+      }
+    } catch {
+      // A MailerLite outage must not lose the lead — the row above already
+      // exists with subscribed=false. Swallow only here, and report the
+      // failure upward via `subscribed: false`.
+    }
+  }
+
+  return { ok: true as const, subscribed };
+}
+
 export const submitFreeSample = createServerFn({ method: "POST" })
   .validator((input: FreeSampleInput) => input)
-  .handler(async ({ data }) => {
-    const { name, email, packSlug } = data;
-    const cleanEmail = (email ?? "").trim().toLowerCase();
-    if (!EMAIL_RE.test(cleanEmail)) {
-      throw new Error("Please enter a valid email address.");
-    }
-    const cleanName = (name ?? "").trim() || null;
-    const cleanPack = (packSlug ?? "").trim() || null;
-
-    await sql()`
-      insert into leads (name, email, pack_slug)
-      values (${cleanName}, ${cleanEmail}, ${cleanPack})
-      on conflict (email) do nothing
-    `;
-
-    let subscribed = false;
-    const apiKey = resolveMailerLiteApiKey();
-    if (apiKey) {
-      try {
-        if (await forwardToMailerLite(apiKey, cleanEmail, cleanName)) {
-          subscribed = true;
-          await sql()`update leads set subscribed = true where email = ${cleanEmail}`;
-        }
-      } catch {
-        // Newsletter forwarding must never break the opt-in itself.
-      }
-    }
-
-    return { ok: true as const, subscribed };
-  });
+  .handler(({ data }) => handleFreeSample(data, serverDeps()));
