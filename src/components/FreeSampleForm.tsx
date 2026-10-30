@@ -205,7 +205,7 @@ export function FreeSampleBand({
           </p>
         ) : null}
         <p className="mt-4 text-xs text-gray-400">
-          One sample per email. No spam — unsubscribe anytime.
+          One free sample per visitor. No spam — unsubscribe anytime.
         </p>
       </div>
     </section>
