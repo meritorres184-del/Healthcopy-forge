@@ -428,6 +428,16 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459809",
     "Nutrition Basics for Beginners \u2014 PLR Course",
   ),
+  // Nutrition Wellness After 50 — course page /sales/nutrition-wellness.
+  // Listing created by the owner 2026-10-30; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 459811. The
+  // alt text in the owner's pasted snippet ("Nutrition Wellness After 50") is the
+  // catalog title with no typo, so the line below is that title plus our
+  // "\u2014 PLR Course" suffix, exactly like the twenty-four entries above.
+  "nutrition-wellness": jvzooProduct(
+    "459811",
+    "Nutrition Wellness After 50 \u2014 PLR Course",
+  ),
 };
 
 /**
