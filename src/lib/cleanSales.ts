@@ -106,7 +106,7 @@ export const CLEAN_SALES: CleanSaleEntry[] = [
   // two lines and no page edit: the ID in src/jvzoo.ts (courseJvzooProducts) plus
   // the course in the gate's WIRED_COURSES — that page then renders the canonical
   // buy block, drops its interim Stripe button, and leaves
-  // PENDING_COURSE_BUY_SLUGS. Twenty-four are wired so far: active-living (JVZoo 458158),
+  // PENDING_COURSE_BUY_SLUGS. Twenty-five are wired so far: active-living (JVZoo 458158),
   // balance-stability (JVZoo 458450), balanced-eating (JVZoo 458983),
   // bodyweight-exercise (JVZoo 459045), busy-lifestyle (JVZoo 459047),
   // cardiovascular-fitness (JVZoo 459049), eating-budget (JVZoo 459101),
@@ -117,8 +117,9 @@ export const CLEAN_SALES: CleanSaleEntry[] = [
   // healthy-snacking (JVZoo 459139), home-fitness-beginners (JVZoo 459143),
   // home-workout-space (JVZoo 459169), low-impact-fitness (JVZoo 459171),
   // meal-planning-budget (JVZoo 459173), meal-prep (JVZoo 459787),
-  // mindful-eating (JVZoo 459791), mobility-flexibility (JVZoo 459805) and
-  // nutrition-basics (JVZoo 459809); the other 11 are still pending.
+  // mindful-eating (JVZoo 459791), mobility-flexibility (JVZoo 459805),
+  // nutrition-basics (JVZoo 459809) and nutrition-wellness (JVZoo 459811); the
+  // other 10 are still pending.
   { slug: "active-living", kind: "course" },
   { slug: "balance-stability", kind: "course" },
   { slug: "balanced-eating", kind: "course" },
