@@ -448,6 +448,16 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459817",
     "Plant Forward Eating for Beginners \u2014 PLR Course",
   ),
+  // Portion Awareness and Balanced Meals — course page /sales/portion-awareness.
+  // Listing created by the owner 2026-10-30; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 459837. The
+  // alt text in the owner's pasted snippet ("Portion Awareness and Balanced Meals")
+  // is the catalog title with no typo, so the line below is that title plus our
+  // "\u2014 PLR Course" suffix, exactly like the twenty-six entries above.
+  "portion-awareness": jvzooProduct(
+    "459837",
+    "Portion Awareness and Balanced Meals \u2014 PLR Course",
+  ),
 };
 
 /**
