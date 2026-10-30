@@ -213,7 +213,8 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // 39 -> 40 with plant-forward, 40 -> 41 with portion-awareness,
 // 41 -> 42 with resistance-band, 42 -> 43 with starting-exercise,
 // 43 -> 44 with strength-training,
-// 44 -> 45 with stretching-fundamentals.
+// 44 -> 45 with stretching-fundamentals,
+// 45 -> 46 with sustainable-eating.
 //
 // active-living — "Active Living for Busy People", JVZoo product 458158, the first
 // course listing the owner created (2026-10-18).
@@ -308,9 +309,12 @@ const CLEAN_SALES_COURSE_SLUGS = [
 // the thirtieth (2026-10-30).
 //
 // stretching-fundamentals — "Stretching Fundamentals", JVZoo product 459871,
-// the thirty-first (2026-10-30). Each such page therefore carries the full
-// canonical buy block (link + button image + 1x1 tracking pixel) and NO
-// interim Stripe href.
+// the thirty-first (2026-10-30).
+//
+// sustainable-eating — "Creating Sustainable Healthy Eating Habits", JVZoo
+// product 459911, the thirty-second (2026-10-30). Each such page therefore
+// carries the full canonical buy block (link + button image + 1x1 tracking
+// pixel) and NO interim Stripe href.
 const WIRED_COURSES = [
   ["active-living", "458158"],
   ["balance-stability", "458450"],
@@ -343,10 +347,11 @@ const WIRED_COURSES = [
   ["starting-exercise", "459857"],
   ["strength-training", "459867"],
   ["stretching-fundamentals", "459871"],
+  ["sustainable-eating", "459911"],
 ];
 const WIRED_COURSE_SLUGS = new Set(WIRED_COURSES.map(([slug]) => slug));
 // The course slugs whose JVZoo listing may not exist yet, so the buy block CANNOT
-// be on their page: every course that is NOT wired above (4 today). Derived from
+// be on their page: every course that is NOT wired above (3 today). Derived from
 // CLEAN_SALES_COURSE_SLUGS rather than listed by hand so that (a) a newly added
 // course page is buy-pending by default — it must never claim a buy path it does
 // not have — and (b) this set can never contradict WIRED_COURSES. The clean-page
@@ -592,7 +597,7 @@ const packBundleIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])
 const wiredCourseSlugs = CLEAN_SALES_COURSE_SLUGS.filter((s) => idBySlug.has(s));
 const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))];
 // EVERY product ID the gate expects a canonical buy block for: the 14 packs +
-// bundle above, plus one per wired course. 45 today (14 + active-living 458158 +
+// bundle above, plus one per wired course. 46 today (14 + active-living 458158 +
 // balance-stability 458450 + balanced-eating 458983 + bodyweight-exercise 459045 +
 // busy-lifestyle 459047 + cardiovascular-fitness 459049 + eating-budget 459101 +
 // exercise-motivation 459117 + exercise-recovery 459119 + fitness-after-50 459123 +
@@ -603,7 +608,7 @@ const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))
 // mindful-eating 459791 + mobility-flexibility 459805 + nutrition-basics 459809 +
 // nutrition-wellness 459811 + plant-forward 459817 + portion-awareness 459837 +
 // resistance-band 459847 + starting-exercise 459857 + strength-training 459867 +
-// stretching-fundamentals 459871);
+// stretching-fundamentals 459871 + sustainable-eating 459911);
 // it grows by one each time the owner sends another course's listing ID.
 const allIds = [...new Set([...packBundleIds, ...wiredCourseIds])];
 // The gate half and the code half of the course wiring step must agree EXACTLY.
