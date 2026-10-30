@@ -6,8 +6,26 @@ export interface PackOption {
   title: string;
 }
 
-export const SUCCESS_MESSAGE =
-  "Check your inbox — your sample article is on its way.";
+/**
+ * Where the free sample actually lives. The sample is DELIVERED ON THE PAGE, not
+ * by email (owner decision 2026-10-30): the MailerLite account has no verified
+ * sender and no automation, so an emailed sample would never arrive. The success
+ * state therefore links straight to the article.
+ */
+export const FREE_SAMPLE_ARTICLE_HREF = "/free-sample-article";
+
+/**
+ * Shown after a successful signup. It must promise ONLY what happens: the sample
+ * is on this site, right now. Never say an email is coming — nothing sends it.
+ */
+export const SUCCESS_MESSAGE = "Thank you — your free sample article is ready.";
+
+/** The prominent link label in the success state. */
+export const SUCCESS_LINK_LABEL = "Read your free sample article";
+
+/** One line under the link, so the visitor knows it opens immediately. */
+export const SUCCESS_HINT =
+  "It opens right now — nothing is sent by email.";
 
 /**
  * Shown when the address could NOT be added to the list (MailerLite down, key
@@ -82,12 +100,21 @@ export function FreeSampleForm({ packs }: { packs: PackOption[] }) {
 
   if (status === "success") {
     return (
-      <p
+      <div
         role="status"
-        className="rounded-xl bg-emerald-50 px-6 py-5 text-center text-base font-semibold text-emerald-700"
+        className="rounded-xl bg-emerald-50 px-6 py-6 text-center"
       >
-        {SUCCESS_MESSAGE}
-      </p>
+        <p className="text-base font-semibold text-emerald-700">
+          {SUCCESS_MESSAGE}
+        </p>
+        <a
+          href={FREE_SAMPLE_ARTICLE_HREF}
+          className="mt-4 inline-flex items-center justify-center rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700"
+        >
+          {SUCCESS_LINK_LABEL}
+        </a>
+        <p className="mt-3 text-xs text-gray-500">{SUCCESS_HINT}</p>
+      </div>
     );
   }
 

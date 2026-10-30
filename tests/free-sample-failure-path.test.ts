@@ -3,7 +3,7 @@
  *
  * Bug being locked down: the form discarded the `subscribed` flag and the server
  * swallowed MailerLite errors, so a visitor whose address was never added still
- * got the green "Check your inbox" message. These tests drive the real
+ * got the green "check your inbox" message. These tests drive the real
  * `handleFreeSample` handler through the component's real submit pipeline with:
  *   - `fetch` stubbed         -> no request ever reaches the live MailerLite account,
  *   - the lead write stubbed  -> no request ever reaches the real Neon database,
@@ -193,7 +193,7 @@ describe("free sample opt-in — a MailerLite failure is visible to the visitor"
     );
   });
 
-  test("success path is unchanged: subscribed=true still shows the exact success message", async () => {
+  test("success path: subscribed=true still shows the exact success message", async () => {
     const net = stubFetch((url) =>
       url.includes("/groups")
         ? new Response(
@@ -214,9 +214,10 @@ describe("free sample opt-in — a MailerLite failure is visible to the visitor"
     expect(outcome).toEqual({ status: "success", message: SUCCESS_MESSAGE });
     expect(store.leads).toHaveLength(1);
     expect(store.marked).toEqual([CLEAN_EMAIL]); // subscribed flipped to true
-    // Byte-for-byte the copy that shipped before this fix.
+    // The success copy promises ONLY what now happens: the sample is on the site.
+    // (It used to promise an email — see free-sample-success-delivered.test.ts.)
     expect(SUCCESS_MESSAGE).toBe(
-      "Check your inbox — your sample article is on its way.",
+      "Thank you — your free sample article is ready.",
     );
 
     net.restore();

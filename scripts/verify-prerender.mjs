@@ -436,6 +436,13 @@ const OTHER = [
   "/affiliate-kit",
   "/disclaimer",
   "/downloads",
+  // The free sample article (owner decision 2026-10-30). The free-sample form's
+  // success state links straight to it, so a visitor arrives the second they sign
+  // up and the page must be served complete from disk — a half-baked article would
+  // be the giveaway failing in public. Like /affiliate-kit it is UNLISTED (noindex,
+  // not in the sitemap, not in any nav), which is why it is listed here by hand
+  // instead of being left to autoStaticPathsDiscovery.
+  "/free-sample-article",
   "/join",
   "/join/essentials",
   "/join/pro",
@@ -966,6 +973,61 @@ for (const [path] of rows) {
   }
 }
 
+// --- Free sample article gate (added 2026-10-30) ---
+//
+// The free-sample form's success state now hands the visitor the article itself
+// (owner decision: no email dependency — the MailerLite account sends nothing).
+// That makes /free-sample-article the single page a brand-new visitor is sent to,
+// so it is held to four things here:
+//   1. it bakes with the article's real words in it (title + a distinctive line
+//      from the body + the verbatim disclaimer), not a shell or the degraded
+//      fallback — a silent paraphrase or a truncated bake fails the build;
+//   2. it is UNLISTED: `noindex, nofollow`, exactly like /affiliate-kit;
+//   3. it is NOT in public/sitemap.xml;
+//   4. no baked page links to it — it is reached only from the form's success
+//      state, which is client-side (the href never appears in the HTML). That is
+//      what proves "not linked from any nav".
+const FREE_SAMPLE_PATH = "/free-sample-article";
+const FREE_SAMPLE_TITLE = "What Healthy Nutrition Actually Means";
+// Two lines from deep in the article (one early, one late) plus one from the
+// disclaimer. If the source text is ever paraphrased, dropped or truncated, at
+// least one of these goes missing.
+const FREE_SAMPLE_REQUIRED_TEXT = [
+  FREE_SAMPLE_TITLE,
+  "The World Health Organization describes those four principles",
+  "(World Health Organization)",
+  "That is what healthy nutrition actually means.",
+  "The author, publisher, content provider, distributor, and associated parties",
+];
+const freeSampleProblems = [];
+const freeSampleBaked = file(FREE_SAMPLE_PATH);
+if (!existsSync(freeSampleBaked)) {
+  freeSampleProblems.push("no baked file (route missing from the prerender list?)");
+} else {
+  const html = readFileSync(freeSampleBaked, "utf8");
+  for (const text of FREE_SAMPLE_REQUIRED_TEXT) {
+    if (!html.includes(text)) {
+      freeSampleProblems.push(`missing article text "${text.slice(0, 48)}…"`);
+    }
+  }
+  if (!html.includes("noindex, nofollow")) {
+    freeSampleProblems.push("missing the noindex, nofollow robots meta (must stay unlisted)");
+  }
+}
+const sitemapFile = join(ROOT, "public/sitemap.xml");
+if (existsSync(sitemapFile) && readFileSync(sitemapFile, "utf8").includes(FREE_SAMPLE_PATH)) {
+  freeSampleProblems.push("listed in public/sitemap.xml — it must stay out of the sitemap");
+}
+for (const [path] of rows) {
+  const f = file(path);
+  if (existsSync(f) && readFileSync(f, "utf8").includes(`href="${FREE_SAMPLE_PATH}"`)) {
+    freeSampleProblems.push(`linked from ${path} — it must only be reached from the form`);
+  }
+}
+if (freeSampleProblems.length) {
+  failures.push(["free-sample " + FREE_SAMPLE_PATH, freeSampleProblems]);
+}
+
 console.log("pre-render gate — dist/client");
 for (const [path, size, problems] of rows) {
   const status = problems.length ? "FAIL" : "ok  ";
@@ -1000,6 +1062,15 @@ for (const [path, problems] of checkoutRows) {
   const status = problems.length ? "FAIL" : "ok  ";
   console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
 }
+console.log(
+  "\nfree sample article \u2014 delivered on the page, unlisted (noindex, not in the sitemap, linked from nowhere)",
+);
+console.log(
+  `  ${freeSampleProblems.length ? "FAIL" : "ok  "} ${pad(
+    FREE_SAMPLE_PATH,
+    52,
+  )}${freeSampleProblems.join("; ")}`,
+);
 // Every route-level failure was printed by the row loops above. The rest are
 // FILE-level failures — src/jvzoo.ts (the product-ID count and the course-wiring
 // cross-check) and this gate's own literals. Print them too: a wiring mistake
@@ -1011,6 +1082,7 @@ const printedPaths = new Set([
   ...cleanRows.map(([p]) => "clean-sales " + p),
   ...checkoutRows.map(([p]) => "checkout " + p),
   ...rows.map(([p]) => "checkout href " + p),
+  "free-sample " + FREE_SAMPLE_PATH,
 ]);
 const fileFailures = failures.filter(([p]) => !printedPaths.has(p));
 if (fileFailures.length) {
@@ -1031,6 +1103,7 @@ if (failures.length) {
 }
 console.log(
   `\npre-render gate passed: ${rows.length} routes baked and complete; ` +
+    `the free sample article is baked, unlisted and linked from no page; ` +
     `${buyRows.length} sales pages carry canonical JVZoo buy blocks; ` +
     `${allIds.length} product IDs wired ` +
     `(${packBundleIds.length} packs/bundle + ${wiredCourseIds.length} course${
