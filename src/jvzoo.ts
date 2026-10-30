@@ -468,6 +468,16 @@ export const courseJvzooProducts: Record<string, JvzooProduct> = {
     "459847",
     "Resistance Band Training \u2014 PLR Course",
   ),
+  // Starting an Exercise Routine — course page /sales/starting-exercise.
+  // Listing created by the owner 2026-10-30; that page's button was swapped from
+  // the interim Stripe link to this canonical JVZoo block for product 459857. The
+  // alt text in the owner's pasted snippet ("Starting an Exercise Routine")
+  // is the catalog title with no typo, so the line below is that title plus our
+  // "\u2014 PLR Course" suffix, exactly like the twenty-eight entries above.
+  "starting-exercise": jvzooProduct(
+    "459857",
+    "Starting an Exercise Routine \u2014 PLR Course",
+  ),
 };
 
 /**
