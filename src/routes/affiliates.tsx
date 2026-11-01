@@ -30,14 +30,15 @@ const AFFILIATE_PRODUCTS = [
   { name: "Article Pack 12 Functional Nutrition, GLP-1 & Adaptation in 2026", href: "https://www.jvzoo.com/affiliates/info/454675" },
   { name: "Article Pack 13 Women's Longevity & Biology-Specific Care", href: "https://www.jvzoo.com/affiliates/info/454679" },
   // Master Resell ebooks E1–E11 ($27 each)
+  // NOT LISTED ON JVZOO (2026-11-01): the owner deleted the Gut Health for
+  // Beginners, Healthy Bones and Everyday Lifestyle, and Hydration and Wellness
+  // ebook listings, so their affiliate info pages are dead too and are left out
+  // here. Add each one back with its NEW product ID when it is relisted.
   { name: "Balanced Nutrition Made Simple — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454681" },
   { name: "Brain Healthy Lifestyle Habits — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454687" },
-  { name: "Gut Health for Beginners — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454695" },
-  { name: "Healthy Bones and Everyday Lifestyle — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454731" },
   { name: "Healthy Feet and Foot Care — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454739" },
   { name: "Healthy Hair and Scalp Wellness — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454741" },
   { name: "Heart Healthy Lifestyle Habits — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454743" },
-  { name: "Hydration and Wellness — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454745" },
   { name: "Joint Friendly Fitness — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454747" },
   { name: "Posture and Everyday Movement — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454749" },
   { name: "Protein for Healthy Aging — Master Resell Ebook", href: "https://www.jvzoo.com/affiliates/info/454751" },
