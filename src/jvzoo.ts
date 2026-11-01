@@ -125,12 +125,26 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "454687",
     "Brain Healthy Lifestyle Habits — Master Resell Ebook",
   ),
+  // DELISTED 2026-11-01 — listing deleted by the owner on JVZoo, relist pending.
+  // JVZoo 454695 now serves its "Product Not Found" page, so leaving the buy
+  // button in place sent real shoppers to a dead page. The ID is deliberately
+  // gone from this entry (NOT_LISTED_YET, not a commented-out 454695) so the page
+  // renders its price + instant-download state and the build gate stops asking
+  // for a buy block. WHEN IT IS RELISTED: paste the NEW product ID here — a
+  // relisted product may get a NEW ID, so do not assume the old 454695 still works.
   "gut-health": jvzooProduct(
-    "454695",
+    NOT_LISTED_YET,
     "Gut Health for Beginners — Master Resell Ebook",
   ),
+  // DELISTED 2026-11-01 — listing deleted by the owner on JVZoo, relist pending.
+  // JVZoo 454731 now serves its "Product Not Found" page, so leaving the buy
+  // button in place sent real shoppers to a dead page. The ID is deliberately
+  // gone from this entry (NOT_LISTED_YET, not a commented-out 454731) so the page
+  // renders its price + instant-download state and the build gate stops asking
+  // for a buy block. WHEN IT IS RELISTED: paste the NEW product ID here — a
+  // relisted product may get a NEW ID, so do not assume the old 454731 still works.
   "healthy-bones": jvzooProduct(
-    "454731",
+    NOT_LISTED_YET,
     "Healthy Bones and Everyday Lifestyle — Master Resell Ebook",
   ),
   "healthy-feet": jvzooProduct(
@@ -145,8 +159,15 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
     "454743",
     "Heart Healthy Lifestyle Habits — Master Resell Ebook",
   ),
+  // DELISTED 2026-11-01 — listing deleted by the owner on JVZoo, relist pending.
+  // JVZoo 454745 now serves its "Product Not Found" page, so leaving the buy
+  // button in place sent real shoppers to a dead page. The ID is deliberately
+  // gone from this entry (NOT_LISTED_YET, not a commented-out 454745) so the page
+  // renders its price + instant-download state and the build gate stops asking
+  // for a buy block. WHEN IT IS RELISTED: paste the NEW product ID here — a
+  // relisted product may get a NEW ID, so do not assume the old 454745 still works.
   "hydration": jvzooProduct(
-    "454745",
+    NOT_LISTED_YET,
     "Hydration and Wellness — Master Resell Ebook",
   ),
   "joint-fitness": jvzooProduct(

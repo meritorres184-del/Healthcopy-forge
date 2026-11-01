@@ -381,6 +381,27 @@ const WIRED_COURSE_SLUGS = new Set(WIRED_COURSES.map(([slug]) => slug));
 const PENDING_COURSE_BUY_SLUGS = new Set(
   CLEAN_SALES_COURSE_SLUGS.filter((s) => !WIRED_COURSE_SLUGS.has(s)),
 );
+// DELISTED listings (2026-11-01). The owner deleted three ebook listings on
+// JVZoo, so their buy URLs now serve JVZoo's "Product Not Found" page and the buy
+// buttons had to come off the site. Their clean sales page (/sales/<slug>) must
+// still exist and still present the product and its price — but it cannot carry a
+// JVZoo buy block, because there is no JVZoo product left to buy. This set is that
+// exemption, and it expires by itself: the moment a NEW product ID is pasted into
+// src/jvzoo.ts for one of these slugs, idForSlug() returns it, the `if (!id)`
+// branch below is skipped, and the page is held to the full canonical buy block
+// again. It never weakens the rule for anyone else: a slug NOT in this set with no
+// ID still fails the build.
+// Keep in sync with the "DELISTED 2026-11-01" entries in src/jvzoo.ts.
+const DELISTED_CLEAN_SALES_SLUGS = new Set([
+  "gut-health",
+  "healthy-bones",
+  "hydration",
+]);
+// A delisted page is still a finished product page: it keeps the price block
+// ("one-time payment" is the copy both the buy branch and the no-buy branch render
+// under the price). Checked so the exemption cannot be satisfied by a page that
+// quietly lost its whole Get Instant Access section.
+const DELISTED_REQUIRED_TEXT = ["one-time payment"];
 // Rounds 1-2: the five Packs 9-13 and the nine ebooks flagged before them.
 const CLEAN_SALES_SLUGS_ROUNDS_1_2 = [
   "protein-shakes-protein-nutrition",
@@ -957,6 +978,26 @@ for (const slug of CLEAN_SALES_SLUGS) {
           if (html.includes(marker)) {
             problems.push(
               `no JVZoo listing for this course yet but the page ships ${marker}`,
+            );
+          }
+        }
+      } else if (DELISTED_CLEAN_SALES_SLUGS.has(slug)) {
+        // The owner DELETED this listing on JVZoo (2026-11-01): there is no
+        // product to buy, so the page must ship no JVZoo buy block at all — a
+        // leftover block would send a real shopper to JVZoo's "Product Not Found"
+        // page, which is the exact defect this branch exists to prevent. The page
+        // must still be a finished product page (price block present).
+        for (const marker of BUY_MARKERS) {
+          if (html.includes(marker)) {
+            problems.push(
+              `JVZoo listing for "${slug}" was deleted but the page still ships ${marker}`,
+            );
+          }
+        }
+        for (const text of DELISTED_REQUIRED_TEXT) {
+          if (!html.includes(text)) {
+            problems.push(
+              `delisted product page must still present its price block ("${text}")`,
             );
           }
         }
