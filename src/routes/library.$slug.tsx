@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { readWithRetry } from "../db";
 import { jvzooProducts, liveJvzooProduct } from "../jvzoo";
 import { packCover } from "../lib/packCovers";
+import { pendingPack } from "../lib/pendingPacks";
 import { ProductDescription } from "../components/ProductDescription";
 import { JvzooDisclaimer } from "../components/JvzooDisclaimer";
 import { JvzooBuyButton } from "../components/JvzooBuyButton";
@@ -22,7 +23,10 @@ interface Pack {
 
 // The rendered pack plus a flag for the one case where we could not read it.
 // `unavailable` must only ever be set by the degraded fallback below.
-type PackView = Pack & { unavailable?: boolean };
+// `unlisted` is set only by the three pending packs in src/lib/pendingPacks.ts —
+// packs whose page must exist (JVZoo needs a URL) while the content and the
+// product ID do not yet. An unlisted pack bakes with `noindex, nofollow`.
+type PackView = Pack & { unavailable?: boolean; unlisted?: boolean };
 
 // Fallback used when the database is unreachable even after retries. It exists
 // so this sales page still renders something truthful — with its JVZoo buy
@@ -44,7 +48,27 @@ function degradedPack(slug: string): PackView {
 }
 
 export const Route = createFileRoute("/library/$slug")({
+  // Every pack page is indexed except the pending ones (src/lib/pendingPacks.ts,
+  // added 2026-11-02): a page whose product has no content and no JVZoo listing
+  // must never be found by a shopper, so it bakes `noindex, nofollow` — the same
+  // treatment /free-sample-article and /affiliate-kit get. Listed packs return no
+  // robots meta at all, exactly as before this route had a head().
+  head: ({ loaderData }) => {
+    const data = loaderData as PackView | null | undefined;
+    if (!data?.unlisted) return { meta: [] };
+    return {
+      meta: [
+        { title: data.title + " | HealthCopy Forge" },
+        { name: "robots", content: "noindex, nofollow" },
+      ],
+    };
+  },
   loader: async ({ params }) => {
+    // Pending packs (src/lib/pendingPacks.ts) are resolved BEFORE the database
+    // read: they have no content_packs row by design, and looking them up here
+    // means their page can never bake the degraded "unavailable" fallback.
+    const pending = pendingPack(params.slug);
+    if (pending) return pending as PackView;
     try {
       const rows = await readWithRetry(
         "library.pack-detail",

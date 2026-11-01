@@ -49,6 +49,16 @@ const PACK_SLUGS = [
   "health-coaching-functional-nutrition-glp-1-support",
   "functional-nutrition-glp-1-adaptation",
   "womens-longevity-biology-specific-care",
+  // PENDING PACKS (added 2026-11-02, mirrors PACK_SLUGS in vite.config.ts): the
+  // three packs the owner is submitting to JVZoo this week whose content files
+  // arrive later — see src/lib/pendingPacks.ts. They are baked, so they are held
+  // to the normal /library/<slug> checks (exists, closed document, size floor,
+  // not the degraded fallback) and to the existing "no listing => no JVZoo marker
+  // at all" rule, because none of them has an ID in src/jvzoo.ts. They contribute
+  // no product IDs, so the 14-ID count below is unaffected.
+  "heart-health-cardiovascular-2026-2027",
+  "preventive-health-checklist",
+  "brain-health-neurological",
 ];
 
 // The 11 standalone PLR ebooks (src/lib/ebooks.ts -> EBOOK_SLUGS in vite.config.ts).
@@ -1146,6 +1156,80 @@ if (freeSampleProblems.length) {
   failures.push(["free-sample " + FREE_SAMPLE_PATH, freeSampleProblems]);
 }
 
+// --- Pending-pack pages (added 2026-11-02) ---
+//
+// The three packs the owner is submitting to JVZoo this week exist as pages
+// before their content does (src/lib/pendingPacks.ts). Each one is held to six
+// things here, so a future edit cannot quietly turn one into a listed product:
+//   1. it bakes, with the owner's EXACT title and the $47 pack price in it;
+//   2. it carries `noindex, nofollow` — the same treatment as /free-sample-article;
+//   3. it ships NO JVZoo buy path (no jvzoo.com/i.jvzoo.com href, image or pixel);
+//   4. it is NOT in public/sitemap.xml;
+//   5. no OTHER baked page links to it — that is what proves it is out of the
+//      /packs grid, the /library hub, the header nav and the footer;
+//   6. it carries no "Part 1..4" numbering and no collection line (the owner
+//      explicitly ruled both out for these three titles).
+// The word JVZoo itself still appears in the verbatim retailer disclosure every
+// product sales page must carry (components/JvzooDisclaimer.tsx) — that is a
+// required compliance paragraph, not a buy path, so it is not what (3) forbids.
+const PENDING_PACK_PAGES = [
+  ["heart-health-cardiovascular-2026-2027", "Heart Health & Cardiovascular Disease in 2026\u20132027"],
+  ["preventive-health-checklist", "The Preventive Health & Disease Prevention Checklist"],
+  ["brain-health-neurological", "Brain Health & Neurological Diseases"],
+];
+const PENDING_FORBIDDEN_TEXT = [
+  ["Part 1", 'the owner ruled out "Part 1" numbering for these titles'],
+  ["Part 2", 'the owner ruled out "Part 2" numbering for these titles'],
+  ["Part 3", 'the owner ruled out "Part 3" numbering for these titles'],
+  ["Part 4", 'the owner ruled out "Part 4" numbering for these titles'],
+  ["PLR Health & Wellness Article Collection", "the collection line the owner ruled out"],
+];
+const sitemapText = existsSync(sitemapFile)
+  ? readFileSync(sitemapFile, "utf8")
+  : "";
+const pendingRows = [];
+for (const [slug, title] of PENDING_PACK_PAGES) {
+  const path = "/library/" + slug;
+  const f = file(path);
+  const problems = [];
+  if (!existsSync(f)) {
+    problems.push("no baked file (route missing from the prerender list?)");
+  } else {
+    const html = readFileSync(f, "utf8");
+    // React escapes "&" as "&amp;" in text nodes, so the title is compared in
+    // its baked (HTML-escaped) form — the same characters, not a different title.
+    const bakedTitle = title.replace(/&/g, "&amp;");
+    if (!html.includes(bakedTitle)) problems.push(`missing the exact title "${title}"`);
+    // React's server renderer puts a text-node separator between the "$" and the
+    // number ("$<!-- -->47"), so the price is matched with that separator allowed.
+    if (!/\$(\s|<!-- -->)*47\b/.test(html)) problems.push("missing the $47 pack price");
+    if (!html.includes("noindex, nofollow")) {
+      problems.push("missing the noindex, nofollow robots meta (must stay unlisted)");
+    }
+    for (const marker of BUY_MARKERS) {
+      if (html.includes(marker)) problems.push(`ships a JVZoo buy path (${marker})`);
+    }
+    for (const [text, why] of PENDING_FORBIDDEN_TEXT) {
+      // "&" is baked as "&amp;", so both forms are looked for.
+      if (html.includes(text) || html.includes(text.replace(/&/g, "&amp;"))) {
+        problems.push(`contains "${text}" \u2014 ${why}`);
+      }
+    }
+  }
+  if (sitemapText.includes(path)) {
+    problems.push("listed in public/sitemap.xml \u2014 it must stay out of the sitemap");
+  }
+  for (const [other] of rows) {
+    if (other === path) continue;
+    const otherFile = file(other);
+    if (existsSync(otherFile) && readFileSync(otherFile, "utf8").includes(`href="${path}"`)) {
+      problems.push(`linked from ${other} \u2014 it must not be discoverable by browsing`);
+    }
+  }
+  pendingRows.push([path, problems]);
+  if (problems.length) failures.push(["pending-pack " + path, problems]);
+}
+
 console.log("pre-render gate — dist/client");
 for (const [path, size, problems] of rows) {
   const status = problems.length ? "FAIL" : "ok  ";
@@ -1181,6 +1265,13 @@ for (const [path, problems] of checkoutRows) {
   console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
 }
 console.log(
+  "\npending pack pages \u2014 baked, unlisted, no buy path (content + a JVZoo ID unlist them)",
+);
+for (const [path, problems] of pendingRows) {
+  const status = problems.length ? "FAIL" : "ok  ";
+  console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
+}
+console.log(
   "\nfree sample article \u2014 delivered on the page, unlisted (noindex, not in the sitemap, linked from nowhere)",
 );
 console.log(
@@ -1201,6 +1292,7 @@ const printedPaths = new Set([
   ...checkoutRows.map(([p]) => "checkout " + p),
   ...rows.map(([p]) => "checkout href " + p),
   "free-sample " + FREE_SAMPLE_PATH,
+  ...pendingRows.map(([p]) => "pending-pack " + p),
 ]);
 const fileFailures = failures.filter(([p]) => !printedPaths.has(p));
 if (fileFailures.length) {
