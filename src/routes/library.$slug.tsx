@@ -24,9 +24,15 @@ interface Pack {
 // The rendered pack plus a flag for the one case where we could not read it.
 // `unavailable` must only ever be set by the degraded fallback below.
 // `unlisted` is set only by the three pending packs in src/lib/pendingPacks.ts —
-// packs whose page must exist (JVZoo needs a URL) while the content and the
-// product ID do not yet. An unlisted pack bakes with `noindex, nofollow`.
-type PackView = Pack & { unavailable?: boolean; unlisted?: boolean };
+// packs whose page must exist (JVZoo needs a URL) while the product ID does not
+// exist yet. Their content is written and verified; only the listing is missing.
+// An unlisted pack bakes with `noindex, nofollow`.
+type PackView = Pack & {
+  unavailable?: boolean;
+  unlisted?: boolean;
+  /** Pending packs only: what the one ZIP actually delivers (src/lib/pendingPacks.ts). */
+  delivery?: string;
+};
 
 // Fallback used when the database is unreachable even after retries. It exists
 // so this sales page still renders something truthful — with its JVZoo buy
@@ -48,11 +54,11 @@ function degradedPack(slug: string): PackView {
 }
 
 export const Route = createFileRoute("/library/$slug")({
-  // Every pack page is indexed except the pending ones (src/lib/pendingPacks.ts,
-  // added 2026-11-02): a page whose product has no content and no JVZoo listing
-  // must never be found by a shopper, so it bakes `noindex, nofollow` — the same
-  // treatment /free-sample-article and /affiliate-kit get. Listed packs return no
-  // robots meta at all, exactly as before this route had a head().
+  // Every pack page is indexed except the pending ones (src/lib/pendingPacks.ts):
+  // a page whose product has no JVZoo listing yet must never be found by a
+  // shopper, so it bakes `noindex, nofollow` — the same treatment
+  // /free-sample-article and /affiliate-kit get. Listed packs return no robots
+  // meta at all, exactly as before this route had a head().
   head: ({ loaderData }) => {
     const data = loaderData as PackView | null | undefined;
     if (!data?.unlisted) return { meta: [] };
@@ -173,77 +179,25 @@ function PackDetailPage() {
         </div>
       </section>
 
-      {/* What's included */}
+      {/* What's included. A listed pack shows the two-column layout with its
+          member-download cards. An unlisted (pending) pack shows its real contents
+          list alone: no disabled "Download" button and no "being finalized"
+          notice, because the JVZoo reviewer opens this URL and has to see a
+          finished product page. */}
       <section className="px-4 py-12 sm:px-6 sm:py-16">
-        <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-2">
+        <div
+          className={
+            pack.unlisted
+              ? "mx-auto max-w-3xl"
+              : "mx-auto grid max-w-5xl gap-10 lg:grid-cols-2"
+          }
+        >
           <div>
             <h2 className="text-xl font-bold text-gray-900">What's included</h2>
-            <ul className="mt-5 space-y-3">
-              {pack.includes.map((item) => (
-                <li
-                  key={item}
-                  className="flex items-start gap-3 text-sm text-gray-700"
-                >
-                  <svg
-                    className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <IncludesList items={pack.includes} />
           </div>
 
-          {/* Content types */}
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">
-              Content formats
-            </h2>
-            <p className="mt-2 text-sm text-gray-500">
-              Every pack includes each format below — professionally edited and
-              ready to rebrand as your own.
-            </p>
-            <div className="mt-5 space-y-3">
-              {contentTypes.map((ct) => (
-                <div
-                  key={ct.name}
-                  className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                      {ct.icon}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">
-                        {ct.name}
-                      </p>
-                      <p className="text-xs text-gray-500">{ct.note}</p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    disabled
-                    title="Downloads are being finalized"
-                    className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-400 cursor-not-allowed"
-                  >
-                    Download
-                  </button>
-                </div>
-              ))}
-            </div>
-            <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-center text-sm text-gray-600">
-              Downloads will be enabled once member access is finalized.
-            </p>
-          </div>
+          {pack.unlisted ? null : <ContentFormats />}
         </div>
       </section>
 
@@ -282,9 +236,8 @@ function PackDetailPage() {
               </span>
             </p>
             <p className="mt-4 text-sm leading-relaxed text-gray-600">
-              Instant download of one ZIP containing all files — the
-              in-depth article, the lead magnet, the social media posts, the
-              email swipes, the PLR license and the medical disclaimer.
+              {pack.delivery ??
+                "Instant download of one ZIP containing all files — the in-depth article, the lead magnet, the social media posts, the email swipes, the PLR license and the medical disclaimer."}
             </p>
             <p className="mt-6 rounded-xl border border-emerald-100 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-800">
               Available for instant download
@@ -302,6 +255,83 @@ function PackDetailPage() {
           listed or not (compliance reviews the live URL before launch) */}
       <JvzooDisclaimer />
     </main>
+  );
+}
+
+// The content-format cards and the member-download notice — rendered on LISTED
+// packs only. A pending pack (src/lib/pendingPacks.ts) is unlisted, has no member
+// download surface yet, and must never show a disabled "Download" button or a
+// "being finalized" notice to a JVZoo reviewer opening its URL.
+function ContentFormats() {
+  return (
+    <div>
+      <h2 className="text-xl font-bold text-gray-900">
+        Content formats
+      </h2>
+      <p className="mt-2 text-sm text-gray-500">
+        Every pack includes each format below — professionally edited and
+        ready to rebrand as your own.
+      </p>
+      <div className="mt-5 space-y-3">
+        {contentTypes.map((ct) => (
+          <div
+            key={ct.name}
+            className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                {ct.icon}
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {ct.name}
+                </p>
+                <p className="text-xs text-gray-500">{ct.note}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              disabled
+              title="Downloads are being finalized"
+              className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-400 cursor-not-allowed"
+            >
+              Download
+            </button>
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-center text-sm text-gray-600">
+        Downloads will be enabled once member access is finalized.
+      </p>
+    </div>
+  );
+}
+
+// The pack's contents list. The same markup on every pack page, listed or
+// pending — only the items differ, and on a pending pack they are the real,
+// measured contents of the release ZIP.
+function IncludesList({ items }: { items: string[] }) {
+  return (
+    <ul className="mt-5 space-y-3">
+      {items.map((item) => (
+        <li key={item} className="flex items-start gap-3 text-sm text-gray-700">
+          <svg
+            className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          {item}
+        </li>
+      ))}
+    </ul>
   );
 }
 
