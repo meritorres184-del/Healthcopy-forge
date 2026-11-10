@@ -1160,7 +1160,7 @@ if (freeSampleProblems.length) {
 //
 // The three packs the owner is submitting to JVZoo exist as pages before their
 // JVZoo listings do (src/lib/pendingPacks.ts). Their content is written and
-// verified, so each page is held to EIGHT things here, and a future edit cannot
+// verified, so each page is held to NINE things here, and a future edit cannot
 // quietly turn one back into a placeholder or forward into a listed product:
 //   1. it bakes, with the owner's EXACT title and the $47 pack price in it;
 //   2. it carries the REAL contents of the release ZIP (word counts, lead-magnet
@@ -1175,16 +1175,22 @@ if (freeSampleProblems.length) {
 //   7. no OTHER baked page links to it — that is what proves it is out of the
 //      /packs grid, the /library hub, the header nav and the footer;
 //   8. it carries no "Part 1..4" numbering and no collection line (the owner
-//      explicitly ruled both out for these three titles).
+//      explicitly ruled both out for these three titles);
+//   9. it shows its own bookcover — every listed pack page shows one, so a page a
+//      JVZoo reviewer opens must too. The image comes from src/lib/packCovers.ts
+//      and the file is served from public/covers (serve.ts' second static root),
+//      so both halves are checked: the baked page carries the img, and the JPG is
+//      on disk and really is a JPEG.
 // The word JVZoo itself still appears in the verbatim retailer disclosure every
 // product sales page must carry (components/JvzooDisclaimer.tsx) — that is a
 // required compliance paragraph, not a buy path, so it is not what (5) forbids.
 //
-// slug, owner's exact title, and the REAL facts of that pack's release ZIP
+// slug, owner's exact title, the REAL facts of that pack's release ZIP
 // (content-packs/packs-2026-11-PAGE-FACTS.md, re-measured against the ZIP on
-// 2026-11-01). Every required string must appear in the baked page: if a word
-// count, a lead-magnet name or a count of posts/emails/sources is edited away,
-// the page has stopped describing the product that ships and the build fails.
+// 2026-11-01) and the cover image the page must show (src/lib/packCovers.ts).
+// Every required string must appear in the baked page: if a word count, a
+// lead-magnet name or a count of posts/emails/sources is edited away, the page
+// has stopped describing the product that ships and the build fails.
 const PENDING_PACK_PAGES = [
   [
     "heart-health-cardiovascular-2026-2027",
@@ -1197,6 +1203,7 @@ const PENDING_PACK_PAGES = [
       "7 email swipes",
       "8 citations",
     ],
+    "/covers/pack-heart-health-cardiovascular-2026-2027.jpg",
   ],
   [
     "preventive-health-checklist",
@@ -1212,6 +1219,7 @@ const PENDING_PACK_PAGES = [
       "3 email swipes",
       "8 citations",
     ],
+    "/covers/pack-preventive-health-checklist.jpg",
   ],
   [
     "brain-health-neurological",
@@ -1225,6 +1233,7 @@ const PENDING_PACK_PAGES = [
       "3 email swipes",
       "5 citations",
     ],
+    "/covers/pack-brain-health-neurological.jpg",
   ],
 ];
 const PENDING_FORBIDDEN_TEXT = [
@@ -1251,7 +1260,7 @@ const sitemapText = existsSync(sitemapFile)
   ? readFileSync(sitemapFile, "utf8")
   : "";
 const pendingRows = [];
-for (const [slug, title, requiredText] of PENDING_PACK_PAGES) {
+for (const [slug, title, requiredText, cover] of PENDING_PACK_PAGES) {
   const path = "/library/" + slug;
   const f = file(path);
   const problems = [];
@@ -1276,6 +1285,10 @@ for (const [slug, title, requiredText] of PENDING_PACK_PAGES) {
     if (!html.includes("noindex, nofollow")) {
       problems.push("missing the noindex, nofollow robots meta (must stay unlisted)");
     }
+    // Its own bookcover, the same one every listed pack page shows.
+    if (!html.includes(`src="${cover}"`)) {
+      problems.push(`missing its bookcover image (no src="${cover}" in the page)`);
+    }
     for (const marker of BUY_MARKERS) {
       if (html.includes(marker)) problems.push(`ships a JVZoo buy path (${marker})`);
     }
@@ -1284,6 +1297,21 @@ for (const [slug, title, requiredText] of PENDING_PACK_PAGES) {
       if (html.includes(text) || html.includes(text.replace(/&/g, "&amp;"))) {
         problems.push(`contains "${text}" \u2014 ${why}`);
       }
+    }
+  }
+  // The image itself. Covers are served from public/ (serve.ts' second static
+  // root), not copied into dist/client, so the file is checked where it lives: it
+  // must exist and it must be a real JPEG — an HTML page pointing at a missing or
+  // renamed file would render a broken image to the reviewer.
+  const coverFile = join(ROOT, "public", cover);
+  if (!existsSync(coverFile)) {
+    problems.push(`its bookcover file public${cover} is missing`);
+  } else {
+    const bytes = readFileSync(coverFile);
+    if (bytes.length < 1024) {
+      problems.push(`its bookcover file public${cover} is only ${bytes.length} bytes`);
+    } else if (bytes[0] !== 0xff || bytes[1] !== 0xd8 || bytes[2] !== 0xff) {
+      problems.push(`its bookcover file public${cover} is not a JPEG`);
     }
   }
   if (sitemapText.includes(path)) {
