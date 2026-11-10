@@ -9,6 +9,14 @@
 // know — so a new pack silently showed pack 1's cover. Adding a pack now means
 // adding one line here, and a slug with no cover renders no image instead of the
 // wrong one.
+//
+// The three packs added 2026-11 (heart health, the preventive health checklist and
+// brain health) have no pack number — the owner's 1–13 set is what carries numbers —
+// so their covers are named from the slug instead: `pack-<slug>.jpg`. The files are
+// the owner's own finished covers, copied byte-identical from the same JPGs that
+// ship as Bookcover.jpg inside each release ZIP. They are shown on the three
+// unlisted pages (`/library/<slug>`, see src/lib/pendingPacks.ts) and the build gate
+// checks that each page carries its image and that the file is on disk.
 export const PACK_COVERS: Record<string, string> = {
   "nutrition-everyday-wellness": "/covers/pack-1-1.jpg",
   "supplements-nutritional-support": "/covers/pack-2-1.jpg",
@@ -23,6 +31,11 @@ export const PACK_COVERS: Record<string, string> = {
   "health-coaching-functional-nutrition-glp-1-support": "/covers/pack-11.jpg",
   "functional-nutrition-glp-1-adaptation": "/covers/pack-12.jpg",
   "womens-longevity-biology-specific-care": "/covers/pack-13.jpg",
+  // The three 2026-11 packs — unlisted until their JVZoo IDs arrive.
+  "heart-health-cardiovascular-2026-2027":
+    "/covers/pack-heart-health-cardiovascular-2026-2027.jpg",
+  "preventive-health-checklist": "/covers/pack-preventive-health-checklist.jpg",
+  "brain-health-neurological": "/covers/pack-brain-health-neurological.jpg",
 };
 
 /** Cover path for a pack slug, or undefined when that pack has no cover file. */
