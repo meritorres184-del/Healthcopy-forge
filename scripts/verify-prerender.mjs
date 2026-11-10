@@ -1158,24 +1158,74 @@ if (freeSampleProblems.length) {
 
 // --- Pending-pack pages (added 2026-11-02) ---
 //
-// The three packs the owner is submitting to JVZoo this week exist as pages
-// before their content does (src/lib/pendingPacks.ts). Each one is held to six
-// things here, so a future edit cannot quietly turn one into a listed product:
+// The three packs the owner is submitting to JVZoo exist as pages before their
+// JVZoo listings do (src/lib/pendingPacks.ts). Their content is written and
+// verified, so each page is held to EIGHT things here, and a future edit cannot
+// quietly turn one back into a placeholder or forward into a listed product:
 //   1. it bakes, with the owner's EXACT title and the $47 pack price in it;
-//   2. it carries `noindex, nofollow` — the same treatment as /free-sample-article;
-//   3. it ships NO JVZoo buy path (no jvzoo.com/i.jvzoo.com href, image or pixel);
-//   4. it is NOT in public/sitemap.xml;
-//   5. no OTHER baked page links to it — that is what proves it is out of the
+//   2. it carries the REAL contents of the release ZIP (word counts, lead-magnet
+//      names, post/email/source counts — see PENDING_PACK_PAGES below), so the
+//      page cannot drift back to "content arrives later" wording;
+//   3. it carries no placeholder wording at all — no "coming soon", no "not yet
+//      available", no "being finalized", no disabled-download notice. A JVZoo
+//      reviewer opens this URL directly and must see a finished product page;
+//   4. it carries `noindex, nofollow` — the same treatment as /free-sample-article;
+//   5. it ships NO JVZoo buy path (no jvzoo.com/i.jvzoo.com href, image or pixel);
+//   6. it is NOT in public/sitemap.xml;
+//   7. no OTHER baked page links to it — that is what proves it is out of the
 //      /packs grid, the /library hub, the header nav and the footer;
-//   6. it carries no "Part 1..4" numbering and no collection line (the owner
+//   8. it carries no "Part 1..4" numbering and no collection line (the owner
 //      explicitly ruled both out for these three titles).
 // The word JVZoo itself still appears in the verbatim retailer disclosure every
 // product sales page must carry (components/JvzooDisclaimer.tsx) — that is a
-// required compliance paragraph, not a buy path, so it is not what (3) forbids.
+// required compliance paragraph, not a buy path, so it is not what (5) forbids.
+//
+// slug, owner's exact title, and the REAL facts of that pack's release ZIP
+// (content-packs/packs-2026-11-PAGE-FACTS.md, re-measured against the ZIP on
+// 2026-11-01). Every required string must appear in the baked page: if a word
+// count, a lead-magnet name or a count of posts/emails/sources is edited away,
+// the page has stopped describing the product that ships and the build fails.
 const PENDING_PACK_PAGES = [
-  ["heart-health-cardiovascular-2026-2027", "Heart Health & Cardiovascular Disease in 2026\u20132027"],
-  ["preventive-health-checklist", "The Preventive Health & Disease Prevention Checklist"],
-  ["brain-health-neurological", "Brain Health & Neurological Diseases"],
+  [
+    "heart-health-cardiovascular-2026-2027",
+    "Heart Health & Cardiovascular Disease in 2026\u20132027",
+    [
+      "6,039 words",
+      "9,140 words",
+      "The Heart Health & Cardiovascular Disease Prevention Checklist",
+      "10 social media posts",
+      "7 email swipes",
+      "8 citations",
+    ],
+  ],
+  [
+    "preventive-health-checklist",
+    "The Preventive Health & Disease Prevention Checklist",
+    [
+      // This pack is shaped differently: the checklist IS the product, and the
+      // page has to say that plainly instead of implying an article.
+      "the checklist document is the product",
+      "no separate long article and no separate lead magnet",
+      "1,954 words",
+      "4,506 words",
+      "10 social media posts",
+      "3 email swipes",
+      "8 citations",
+    ],
+  ],
+  [
+    "brain-health-neurological",
+    "Brain Health & Neurological Diseases",
+    [
+      "4,076 words",
+      "5,883 words",
+      "The Brain Health & Cognitive Longevity Checklist",
+      "seven-day habit planner",
+      "10 social media posts",
+      "3 email swipes",
+      "5 citations",
+    ],
+  ],
 ];
 const PENDING_FORBIDDEN_TEXT = [
   ["Part 1", 'the owner ruled out "Part 1" numbering for these titles'],
@@ -1183,12 +1233,25 @@ const PENDING_FORBIDDEN_TEXT = [
   ["Part 3", 'the owner ruled out "Part 3" numbering for these titles'],
   ["Part 4", 'the owner ruled out "Part 4" numbering for these titles'],
   ["PLR Health & Wellness Article Collection", "the collection line the owner ruled out"],
+  // Placeholder wording. The content is written, packaged and verified, so a
+  // product page a JVZoo reviewer opens may not say otherwise.
+  ["coming soon", 'the pack is finished — the page may not call it "coming soon"'],
+  ["Coming Soon", 'the pack is finished — the page may not call it "Coming Soon"'],
+  ["not yet available", 'the content exists — the page may not call it "not yet available"'],
+  ["arrives Sunday", "the content has arrived — the page may not promise it later"],
+  ["has not arrived", "the content has arrived — the page may not say otherwise"],
+  ["content files", "no talk of content files that do not exist any more"],
+  ["being finalized", 'no placeholder "being finalized" notice on a product page'],
+  [
+    "Downloads will be enabled",
+    "no disabled-download placeholder notice on a page a reviewer opens",
+  ],
 ];
 const sitemapText = existsSync(sitemapFile)
   ? readFileSync(sitemapFile, "utf8")
   : "";
 const pendingRows = [];
-for (const [slug, title] of PENDING_PACK_PAGES) {
+for (const [slug, title, requiredText] of PENDING_PACK_PAGES) {
   const path = "/library/" + slug;
   const f = file(path);
   const problems = [];
@@ -1200,6 +1263,13 @@ for (const [slug, title] of PENDING_PACK_PAGES) {
     // its baked (HTML-escaped) form — the same characters, not a different title.
     const bakedTitle = title.replace(/&/g, "&amp;");
     if (!html.includes(bakedTitle)) problems.push(`missing the exact title "${title}"`);
+    // The pack's real contents. A page that lost one of these no longer describes
+    // the ZIP the owner uploads, so it fails instead of shipping a half-truth.
+    for (const text of requiredText) {
+      if (!html.includes(text)) {
+        problems.push(`missing the pack's real contents "${text}"`);
+      }
+    }
     // React's server renderer puts a text-node separator between the "$" and the
     // number ("$<!-- -->47"), so the price is matched with that separator allowed.
     if (!/\$(\s|<!-- -->)*47\b/.test(html)) problems.push("missing the $47 pack price");

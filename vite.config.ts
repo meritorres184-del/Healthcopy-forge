@@ -39,8 +39,9 @@ const PACK_SLUGS = [
   "functional-nutrition-glp-1-adaptation",
   "womens-longevity-biology-specific-care",
   // PENDING PACKS (added 2026-11-02): the three packs the owner is submitting to
-  // JVZoo this week, whose content files arrive later. They are baked because the
-  // owner needs a real, complete page at each URL for her listings — but they are
+  // JVZoo, whose content is written, packaged and verified but whose listings do
+  // not exist yet. They are baked because the owner needs a real, complete page at
+  // each URL for her listings — but they are
   // UNLISTED (noindex, out of the /packs grid, the /library hub, the nav and the
   // sitemap) and they carry no buy button: see src/lib/pendingPacks.ts. Nothing
   // here sells them; the gate holds them to "no JVZoo marker at all" until an ID
