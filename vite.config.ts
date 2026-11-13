@@ -38,19 +38,14 @@ const PACK_SLUGS = [
   "health-coaching-functional-nutrition-glp-1-support",
   "functional-nutrition-glp-1-adaptation",
   "womens-longevity-biology-specific-care",
-  // The 2026-11 packs, wired as the owner lists them. Heart Health (JVZoo 462871)
-  // and The Preventive Health & Disease Prevention Checklist (JVZoo 462879) are
-  // LISTED (owner 2026-11-13): both are normal pack rows in src/db/seed.ts and
-  // their pages carry the canonical buy block.
+  // The 2026-11 packs, wired as the owner lists them. All three are LISTED (owner
+  // 2026-11-13): Heart Health (JVZoo 462871), The Preventive Health & Disease
+  // Prevention Checklist (462879) and Brain Health & Neurological Diseases
+  // (462883). Each is a normal pack row in src/db/seed.ts, each page carries the
+  // canonical buy block, and none is pending any more — src/lib/pendingPacks.ts is
+  // empty and the gate asserts that it stays so.
   "heart-health-cardiovascular-2026-2027",
   "preventive-health-checklist",
-  // PENDING PACK (added 2026-11-02): the last pack the owner is submitting to
-  // JVZoo, whose content is written, packaged and verified but whose listing does
-  // not exist yet. It is baked because the owner needs a real, complete page at
-  // its URL for her listing — but it is UNLISTED (noindex, out of the /packs grid,
-  // the /library hub, the nav and the sitemap) and it carries no buy button: see
-  // src/lib/pendingPacks.ts. Nothing here sells it; the gate holds it to "no JVZoo
-  // marker at all" until an ID appears in src/jvzoo.ts.
   "brain-health-neurological",
 ];
 // JVZoo compliance "clean" sales pages — /sales/<slug>, one per FLAGGED listing

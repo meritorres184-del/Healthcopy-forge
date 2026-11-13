@@ -50,18 +50,14 @@ const PACK_SLUGS = [
   "functional-nutrition-glp-1-adaptation",
   "womens-longevity-biology-specific-care",
   // The 2026-11 packs, wired as the owner lists them (mirrors PACK_SLUGS in
-  // vite.config.ts). Heart Health (JVZoo 462871) and The Preventive Health &
-  // Disease Prevention Checklist (JVZoo 462879) are LISTED (owner 2026-11-13):
-  // both are normal content_packs rows in src/db/seed.ts, their pages carry the
-  // canonical buy block, and they are two more IDs in the count below (16 now).
+  // vite.config.ts). All three are LISTED (owner 2026-11-13): Heart Health (JVZoo
+  // 462871), The Preventive Health & Disease Prevention Checklist (462879) and
+  // Brain Health & Neurological Diseases (462883). Each is a normal content_packs
+  // row in src/db/seed.ts, each page carries the canonical buy block, and they are
+  // three more IDs in the count below (17 now). Nothing is pending: the registry
+  // in src/lib/pendingPacks.ts is empty and the gate asserts that it stays so.
   "heart-health-cardiovascular-2026-2027",
   "preventive-health-checklist",
-  // PENDING PACK (added 2026-11-02): the last pack the owner is submitting to
-  // JVZoo, whose listing does not exist yet — see src/lib/pendingPacks.ts. It is
-  // baked, so it is held to the normal /library/<slug> checks (exists, closed
-  // document, size floor, not the degraded fallback) and to the existing "no
-  // listing => no JVZoo marker at all" rule, because it has no ID in
-  // src/jvzoo.ts. It contributes no product ID, so the 16-ID count is unaffected.
   "brain-health-neurological",
 ];
 
@@ -92,12 +88,12 @@ const EBOOK_SLUGS = [
 //
 // These pages map to products whose JVZoo IDs are ALREADY counted below (packs
 // 9-13 are in PACK_SLUGS; ebooks are read from src/jvzoo.ts), so this list must
-// NOT feed the "16 product IDs" count — it is only an extra page family.
+// NOT feed the "17 product IDs" count — it is only an extra page family.
 //
 // Second flag round (2026-09-28): the four remaining ebook listings whose JVZoo
 // sales URL still pointed at the full-chrome /ebooks/<slug> page. Same page
 // family, same checks; kept as their own const so the rounds stay readable —
-// they are NOT new product IDs, so `allIds` below must stay at 16.
+// they are NOT new product IDs, so `allIds` below must stay at 17.
 const CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND = [
   "balanced-nutrition",
   "brain-habits",
@@ -107,7 +103,7 @@ const CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND = [
 // Third flag round (2026-09-28): the eight original article packs (Packs 1-8) and
 // the fixed Packs 1-4 bundle listing (JVZoo 453431). Same page family, same
 // checks; kept as their own consts so the rounds stay readable. The pack IDs and
-// the bundle ID are ALREADY counted in `allIds` below (15 packs + 1 bundle = 16),
+// the bundle ID are ALREADY counted in `allIds` below (16 packs + 1 bundle = 17),
 // so these are extra *pages* for IDs already counted, never new IDs.
 const CLEAN_SALES_PACKS_3RD_ROUND = [
   "nutrition-everyday-wellness",
@@ -518,7 +514,7 @@ function idForSlug(slug) {
 // counts PACK_SLUGS + the bundle only.
 const PRODUCT_PATH = /^\/(?:library|ebooks|sales)\/(.+)$/;
 
-// /packs and /library always carry a working buy path (fifteen live packs + the
+// /packs and /library always carry a working buy path (sixteen live packs + the
 // Packs 1-4 bundle). A product page (/library/<pack>, /ebooks/<ebook>) is held to
 // that only when that product has a live listing. /ebooks is the ebook hub: a page
 // of links to the ebook sales pages, not a buy page.
@@ -641,15 +637,15 @@ for (const [path, min, wantBuy] of [
 // than "every ID in the file" so that wiring up the 11 ebook listings later (one
 // line each in src/jvzoo.ts) can never make this count check fire.
 const packIds = [...new Set(PACK_SLUGS.map((s) => idBySlug.get(s)).filter(Boolean))];
-// The 15 packs + the fixed bundle: the IDs the /packs and /library pages sell, and
-// the set the "16 product IDs" count below is about.
+// The 16 packs + the fixed bundle: the IDs the /packs and /library pages sell, and
+// the set the "17 product IDs" count below is about.
 const packBundleIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])];
 // The courses the owner has wired, read back out of src/jvzoo.ts — the same file
 // the buy blocks are rendered from, so this can never drift from the code.
 const wiredCourseSlugs = CLEAN_SALES_COURSE_SLUGS.filter((s) => idBySlug.has(s));
 const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))];
-// EVERY product ID the gate expects a canonical buy block for: the 16 packs +
-// bundle above, plus one per wired course. 51 today (16 + active-living 458158 +
+// EVERY product ID the gate expects a canonical buy block for: the 17 packs +
+// bundle above, plus one per wired course. 52 today (17 + active-living 458158 +
 // balance-stability 458450 + balanced-eating 458983 + bodyweight-exercise 459045 +
 // busy-lifestyle 459047 + cardiovascular-fitness 459049 + eating-budget 459101 +
 // exercise-motivation 459117 + exercise-recovery 459119 + fitness-after-50 459123 +
@@ -706,20 +702,20 @@ function canonicalBuyProblems(html, id) {
   if (html.includes(`/0/${id}/1`)) problems.push(`non-canonical /1 image for product ${id}`);
   return problems;
 }
-if (packBundleIds.length !== 16) {
+if (packBundleIds.length !== 17) {
   failures.push([
     "src/jvzoo.ts",
     [
-      `expected 16 product IDs (15 packs + 1 bundle), read ${packBundleIds.length}`,
+      `expected 17 product IDs (16 packs + 1 bundle), read ${packBundleIds.length}`,
     ],
   ]);
 }
 const buyPages = [
-  // /packs shows all fifteen live packs plus the Packs 1-4 bundle. NOT allIds:
+  // /packs shows all sixteen live packs plus the Packs 1-4 bundle. NOT allIds:
   // a wired course's buy block belongs on that course's own sales page, never on
   // the packs page.
   ["/packs", packBundleIds],
-  // /library shows the fifteen live pack buy buttons; the bundle is only sold on /packs.
+  // /library shows the sixteen live pack buy buttons; the bundle is only sold on /packs.
   ["/library", packIds],
   ...PACK_SLUGS.map((s) => [
     "/library/" + s,
@@ -734,8 +730,8 @@ const buyPages = [
   // canonical buy block for its OWN product ID (the same IDs counted above — no
   // new ones). The 35 course pages contribute an EMPTY id list until the owner
   // wires each course into src/jvzoo.ts — then that page is checked here in full
-  // (their IDs are not part of the 16 counted above: the count is the 15 packs +
-  // the fixed bundle, and it must stay 16).
+  // (their IDs are not part of the 17 counted above: the count is the 16 packs +
+  // the fixed bundle, and it must stay 17).
   ...CLEAN_SALES_SLUGS.map((s) => [
     "/sales/" + s,
     idForSlug(s) ? [idForSlug(s)] : [],
@@ -1160,46 +1156,89 @@ if (freeSampleProblems.length) {
   failures.push(["free-sample " + FREE_SAMPLE_PATH, freeSampleProblems]);
 }
 
-// --- Pending-pack pages (added 2026-11-02) ---
+// --- Pack pages: nothing is pending any more (updated 2026-11-13) ---
 //
-// The last new pack the owner is submitting to JVZoo exists as a page before its
-// JVZoo listing does (src/lib/pendingPacks.ts). Its content is written and
-// verified, so the page is held to NINE things here, and a future edit cannot
-// quietly turn it back into a placeholder or forward into a listed product.
-// (Heart Health left this list on 2026-11-13, when JVZoo 462871 arrived, and
-// The Preventive Health & Disease Prevention Checklist followed on the same day
-// with JVZoo 462879: both are listed packs now, held by the SALES rows and the
-// canonical buy-block gate.)
-//   1. it bakes, with the owner's EXACT title and the $47 pack price in it;
-//   2. it carries the REAL contents of the release ZIP (word counts, lead-magnet
-//      names, post/email/source counts — see PENDING_PACK_PAGES below), so the
-//      page cannot drift back to "content arrives later" wording;
-//   3. it carries no placeholder wording at all — no "coming soon", no "not yet
-//      available", no "being finalized", no disabled-download notice. A JVZoo
-//      reviewer opens this URL directly and must see a finished product page;
-//   4. it carries `noindex, nofollow` — the same treatment as /free-sample-article;
-//   5. it ships NO JVZoo buy path (no jvzoo.com/i.jvzoo.com href, image or pixel);
-//   6. it is NOT in public/sitemap.xml;
-//   7. no OTHER baked page links to it — that is what proves it is out of the
-//      /packs grid, the /library hub, the header nav and the footer;
-//   8. it carries no "Part 1..4" numbering and no collection line (the owner
-//      explicitly ruled both out for these three titles);
-//   9. it shows its own bookcover — every listed pack page shows one, so a page a
-//      JVZoo reviewer opens must too. The image comes from src/lib/packCovers.ts
-//      and the file is served from public/covers (serve.ts' second static root),
-//      so both halves are checked: the baked page carries the img, and the JPG is
-//      on disk and really is a JPEG.
-// The word JVZoo itself still appears in the verbatim retailer disclosure every
-// product sales page must carry (components/JvzooDisclaimer.tsx) — that is a
-// required compliance paragraph, not a buy path, so it is not what (5) forbids.
-//
-// slug, owner's exact title, the REAL facts of that pack's release ZIP
-// (content-packs/packs-2026-11-PAGE-FACTS.md, re-measured against the ZIP on
-// 2026-11-01) and the cover image the page must show (src/lib/packCovers.ts).
-// Every required string must appear in the baked page: if a word count, a
-// lead-magnet name or a count of posts/emails/sources is edited away, the page
-// has stopped describing the product that ships and the build fails.
-const PENDING_PACK_PAGES = [
+// Until 2026-11-13 three new packs existed as pages BEFORE their JVZoo listings
+// (src/lib/pendingPacks.ts): baked, unlisted, no buy path. The owner wired all
+// three listings that day — Heart Health 462871, The Preventive Health & Disease
+// Prevention Checklist 462879, Brain Health & Neurological Diseases 462883 — each
+// was promoted to a normal content_packs row in src/db/seed.ts with its ID in
+// src/jvzoo.ts, and the pending registry is empty. The block that used to hold
+// those pages to the UNLISTED state is replaced here by the opposite check, so
+// the invariant cannot quietly rot in either direction:
+//   1. src/lib/pendingPacks.ts really is empty. A pack may not sit in the half
+//      state — content shipped, page live, no way to buy it;
+//   2. each of the three pages is LISTED: it is in public/sitemap.xml, it is not
+//      baked with `noindex`, and /library links to it, so a shopper can find it;
+//   3. each still describes the product the owner uploads: her exact title, the
+//      real word counts, the real lead-magnet name, the real counts of social
+//      posts, email swipes and sources, the $47 pack price and its own bookcover
+//      (the JPG must be on disk in public/covers and really be a JPEG).
+// A page that lost one of those has stopped describing the ZIP the owner uploads,
+// and the build fails instead of shipping a half-truth to a JVZoo reviewer.
+const sitemapText = existsSync(sitemapFile)
+  ? readFileSync(sitemapFile, "utf8")
+  : "";
+const PENDING_REGISTRY_FILE = join(ROOT, "src/lib/pendingPacks.ts");
+if (!existsSync(PENDING_REGISTRY_FILE)) {
+  failures.push([
+    "src/lib/pendingPacks.ts",
+    ["missing — src/routes/library.$slug.tsx imports it for the empty pending state"],
+  ]);
+} else {
+  const reg = readFileSync(PENDING_REGISTRY_FILE, "utf8");
+  const registry = reg.match(
+    /export const PENDING_PACKS: Record<string, PendingPack> = \{([\s\S]*?)\};/,
+  );
+  if (!registry) {
+    failures.push([
+      "src/lib/pendingPacks.ts",
+      ["cannot read the PENDING_PACKS registry — keep the `export const ... = { ... };` shape"],
+    ]);
+  } else {
+    const stillPending = (registry[1].match(/slug:/g) || []).length;
+    if (stillPending) {
+      failures.push([
+        "src/lib/pendingPacks.ts",
+        [
+          `${stillPending} pack(s) still pending — every pack in the catalog has a JVZoo ` +
+            "listing, so a pending entry means a live page with no way to buy it",
+        ],
+      ]);
+    }
+  }
+}
+// slug, the owner's exact title, the REAL facts of that pack's release ZIP
+// (content-packs/packs-2026-11-PAGE-FACTS.md, re-measured against the ZIP) and the
+// cover image the page must show (src/lib/packCovers.ts). Every required string
+// must appear in the baked page.
+const LISTED_PACK_PAGES = [
+  [
+    "heart-health-cardiovascular-2026-2027",
+    "Heart Health & Cardiovascular Disease in 2026\u20132027",
+    [
+      "6,039 words",
+      "9,140 words",
+      "10 social media posts",
+      "7 email swipes",
+      "8 citations",
+    ],
+    "/covers/pack-heart-health-cardiovascular-2026-2027.jpg",
+  ],
+  [
+    "preventive-health-checklist",
+    "The Preventive Health & Disease Prevention Checklist",
+    [
+      "the checklist document is the product",
+      "no separate long article and no separate lead magnet",
+      "1,954 words",
+      "4,506 words",
+      "10 social media posts",
+      "3 email swipes",
+      "8 citations",
+    ],
+    "/covers/pack-preventive-health-checklist.jpg",
+  ],
   [
     "brain-health-neurological",
     "Brain Health & Neurological Diseases",
@@ -1215,31 +1254,33 @@ const PENDING_PACK_PAGES = [
     "/covers/pack-brain-health-neurological.jpg",
   ],
 ];
+// Placeholder wording a finished product page may never carry. The content is
+// written, packaged and verified, so a page a JVZoo reviewer opens cannot say
+// otherwise — and neither can a listed page a shopper reaches.
 const PENDING_FORBIDDEN_TEXT = [
   ["Part 1", 'the owner ruled out "Part 1" numbering for these titles'],
   ["Part 2", 'the owner ruled out "Part 2" numbering for these titles'],
   ["Part 3", 'the owner ruled out "Part 3" numbering for these titles'],
   ["Part 4", 'the owner ruled out "Part 4" numbering for these titles'],
   ["PLR Health & Wellness Article Collection", "the collection line the owner ruled out"],
-  // Placeholder wording. The content is written, packaged and verified, so a
-  // product page a JVZoo reviewer opens may not say otherwise.
   ["coming soon", 'the pack is finished — the page may not call it "coming soon"'],
   ["Coming Soon", 'the pack is finished — the page may not call it "Coming Soon"'],
   ["not yet available", 'the content exists — the page may not call it "not yet available"'],
   ["arrives Sunday", "the content has arrived — the page may not promise it later"],
   ["has not arrived", "the content has arrived — the page may not say otherwise"],
   ["content files", "no talk of content files that do not exist any more"],
-  ["being finalized", 'no placeholder "being finalized" notice on a product page'],
-  [
-    "Downloads will be enabled",
-    "no disabled-download placeholder notice on a page a reviewer opens",
-  ],
+  // NOT forbidden here: "being finalized" / "Downloads will be enabled". Those two
+  // are the site-wide member-download notice EVERY listed pack page carries (the
+  // buyer downloads the pack from the members area, not from the sales page), so
+  // they say nothing about this product. The placeholder they used to catch — a
+  // pending page implying its content had not arrived — is caught by the word
+  // counts and the lead-magnet name above.
 ];
-const sitemapText = existsSync(sitemapFile)
-  ? readFileSync(sitemapFile, "utf8")
+const libraryHtml = existsSync(file("/library"))
+  ? readFileSync(file("/library"), "utf8")
   : "";
-const pendingRows = [];
-for (const [slug, title, requiredText, cover] of PENDING_PACK_PAGES) {
+const packPageRows = [];
+for (const [slug, title, requiredText, cover] of LISTED_PACK_PAGES) {
   const path = "/library/" + slug;
   const f = file(path);
   const problems = [];
@@ -1261,15 +1302,13 @@ for (const [slug, title, requiredText, cover] of PENDING_PACK_PAGES) {
     // React's server renderer puts a text-node separator between the "$" and the
     // number ("$<!-- -->47"), so the price is matched with that separator allowed.
     if (!/\$(\s|<!-- -->)*47\b/.test(html)) problems.push("missing the $47 pack price");
-    if (!html.includes("noindex, nofollow")) {
-      problems.push("missing the noindex, nofollow robots meta (must stay unlisted)");
+    // The page left the unlisted state for good when its listing went live.
+    if (html.includes("noindex")) {
+      problems.push("still baked with a noindex robots meta — it is a listed product now");
     }
     // Its own bookcover, the same one every listed pack page shows.
     if (!html.includes(`src="${cover}"`)) {
       problems.push(`missing its bookcover image (no src="${cover}" in the page)`);
-    }
-    for (const marker of BUY_MARKERS) {
-      if (html.includes(marker)) problems.push(`ships a JVZoo buy path (${marker})`);
     }
     for (const [text, why] of PENDING_FORBIDDEN_TEXT) {
       // "&" is baked as "&amp;", so both forms are looked for.
@@ -1277,6 +1316,14 @@ for (const [slug, title, requiredText, cover] of PENDING_PACK_PAGES) {
         problems.push(`contains "${text}" \u2014 ${why}`);
       }
     }
+  }
+  // A listed product a shopper cannot reach is a product nobody buys: it must be
+  // in the sitemap and linked from the /library hub.
+  if (!sitemapText.includes(path)) {
+    problems.push("missing from public/sitemap.xml — it is a listed product now");
+  }
+  if (!libraryHtml.includes(`href="${path}"`)) {
+    problems.push("not linked from /library — a shopper cannot browse to it");
   }
   // The image itself. Covers are served from public/ (serve.ts' second static
   // root), not copied into dist/client, so the file is checked where it lives: it
@@ -1293,18 +1340,8 @@ for (const [slug, title, requiredText, cover] of PENDING_PACK_PAGES) {
       problems.push(`its bookcover file public${cover} is not a JPEG`);
     }
   }
-  if (sitemapText.includes(path)) {
-    problems.push("listed in public/sitemap.xml \u2014 it must stay out of the sitemap");
-  }
-  for (const [other] of rows) {
-    if (other === path) continue;
-    const otherFile = file(other);
-    if (existsSync(otherFile) && readFileSync(otherFile, "utf8").includes(`href="${path}"`)) {
-      problems.push(`linked from ${other} \u2014 it must not be discoverable by browsing`);
-    }
-  }
-  pendingRows.push([path, problems]);
-  if (problems.length) failures.push(["pending-pack " + path, problems]);
+  packPageRows.push([path, problems]);
+  if (problems.length) failures.push(["pack-page " + path, problems]);
 }
 
 console.log("pre-render gate — dist/client");
@@ -1342,9 +1379,9 @@ for (const [path, problems] of checkoutRows) {
   console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
 }
 console.log(
-  "\npending pack pages \u2014 baked, unlisted, no buy path (content + a JVZoo ID unlist them)",
+  "\nnew pack pages \u2014 listed: in the sitemap, indexable, linked from /library, real contents",
 );
-for (const [path, problems] of pendingRows) {
+for (const [path, problems] of packPageRows) {
   const status = problems.length ? "FAIL" : "ok  ";
   console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
 }
@@ -1369,7 +1406,7 @@ const printedPaths = new Set([
   ...checkoutRows.map(([p]) => "checkout " + p),
   ...rows.map(([p]) => "checkout href " + p),
   "free-sample " + FREE_SAMPLE_PATH,
-  ...pendingRows.map(([p]) => "pending-pack " + p),
+  ...packPageRows.map(([p]) => "pack-page " + p),
 ]);
 const fileFailures = failures.filter(([p]) => !printedPaths.has(p));
 if (fileFailures.length) {
