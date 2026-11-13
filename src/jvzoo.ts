@@ -107,6 +107,18 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
   ),
 
   // ---------------------------------------------------------------------------
+  // The three 2026-11 packs (built 2026-11-01), wired as the owner sends each
+  // listing ID. Heart Health is the first: JVZoo 462871 (owner, 2026-11-13), so
+  // its page now carries the canonical buy block and it was promoted to a normal
+  // content_packs row in src/db/seed.ts. The other two — preventive-health-checklist
+  // and brain-health-neurological — stay in src/lib/pendingPacks.ts with no ID
+  // until their own listings exist.
+  "heart-health-cardiovascular-2026-2027": jvzooProduct(
+    "462871",
+    "Heart Health & Cardiovascular Disease in 2026–2027 Article Pack",
+  ),
+
+  // ---------------------------------------------------------------------------
   // Ebooks E1-E11 — the standalone PLR ebook line, $27 each (src/lib/ebooks.ts).
   //
   // Same rule as the packs above: this is the ONE place to wire them up. Replace

@@ -49,14 +49,17 @@ const PACK_SLUGS = [
   "health-coaching-functional-nutrition-glp-1-support",
   "functional-nutrition-glp-1-adaptation",
   "womens-longevity-biology-specific-care",
-  // PENDING PACKS (added 2026-11-02, mirrors PACK_SLUGS in vite.config.ts): the
-  // three packs the owner is submitting to JVZoo this week whose content files
-  // arrive later — see src/lib/pendingPacks.ts. They are baked, so they are held
-  // to the normal /library/<slug> checks (exists, closed document, size floor,
-  // not the degraded fallback) and to the existing "no listing => no JVZoo marker
-  // at all" rule, because none of them has an ID in src/jvzoo.ts. They contribute
-  // no product IDs, so the 14-ID count below is unaffected.
+  // The 2026-11 packs, wired as the owner lists them (mirrors PACK_SLUGS in
+  // vite.config.ts). Heart Health is LISTED — JVZoo 462871 (owner 2026-11-13): it
+  // is a normal content_packs row in src/db/seed.ts, its page carries the
+  // canonical buy block, and it is one more ID in the count below (15 now).
   "heart-health-cardiovascular-2026-2027",
+  // PENDING PACKS (added 2026-11-02): the remaining packs the owner is submitting
+  // to JVZoo, whose listings do not exist yet — see src/lib/pendingPacks.ts. They
+  // are baked, so they are held to the normal /library/<slug> checks (exists,
+  // closed document, size floor, not the degraded fallback) and to the existing
+  // "no listing => no JVZoo marker at all" rule, because neither has an ID in
+  // src/jvzoo.ts. They contribute no product IDs, so the 15-ID count is unaffected.
   "preventive-health-checklist",
   "brain-health-neurological",
 ];
@@ -88,12 +91,12 @@ const EBOOK_SLUGS = [
 //
 // These pages map to products whose JVZoo IDs are ALREADY counted below (packs
 // 9-13 are in PACK_SLUGS; ebooks are read from src/jvzoo.ts), so this list must
-// NOT feed the "14 product IDs" count — it is only an extra page family.
+// NOT feed the "15 product IDs" count — it is only an extra page family.
 //
 // Second flag round (2026-09-28): the four remaining ebook listings whose JVZoo
 // sales URL still pointed at the full-chrome /ebooks/<slug> page. Same page
 // family, same checks; kept as their own const so the rounds stay readable —
-// they are NOT new product IDs, so `allIds` below must stay at 14.
+// they are NOT new product IDs, so `allIds` below must stay at 15.
 const CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND = [
   "balanced-nutrition",
   "brain-habits",
@@ -103,7 +106,7 @@ const CLEAN_SALES_EBOOK_SLUGS_2ND_ROUND = [
 // Third flag round (2026-09-28): the eight original article packs (Packs 1-8) and
 // the fixed Packs 1-4 bundle listing (JVZoo 453431). Same page family, same
 // checks; kept as their own consts so the rounds stay readable. The pack IDs and
-// the bundle ID are ALREADY counted in `allIds` below (13 packs + 1 bundle = 14),
+// the bundle ID are ALREADY counted in `allIds` below (14 packs + 1 bundle = 15),
 // so these are extra *pages* for IDs already counted, never new IDs.
 const CLEAN_SALES_PACKS_3RD_ROUND = [
   "nutrition-everyday-wellness",
@@ -129,7 +132,7 @@ const CLEAN_SALES_ROUND_3_SLUGS = [
 // (JVZoo 454739). That listing was never flagged — the owner asked for its
 // link-free page herself — but it is the same page family and the same checks,
 // so it is its own const for the same reason as the other rounds. Its ID already
-// exists in src/jvzoo.ts, so it adds no new product ID: `allIds` stays at 14.
+// exists in src/jvzoo.ts, so it adds no new product ID: `allIds` stays at 15.
 // Held to the standard 15 KB SALES floor (it joins the rounds 1-2 spread below),
 // because it is an ebook with a full owner description like those pages, not one
 // of the shorter third-round pages.
@@ -140,7 +143,7 @@ const CLEAN_SALES_EBOOK_SLUGS_4TH_ROUND = ["healthy-feet"];
 // duplicate, then asked for its page, so it completes the catalog (25 pages).
 // Same page family, same checks, its own const for the same reason as the other
 // rounds. Its ID already exists in src/jvzoo.ts, so it adds no new product ID:
-// `allIds` stays at 14. Held to the standard 15 KB SALES floor (it is an ebook
+// `allIds` stays at 15. Held to the standard 15 KB SALES floor (it is an ebook
 // with a full owner description), like round 4.
 const CLEAN_SALES_EBOOK_SLUGS_5TH_ROUND = ["protein-aging"];
 const CLEAN_SALES_COURSE_SLUGS = [
@@ -485,7 +488,7 @@ const idBySlug = new Map(
 );
 // The fixed Packs 1-4 bundle (JVZoo 453431): the one product whose buy block is a
 // named export (`bundleBuy`) instead of a slug-keyed entry, so it needs its own ID
-// reader. It is one of the 14 counted IDs, and it is the product behind the
+// reader. It is one of the 15 counted IDs, and it is the product behind the
 // /sales/packs-1-4-bundle clean page.
 const bundleId = (jvzooSource.match(/bundleBuy\s*=\s*jvzooProduct\(\s*"(\d+)"/) || [])[1];
 // The bundle's listing NAME, read from the same `bundleBuy` export the buy button
@@ -514,7 +517,7 @@ function idForSlug(slug) {
 // counts PACK_SLUGS + the bundle only.
 const PRODUCT_PATH = /^\/(?:library|ebooks|sales)\/(.+)$/;
 
-// /packs and /library always carry a working buy path (thirteen live packs + the
+// /packs and /library always carry a working buy path (fourteen live packs + the
 // Packs 1-4 bundle). A product page (/library/<pack>, /ebooks/<ebook>) is held to
 // that only when that product has a live listing. /ebooks is the ebook hub: a page
 // of links to the ebook sales pages, not a buy page.
@@ -637,15 +640,15 @@ for (const [path, min, wantBuy] of [
 // than "every ID in the file" so that wiring up the 11 ebook listings later (one
 // line each in src/jvzoo.ts) can never make this count check fire.
 const packIds = [...new Set(PACK_SLUGS.map((s) => idBySlug.get(s)).filter(Boolean))];
-// The 13 packs + the fixed bundle: the IDs the /packs and /library pages sell, and
-// the set the "14 product IDs" count below is about.
+// The 14 packs + the fixed bundle: the IDs the /packs and /library pages sell, and
+// the set the "15 product IDs" count below is about.
 const packBundleIds = [...new Set([...packIds, ...(bundleId ? [bundleId] : [])])];
 // The courses the owner has wired, read back out of src/jvzoo.ts — the same file
 // the buy blocks are rendered from, so this can never drift from the code.
 const wiredCourseSlugs = CLEAN_SALES_COURSE_SLUGS.filter((s) => idBySlug.has(s));
 const wiredCourseIds = [...new Set(wiredCourseSlugs.map((s) => idBySlug.get(s)))];
-// EVERY product ID the gate expects a canonical buy block for: the 14 packs +
-// bundle above, plus one per wired course. 49 today (14 + active-living 458158 +
+// EVERY product ID the gate expects a canonical buy block for: the 15 packs +
+// bundle above, plus one per wired course. 50 today (15 + active-living 458158 +
 // balance-stability 458450 + balanced-eating 458983 + bodyweight-exercise 459045 +
 // busy-lifestyle 459047 + cardiovascular-fitness 459049 + eating-budget 459101 +
 // exercise-motivation 459117 + exercise-recovery 459119 + fitness-after-50 459123 +
@@ -702,20 +705,20 @@ function canonicalBuyProblems(html, id) {
   if (html.includes(`/0/${id}/1`)) problems.push(`non-canonical /1 image for product ${id}`);
   return problems;
 }
-if (packBundleIds.length !== 14) {
+if (packBundleIds.length !== 15) {
   failures.push([
     "src/jvzoo.ts",
     [
-      `expected 14 product IDs (13 packs + 1 bundle), read ${packBundleIds.length}`,
+      `expected 15 product IDs (14 packs + 1 bundle), read ${packBundleIds.length}`,
     ],
   ]);
 }
 const buyPages = [
-  // /packs shows all thirteen live packs plus the Packs 1-4 bundle. NOT allIds:
+  // /packs shows all fourteen live packs plus the Packs 1-4 bundle. NOT allIds:
   // a wired course's buy block belongs on that course's own sales page, never on
   // the packs page.
   ["/packs", packBundleIds],
-  // /library shows the thirteen live pack buy buttons; the bundle is only sold on /packs.
+  // /library shows the fourteen live pack buy buttons; the bundle is only sold on /packs.
   ["/library", packIds],
   ...PACK_SLUGS.map((s) => [
     "/library/" + s,
@@ -730,8 +733,8 @@ const buyPages = [
   // canonical buy block for its OWN product ID (the same IDs counted above — no
   // new ones). The 35 course pages contribute an EMPTY id list until the owner
   // wires each course into src/jvzoo.ts — then that page is checked here in full
-  // (their IDs are not part of the 14 counted above: the count is the 13 packs +
-  // the fixed bundle, and it must stay 14).
+  // (their IDs are not part of the 15 counted above: the count is the 14 packs +
+  // the fixed bundle, and it must stay 15).
   ...CLEAN_SALES_SLUGS.map((s) => [
     "/sales/" + s,
     idForSlug(s) ? [idForSlug(s)] : [],
@@ -1158,10 +1161,12 @@ if (freeSampleProblems.length) {
 
 // --- Pending-pack pages (added 2026-11-02) ---
 //
-// The three packs the owner is submitting to JVZoo exist as pages before their
-// JVZoo listings do (src/lib/pendingPacks.ts). Their content is written and
+// The remaining new packs the owner is submitting to JVZoo exist as pages before
+// their JVZoo listings do (src/lib/pendingPacks.ts). Their content is written and
 // verified, so each page is held to NINE things here, and a future edit cannot
-// quietly turn one back into a placeholder or forward into a listed product:
+// quietly turn one back into a placeholder or forward into a listed product.
+// (Heart Health left this list on 2026-11-13, when JVZoo 462871 arrived: it is
+// now a listed pack, held by the SALES rows and the canonical buy-block gate.)
 //   1. it bakes, with the owner's EXACT title and the $47 pack price in it;
 //   2. it carries the REAL contents of the release ZIP (word counts, lead-magnet
 //      names, post/email/source counts — see PENDING_PACK_PAGES below), so the
@@ -1192,19 +1197,6 @@ if (freeSampleProblems.length) {
 // lead-magnet name or a count of posts/emails/sources is edited away, the page
 // has stopped describing the product that ships and the build fails.
 const PENDING_PACK_PAGES = [
-  [
-    "heart-health-cardiovascular-2026-2027",
-    "Heart Health & Cardiovascular Disease in 2026\u20132027",
-    [
-      "6,039 words",
-      "9,140 words",
-      "The Heart Health & Cardiovascular Disease Prevention Checklist",
-      "10 social media posts",
-      "7 email swipes",
-      "8 citations",
-    ],
-    "/covers/pack-heart-health-cardiovascular-2026-2027.jpg",
-  ],
   [
     "preventive-health-checklist",
     "The Preventive Health & Disease Prevention Checklist",
