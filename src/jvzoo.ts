@@ -108,11 +108,11 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
 
   // ---------------------------------------------------------------------------
   // The three 2026-11 packs (built 2026-11-01), wired as the owner sends each
-  // listing ID. Heart Health (JVZoo 462871) and The Preventive Health & Disease
-  // Prevention Checklist (JVZoo 462879) are LISTED (owner, 2026-11-13): their
-  // pages carry the canonical buy block and both were promoted to normal
-  // content_packs rows in src/db/seed.ts. brain-health-neurological stays in
-  // src/lib/pendingPacks.ts with no ID until its own listing exists.
+  // listing ID. All three are LISTED (owner, 2026-11-13): Heart Health (JVZoo
+  // 462871), The Preventive Health & Disease Prevention Checklist (JVZoo 462879)
+  // and Brain Health & Neurological Diseases (JVZoo 462883). Their pages carry
+  // the canonical buy block and all three were promoted to normal content_packs
+  // rows in src/db/seed.ts, so src/lib/pendingPacks.ts now holds no pack at all.
   "heart-health-cardiovascular-2026-2027": jvzooProduct(
     "462871",
     "Heart Health & Cardiovascular Disease in 2026–2027 Article Pack",
@@ -120,6 +120,10 @@ export const jvzooProducts: Record<string, JvzooProduct> = {
   "preventive-health-checklist": jvzooProduct(
     "462879",
     "The Preventive Health & Disease Prevention Checklist Article Pack",
+  ),
+  "brain-health-neurological": jvzooProduct(
+    "462883",
+    "Brain Health & Neurological Diseases Article Pack",
   ),
 
   // ---------------------------------------------------------------------------
