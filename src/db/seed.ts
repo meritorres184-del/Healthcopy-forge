@@ -282,6 +282,46 @@ const packs: SeedPack[] = [
       "Bookcover.jpg",
     ],
   },
+  // ── The second of the three 2026-11 packs to be LISTED (JVZoo 462879,
+  // owner 2026-11-13). Promoted from src/lib/pendingPacks.ts, where it lived
+  // while it had no listing: same title, description, price, category and
+  // contents, so the page it renders now is the page the reviewer already saw.
+  {
+    slug: "preventive-health-checklist",
+    title: "The Preventive Health & Disease Prevention Checklist",
+    description:
+      "\n\n**The Preventive Health & Disease Prevention Checklist**\n\n" +
+      "Your Personal Guide to Early Detection, Health Screenings, Chronic Disease Prevention & Lifelong Wellness\n\n" +
+      "This pack is shaped differently from an ordinary article pack, and it is worth saying plainly: **the checklist document is the product.** There is no separate long article and no separate lead magnet — what you get is one complete, printable preventive health checklist, plus the social posts, the emails and the sources list you need to publish and promote it the same week.\n\n" +
+      "It walks a reader through screening, risk factors, biomarkers, nutrition, movement, sleep, stress and environmental health, then turns all of it into a 30-day action plan and a progress tracker. You can hand it to your audience as a free download, or customize it and sell it as your own branded guide.\n\n" +
+      "**What's inside this pack:**\n" +
+      "* The checklist document itself — *The Preventive Health & Disease Prevention Checklist*, 1,954 words (4,506 words in the complete pack document, which also carries the social posts, the emails, the references and the license). Its sections are: a preventive health screening checklist · chronic disease risk assessment (personal, family, lifestyle and environmental risk factors) · essential health biomarkers to understand, with a review page · daily nutrition for disease prevention, with a nutrition checklist and goal page · lifestyle medicine and healthy habits (physical activity, restorative sleep, stress management and emotional wellness) with an improvement plan · environmental health checklist and action plan · a personalized preventive healthcare planner · five questions to ask your healthcare professional · a four-week, 30-day preventive health action plan · a personal prevention progress tracker · and a lifelong preventive health commitment page. It ships with fill-in lines, checkboxes and goal prompts throughout, so it works as a printable or as a branded PDF.\n" +
+      "* 10 social media posts — ready-to-customize posts: preventive healthcare starts today · why early detection matters · know your chronic disease risk factors · preventive nutrition for lifelong wellness · sleep is essential for disease prevention · understand your health biomarkers · move more for long-term health · your environment matters to your health · a 30-day preventive health challenge · the future of preventive medicine in 2027\n" +
+      "* 3 email swipes — three prewritten emails with [First Name] and [Your Name or Brand] placeholders and bracketed call-to-action buttons: the checklist offer with its full contents list · personalized prevention and what is changing in preventive medicine · and emerging preventive technologies (genetic risk assessment, biomarkers, wearables, artificial intelligence, precision nutrition and multi-cancer early detection research), each framed as something to discuss with a healthcare professional.\n" +
+      "* 1 Sources and Further Reading list — eight full citations with working links, including the U.S. Preventive Services Task Force A and B recommendations, the National Heart, Lung, and Blood Institute, MedlinePlus, the A1C test guidance, the Physical Activity Guidelines for Americans, the National Sleep Foundation's sleep-duration paper and the Environmental Protection Agency's radon page.\n" +
+      "* 1 medical disclaimer — a short, ready-to-use disclaimer stating that the guide is educational and informational only, does not replace professional medical advice, diagnosis or treatment, and that screening schedules, tests and vaccinations vary by individual circumstances. It is embedded in the pack document and also ships as a standalone Word file inside the ZIP.\n" +
+      "* 1 Private Label Rights License — the terms are set out below. (Also embedded in the pack document.)\n" +
+      "* Bookcover.jpg — the pack cover image, inside the ZIP\n\n" +
+      "**Ways you can use the content:** put your logo on it and give it away to build your email list. Customize it and sell it as a branded printable or PDF. Split its sections into blog posts or a short email course. Use the ten social posts to promote the download and the three emails to deliver it. Add your own branding, graphics, calls to action and appropriate affiliate links.\n\n" +
+      "**Who it's for:** health and wellness bloggers and newsletter publishers, wellness and health coaches who want a client-ready intake or goal-setting resource, preventive-health and healthy-aging content creators, and affiliate marketers in the health, supplement and screening categories who want a lead magnet they can brand and publish quickly.\n\n" +
+      "**100% Original, In-House Written Content.** Every word in this pack — and in every HealthCopy Forge pack — is originally written by us. Nothing is reused, resold, or repurposed from any other PLR store. You are getting fresh, unique content that was created specifically for HealthCopy Forge, so your audience sees something they won't find anywhere else." +
+      "\n\n" +
+      "**PLR license.** The Private Label Rights License is included inside the ZIP and explains how the content may be used, edited, customized, branded and repurposed according to its terms. The license is not transferable: you can sell your own customized, finished products to end users, but the PLR rights themselves cannot be passed on, sublicensed or resold as PLR. No separate license purchase is needed, and no signature is required." +
+      "\n\n" +
+      "**Delivery:** instant download of one ZIP containing all files — the checklist document, the ten social posts, the three email swipes, the sources list, the PLR license, the medical disclaimer and the bookcover.\n",
+    priceCents: 4700,
+    category: "Preventive Health",
+    comingSoon: false,
+    includes: [
+      "The checklist document itself — 1,954 words. This pack has no separate long article and no separate lead magnet: the checklist IS the product",
+      "10 social media posts",
+      "3 email swipes",
+      "1 Sources and Further Reading list — 8 citations with working links",
+      "Medical disclaimer",
+      "Private Label Rights (PLR) license — edit, rebrand and sell your finished products; the PLR rights are not transferable down",
+      "Bookcover.jpg",
+    ],
+  },
 ];
 
 
