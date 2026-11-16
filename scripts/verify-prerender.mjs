@@ -710,6 +710,55 @@ if (packBundleIds.length !== 17) {
     ],
   ]);
 }
+
+// /affiliates — the affiliate offer list. Every live JVZoo listing must carry its
+// own "apply to promote" link there, so an affiliate can find and promote the
+// product the day it becomes sellable (owner, 2026-11-13: the three 2026-11 packs
+// passed compliance and are sellable). Checked on the BAKED page, so neither half
+// can regress without failing the build:
+//   1. the three 2026-11 packs are present — their IDs are read back out of
+//      src/jvzoo.ts by slug, the same file the buy buttons render from, so this
+//      can never drift from the listings;
+//   2. the page carries exactly AFFILIATE_PRODUCT_COUNT distinct offer links, so
+//      deleting ANY product from AFFILIATE_PRODUCTS fails here instead of quietly
+//      shrinking the list an affiliate sees.
+const AFFILIATE_PAGE = join(CLIENT, "affiliates", "index.html");
+const AFFILIATE_PRODUCT_COUNT = 25;
+// The three 2026-11 packs (heart, checklist, brain), by their src/jvzoo.ts slug.
+const AFFILIATE_REQUIRED_PACK_SLUGS = [
+  "heart-health-cardiovascular-2026-2027",
+  "preventive-health-checklist",
+  "brain-health-neurological",
+];
+const affiliateProblems = [];
+if (!existsSync(AFFILIATE_PAGE)) {
+  affiliateProblems.push("no baked /affiliates page (route missing from the prerender list?)");
+} else {
+  const affiliateHtml = readFileSync(AFFILIATE_PAGE, "utf8");
+  const offerIds = new Set(
+    [
+      ...affiliateHtml.matchAll(
+        /https:\/\/www\.jvzoo\.com\/affiliates\/info\/(\d{6})/g,
+      ),
+    ].map((m) => m[1]),
+  );
+  for (const slug of AFFILIATE_REQUIRED_PACK_SLUGS) {
+    const id = idBySlug.get(slug);
+    if (!id) {
+      affiliateProblems.push(`src/jvzoo.ts has no product ID for "${slug}"`);
+    } else if (!offerIds.has(id)) {
+      affiliateProblems.push(`no apply link for ${id} ("${slug}") on the baked page`);
+    }
+  }
+  if (offerIds.size !== AFFILIATE_PRODUCT_COUNT) {
+    affiliateProblems.push(
+      `lists ${offerIds.size} product(s), expected ${AFFILIATE_PRODUCT_COUNT}`,
+    );
+  }
+}
+if (affiliateProblems.length) {
+  failures.push(["affiliate-links /affiliates", affiliateProblems]);
+}
 const buyPages = [
   // /packs shows all sixteen live packs plus the Packs 1-4 bundle. NOT allIds:
   // a wired course's buy block belongs on that course's own sales page, never on
@@ -1386,6 +1435,15 @@ for (const [path, problems] of packPageRows) {
   console.log(`  ${status} ${pad(path, 52)}${problems.join("; ")}`);
 }
 console.log(
+  "\n/affiliates \u2014 every live JVZoo listing has its own apply-to-promote link",
+);
+console.log(
+  `  ${affiliateProblems.length ? "FAIL" : "ok  "} ${pad(
+    "/affiliates",
+    52,
+  )}${affiliateProblems.join("; ")}`,
+);
+console.log(
   "\nfree sample article \u2014 delivered on the page, unlisted (noindex, not in the sitemap, linked from nowhere)",
 );
 console.log(
@@ -1406,6 +1464,7 @@ const printedPaths = new Set([
   ...checkoutRows.map(([p]) => "checkout " + p),
   ...rows.map(([p]) => "checkout href " + p),
   "free-sample " + FREE_SAMPLE_PATH,
+  "affiliate-links /affiliates",
   ...packPageRows.map(([p]) => "pack-page " + p),
 ]);
 const fileFailures = failures.filter(([p]) => !printedPaths.has(p));
