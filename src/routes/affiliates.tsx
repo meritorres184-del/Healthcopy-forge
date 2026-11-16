@@ -5,8 +5,9 @@ import { createFileRoute } from "@tanstack/react-router";
 // live product. Format: https://www.jvzoo.com/affiliates/info/{productID}
 // (canonical redirect: /affiliate/affiliateinfonew/index/{id}). All 25 live.
 //
-// One entry per live JVZoo listing: 13 article packs + the fixed 4-pack bundle
-// + the 11 Master Resell ebooks. The names below are the listing names buyers/affiliates
+// One entry per live JVZoo listing: 16 article packs (1–8, 9–13 and the three
+// 2026-11 packs) + the fixed 4-pack bundle + the 8 live Master Resell ebooks.
+// The names below are the listing names buyers/affiliates
 // see, taken verbatim from the `alt` text in src/jvzoo.ts — that file stays the
 // single source of truth for the product IDs.
 const AFFILIATE_APPLY_URL =
@@ -29,6 +30,10 @@ const AFFILIATE_PRODUCTS = [
   { name: "Article Pack 11 Health Coaching, Functional Nutrition & GLP-1 Support in 2026", href: "https://www.jvzoo.com/affiliates/info/454673" },
   { name: "Article Pack 12 Functional Nutrition, GLP-1 & Adaptation in 2026", href: "https://www.jvzoo.com/affiliates/info/454675" },
   { name: "Article Pack 13 Women's Longevity & Biology-Specific Care", href: "https://www.jvzoo.com/affiliates/info/454679" },
+  // The three 2026-11 packs ($47 each), listed and sellable 2026-11-13.
+  { name: "Heart Health & Cardiovascular Disease in 2026–2027 Article Pack", href: "https://www.jvzoo.com/affiliates/info/462871" },
+  { name: "The Preventive Health & Disease Prevention Checklist Article Pack", href: "https://www.jvzoo.com/affiliates/info/462879" },
+  { name: "Brain Health & Neurological Diseases Article Pack", href: "https://www.jvzoo.com/affiliates/info/462883" },
   // Master Resell ebooks E1–E11 ($27 each)
   // NOT LISTED ON JVZOO (2026-11-01): the owner deleted the Gut Health for
   // Beginners, Healthy Bones and Everyday Lifestyle, and Hydration and Wellness
@@ -380,8 +385,8 @@ function AffiliatesPage() {
             10. Current PLR Product Categories
           </h2>
           <p className="mt-6 text-base leading-relaxed text-gray-600 sm:text-lg">
-            Twenty-five products are live and ready to promote: 13 article packs
-            at $47 each, the 4-pack bundle at $97, and 11 Master Resell ebooks at $27 each.
+            Twenty-five products are live and ready to promote: 16 article packs
+            at $47 each, the 4-pack bundle at $97, and 8 Master Resell ebooks at $27 each.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-gray-600 sm:text-base">
             {AFFILIATE_PRODUCTS.map((item) => (
@@ -660,7 +665,7 @@ const faqs = [
   {
     question: "What topics are covered?",
     answer:
-      "Thirteen article packs and eleven Master Resell ebooks today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, natural & holistic wellness, product reviews & buying guides, protein nutrition, intermittent fasting, health coaching & GLP-1 support, functional nutrition, and women's longevity — with new topics added regularly.",
+      "Sixteen article packs and eight Master Resell ebooks today: nutrition, supplements, fitness, sleep & recovery, stress management, healthy aging, natural & holistic wellness, product reviews & buying guides, protein nutrition, intermittent fasting, health coaching & GLP-1 support, functional nutrition, women's longevity, heart health & cardiovascular disease, preventive health & disease prevention, and brain health & neurological diseases — with new topics added regularly.",
   },
   {
     question: "Do I need my own website?",
